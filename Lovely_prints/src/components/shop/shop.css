@@ -4,7 +4,7 @@
   --orange-light: #FFBF8A;
   --black-primary: #121212;
   --gray-dark: #2E2E2E;
-  --gray-light: #F5F5F5;
+  --gray-light: #ececec;
   --success-green: #2ECC71;
   --warning-yellow: #F1C40F;
   --error-red: #E74C3C;
@@ -235,4 +235,28 @@ body {
     width: 100%;
     justify-content: space-between;
   }
+}
+
+.order-card.collected {
+  opacity: 0.5;
+  background: #fafafa;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+}
+
+.order-card.collected:hover {
+  opacity: 0.6;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.order-card.collected .student-info h3,
+.order-card.collected .order-id,
+.order-card.collected .document-name {
+  color: var(--gray-dark);
+}
+
+.order-card.collected .student-id,
+.order-card.collected .print-details,
+.order-card.collected .eta {
+  color: #9ca3af;
 }

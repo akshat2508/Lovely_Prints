@@ -10,9 +10,13 @@ export default function OrderList({ orders, onStatusChange }) {
     );
   }
 
+  const activeOrders = orders.filter(order => order.status !== 'collected');
+  const collectedOrders = orders.filter(order => order.status === 'collected');
+  const sortedOrders = [...activeOrders, ...collectedOrders];
+
   return (
     <div className="order-list">
-      {orders.map(order => (
+      {sortedOrders.map(order => (
         <OrderDetails
           key={order.id}
           order={order}
