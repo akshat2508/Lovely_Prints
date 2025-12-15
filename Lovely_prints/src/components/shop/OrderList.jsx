@@ -1,9 +1,24 @@
-import React from 'react'
+import React from 'react';
+import OrderDetails from './OrderDetails';
 
-const OrderList = () => {
+export default function OrderList({ orders, onStatusChange }) {
+  if (orders.length === 0) {
+    return (
+      <div className="order-list-empty">
+        <p>No orders yet</p>
+      </div>
+    );
+  }
+
   return (
-    <div>OrderList</div>
-  )
+    <div className="order-list">
+      {orders.map(order => (
+        <OrderDetails
+          key={order.id}
+          order={order}
+          onStatusChange={onStatusChange}
+        />
+      ))}
+    </div>
+  );
 }
-
-export default OrderList
