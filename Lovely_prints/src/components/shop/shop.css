@@ -1,3 +1,15 @@
+:root {
+  --orange-primary: #F58220;
+  --orange-dark: #C65A00;
+  --orange-light: #FFBF8A;
+  --black-primary: #121212;
+  --gray-dark: #2E2E2E;
+  --gray-light: #F5F5F5;
+  --success-green: #2ECC71;
+  --warning-yellow: #F1C40F;
+  --error-red: #E74C3C;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -6,8 +18,8 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  background: #f5f5f5;
-  color: #333;
+  background: var(--gray-light);
+  color: var(--black-primary);
 }
 
 .shop-dashboard {
@@ -20,16 +32,18 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: white;
+  background: var(--orange-primary);
   padding: 20px 30px;
   border-radius: 8px;
   margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(245, 130, 32, 0.3);
+  color: white;
 }
 
 .dashboard-header h1 {
   font-size: 24px;
   font-weight: 600;
+  color: white;
 }
 
 .shop-info {
@@ -41,7 +55,7 @@ body {
 .shop-number {
   font-size: 16px;
   font-weight: 500;
-  color: #666;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .shop-status {
@@ -52,7 +66,7 @@ body {
 }
 
 .shop-status.open {
-  background: #10b981;
+  background: var(--success-green);
   color: white;
 }
 
@@ -67,7 +81,7 @@ body {
   padding: 60px 20px;
   background: white;
   border-radius: 8px;
-  color: #999;
+  color: var(--gray-dark);
   font-size: 18px;
 }
 
@@ -84,8 +98,8 @@ body {
 }
 
 .order-card.express {
-  border: 2px solid #f59e0b;
-  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
+  border: 2px solid var(--orange-primary);
+  box-shadow: 0 2px 8px rgba(245, 130, 32, 0.25);
 }
 
 .order-header {
@@ -99,12 +113,12 @@ body {
 .order-id {
   font-weight: 600;
   font-size: 16px;
-  color: #333;
+  color: var(--black-primary);
 }
 
 .express-badge {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--orange-light);
+  color: var(--orange-dark);
   padding: 4px 10px;
   border-radius: 12px;
   font-size: 12px;
@@ -118,26 +132,24 @@ body {
   font-weight: 600;
   text-transform: capitalize;
   margin-left: auto;
+  color: white;
 }
 
 .status-badge.pending {
-  background: #e5e7eb;
-  color: #4b5563;
+  background: var(--warning-yellow);
+  color: var(--black-primary);
 }
 
 .status-badge.printing {
-  background: #fed7aa;
-  color: #9a3412;
+  background: var(--orange-primary);
 }
 
 .status-badge.ready {
-  background: #d1fae5;
-  color: #065f46;
+  background: var(--success-green);
 }
 
 .status-badge.collected {
-  background: #d1d5db;
-  color: #374151;
+  background: var(--gray-dark);
 }
 
 .order-body {
@@ -150,16 +162,17 @@ body {
   font-size: 18px;
   font-weight: 600;
   margin-bottom: 4px;
+  color: var(--black-primary);
 }
 
 .student-id {
   font-size: 14px;
-  color: #6b7280;
+  color: var(--gray-dark);
 }
 
 .document-name {
   font-size: 14px;
-  color: #374151;
+  color: var(--black-primary);
   font-weight: 500;
 }
 
@@ -167,10 +180,10 @@ body {
   display: flex;
   gap: 15px;
   font-size: 13px;
-  color: #6b7280;
+  color: var(--gray-dark);
   padding: 10px 0;
-  border-top: 1px solid #e5e7eb;
-  border-bottom: 1px solid #e5e7eb;
+  border-top: 1px solid var(--gray-light);
+  border-bottom: 1px solid var(--gray-light);
 }
 
 .order-footer {
@@ -182,12 +195,12 @@ body {
 
 .eta {
   font-size: 14px;
-  color: #6b7280;
+  color: var(--gray-dark);
   font-weight: 500;
 }
 
 .action-button {
-  background: #3b82f6;
+  background: var(--orange-primary);
   color: white;
   border: none;
   padding: 10px 20px;
@@ -200,7 +213,7 @@ body {
 }
 
 .action-button:hover {
-  background: #2563eb;
+  background: var(--orange-dark);
 }
 
 .action-button:active {
