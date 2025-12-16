@@ -1,0 +1,262 @@
+:root {
+  --orange-primary: #F58220;
+  --orange-dark: #C65A00;
+  --orange-light: #FFBF8A;
+  --black-primary: #121212;
+  --gray-dark: #2E2E2E;
+  --gray-light: #ececec;
+  --success-green: #2ECC71;
+  --warning-yellow: #F1C40F;
+  --error-red: #E74C3C;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background: var(--gray-light);
+  color: var(--black-primary);
+}
+
+.shop-dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--orange-primary);
+  padding: 20px 30px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(245, 130, 32, 0.3);
+  color: white;
+}
+
+.dashboard-header h1 {
+  font-size: 24px;
+  font-weight: 600;
+  color: white;
+}
+
+.shop-info {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.shop-number {
+  font-size: 16px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.shop-status {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.shop-status.open {
+  background: var(--success-green);
+  color: white;
+}
+
+.order-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+}
+
+.order-list-empty {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 8px;
+  color: var(--gray-dark);
+  font-size: 18px;
+}
+
+.order-card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.2s;
+}
+
+.order-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.order-card.express {
+  border: 2px solid var(--orange-primary);
+  box-shadow: 0 2px 8px rgba(245, 130, 32, 0.25);
+}
+
+.order-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.order-id {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--black-primary);
+}
+
+.express-badge {
+  background: var(--orange-light);
+  color: var(--orange-dark);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+  margin-left: auto;
+  color: white;
+}
+
+.status-badge.pending {
+  background: var(--warning-yellow);
+  color: var(--black-primary);
+}
+
+.status-badge.printing {
+  background: var(--orange-primary);
+}
+
+.status-badge.ready {
+  background: var(--success-green);
+}
+
+.status-badge.collected {
+  background: var(--gray-dark);
+}
+
+.order-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.student-info h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--black-primary);
+}
+
+.student-id {
+  font-size: 14px;
+  color: var(--gray-dark);
+}
+
+.document-name {
+  font-size: 14px;
+  color: var(--black-primary);
+  font-weight: 500;
+}
+
+.print-details {
+  display: flex;
+  gap: 15px;
+  font-size: 13px;
+  color: var(--gray-dark);
+  padding: 10px 0;
+  border-top: 1px solid var(--gray-light);
+  border-bottom: 1px solid var(--gray-light);
+}
+
+.order-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 5px;
+}
+
+.eta {
+  font-size: 14px;
+  color: var(--gray-dark);
+  font-weight: 500;
+}
+
+.action-button {
+  background: var(--orange-primary);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  min-height: 44px;
+}
+
+.action-button:hover {
+  background: var(--orange-dark);
+}
+
+.action-button:active {
+  transform: scale(0.98);
+}
+
+@media (max-width: 768px) {
+  .order-list {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .shop-info {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+.order-card.collected {
+  opacity: 0.5;
+  background: #fafafa;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+}
+
+.order-card.collected:hover {
+  opacity: 0.6;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.order-card.collected .student-info h3,
+.order-card.collected .order-id,
+.order-card.collected .document-name {
+  color: var(--gray-dark);
+}
+
+.order-card.collected .student-id,
+.order-card.collected .print-details,
+.order-card.collected .eta {
+  color: #9ca3af;
+}
