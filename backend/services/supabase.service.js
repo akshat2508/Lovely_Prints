@@ -1,23 +1,47 @@
 // services/supabase.service.js
-import supabase from '../config/supabaseClient.js';
+import { createClient } from '@supabase/supabase-js';
+import { config } from '../config/env.js';
+
+// Anon client (no user context)
+const supabaseAnon = createClient(
+  config.supabase.url,
+  config.supabase.key
+);
+
+// User client (RLS-aware, per request)
+const getUserSupabase = (token) => {
+  return createClient(
+    config.supabase.url,
+    config.supabase.key,
+    {
+      global: {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    }
+  );
+};
 
 class SupabaseService {
-  async signUp(email, password, metadata) {
-    return await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: metadata,
-      },
-    });
-  }
+ async getUserFromToken(token) {
+  return await supabaseAnon.auth.getUser(token);
+}
 
-  async signIn(email, password) {
-    return await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-  }
+async signUp(email, password, metadata) {
+  return await supabaseAnon.auth.signUp({
+    email,
+    password,
+    options: { data: metadata },
+  });
+}
+
+async signIn(email, password) {
+  return await supabaseAnon.auth.signInWithPassword({
+    email,
+    password,
+  });
+}
 
   async signOut() {
     return await supabase.auth.signOut();
@@ -76,13 +100,16 @@ class SupabaseService {
       .single();
   }
 
-  async createOrder(orderData) {
-    return await supabase
-      .from('orders')
-      .insert(orderData)
-      .select()
-      .single();
-  }
+ async createOrder(orderData, token) {
+  const supabaseUser = getUserSupabase(token);
+
+  return await supabaseUser
+    .from('orders')
+    .insert(orderData)
+    .select()
+    .single();
+}
+
 
   async getOrderById(orderId) {
     return await supabase
@@ -92,13 +119,15 @@ class SupabaseService {
       .single();
   }
 
-  async getOrdersByStudentId(studentId) {
-    return await supabase
-      .from('orders')
-      .select('*, shops(shop_name, block), documents(*)')
-      .eq('student_id', studentId)
-      .order('created_at', { ascending: false });
-  }
+  async getOrdersByStudentId(studentId, token) {
+  const supabaseUser = getUserSupabase(token);
+
+  return await supabaseUser
+    .from('orders')
+    .select('*, shops(shop_name, block), documents(*)')
+    .eq('student_id', studentId)
+    .order('created_at', { ascending: false });
+}
 
   async getOrdersByShopId(shopId) {
     return await supabase
@@ -124,13 +153,15 @@ class SupabaseService {
       .eq('id', orderId);
   }
 
-  async createDocument(documentData) {
-    return await supabase
-      .from('documents')
-      .insert(documentData)
-      .select()
-      .single();
-  }
+async createDocument(documentData, token) {
+  const supabaseUser = getUserSupabase(token);
+
+  return await supabaseUser
+    .from('documents')
+    .insert(documentData)
+    .select()
+    .single();
+}
 
   async getDocumentsByOrderId(orderId) {
     return await supabase

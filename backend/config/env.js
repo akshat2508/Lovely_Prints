@@ -16,4 +16,4 @@ export const config = {
     accessKey: process.env.B2_ACCESS_KEY,
     secretKey: process.env.B2_SECRET_KEY,
   },
-};
+};  1

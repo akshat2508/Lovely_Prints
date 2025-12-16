@@ -1,11 +1,26 @@
-// routes/student.routes.js
 import express from 'express';
-import { getProfile, updateProfile, getOrders } from '../controllers/student.controller.js';
+import authMiddleware from '../middleware/auth.middleware.js';
+import {
+  getProfile,
+  updateProfile,
+  getOrders,
+  createOrder,
+  addDocumentToOrder
+} from '../controllers/student.controller.js';
 
 const router = express.Router();
 
-router.get('/profile', getProfile);
-router.put('/profile', updateProfile);
-router.get('/orders', getOrders);
+// profile
+router.get('/profile', authMiddleware, getProfile);
+router.put('/profile', authMiddleware, updateProfile);
+
+// orders
+router.get('/orders', authMiddleware, getOrders);
+router.post('/orders', authMiddleware, createOrder);
+router.post(
+  '/orders/:orderId/documents',
+  authMiddleware,
+  addDocumentToOrder
+);
 
 export default router;
