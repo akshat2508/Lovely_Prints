@@ -25,7 +25,7 @@ export default function OrderDetails({ order, onStatusChange }) {
   const actionLabel = getActionLabel(order.status);
 
   return (
-    <div className={`order-card ${order.isExpress ? 'express' : ''}`}>
+    <div className={`order-card ${order.isExpress ? 'express' : ''} ${order.status === 'collected' ? 'collected' : ''}`}>
       <div className="order-header">
         <div className="order-id">#{order.id}</div>
         {order.isExpress && <span className="express-badge">⚡ Express</span>}
@@ -40,9 +40,19 @@ export default function OrderDetails({ order, onStatusChange }) {
         
         <div className="document-info">
           <p className="document-name">{order.documentName}</p>
+          {order.documentUrl && (
+            <a 
+              href={order.documentUrl} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="download-link"
+            >
+              📄 Download
+            </a>
+          )}
         </div>
         
-        <div className="print-details">
+        <div className="print-details"> 
           <span>Paper: {order.paperType}</span>
           <span>Size: {order.size}</span>
           <span>Copies: {order.copies}</span>

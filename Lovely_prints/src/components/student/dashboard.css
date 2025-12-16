@@ -1,0 +1,108 @@
+/* ===== STUDENT DASHBOARD ===== */
+
+.dashboard {
+  min-height: 100vh;
+  background-color: #121212;
+  color: white;
+}
+
+/* Header */
+.dashboard-header {
+  background-color: #2E2E2E;
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dashboard-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dashboard-logo {
+  width: 40px;
+  filter: drop-shadow(0 0 8px rgba(245, 130, 32, 0.6));
+}
+
+.dashboard-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #F58220;
+}
+
+.profile-circle {
+  width: 38px;
+  height: 38px;
+  background-color: #F58220;
+  border-radius: 50%;
+  color: black;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Content */
+.dashboard-content {
+  padding: 1.5rem;
+}
+
+/* Sections */
+.section-heading {
+  color: #FFBF8A;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+/* Cards */
+.dashboard-card {
+  background-color: #2E2E2E;
+  padding: 1.25rem;
+  border-radius: 12px;
+  transition: transform 0.25s ease;
+  cursor: pointer;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-4px);
+}
+
+/* Card Grid */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+/* Orders */
+.order-card {
+  background-color: #2E2E2E;
+  padding: 1rem;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.8rem;
+}
+
+.status-progress {
+  color: #F1C40F;
+}
+
+.status-complete {
+  color: #2ECC71;
+}
+
+/* Action button */
+.new-order-btn {
+  background-color: #F58220;
+  padding: 0.55rem 1.1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+.new-order-btn:hover {
+  background-color: #C65A00;
+}
