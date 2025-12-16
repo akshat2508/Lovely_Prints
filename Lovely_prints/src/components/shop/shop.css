@@ -260,3 +260,29 @@ body {
 .order-card.collected .eta {
   color: #9ca3af;
 }
+
+.document-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.download-link {
+  font-size: 13px;
+  color: var(--orange-primary);
+  text-decoration: none;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: color 0.2s;
+}
+
+.download-link:hover {
+  color: var(--orange-dark);
+  text-decoration: underline;
+}
+
+.order-card.collected .download-link {
+  color: var(--gray-dark);
+}
+
