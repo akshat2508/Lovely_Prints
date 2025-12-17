@@ -45,14 +45,14 @@ export default function OrderDetails({ order, onStatusChange }) {
               href={order.documentUrl} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="download-link"
+              className="download-button"
             >
-              📄 Download
+              Download
             </a>
           )}
         </div>
         
-        <div className="print-details"> 
+        <div className="print-details">
           <span>Paper: {order.paperType}</span>
           <span>Size: {order.size}</span>
           <span>Copies: {order.copies}</span>
