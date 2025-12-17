@@ -9,6 +9,7 @@ export default function ShopDashboard() {
       studentName: 'Rahul Sharma',
       studentId: 'CS2021001',
       documentName: 'Assignment_3.pdf',
+      documentUrl: '/test-document.txt',
       paperType: 'A4',
       size: 'A4',
       copies: 5,

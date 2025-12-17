@@ -4,7 +4,7 @@
   --orange-light: #FFBF8A;
   --black-primary: #121212;
   --gray-dark: #2E2E2E;
-  --gray-light: #ececec;
+  --gray-light: #F5F5F5;
   --success-green: #2ECC71;
   --warning-yellow: #F1C40F;
   --error-red: #E74C3C;
@@ -91,6 +91,8 @@ body {
   padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
 }
 
 .order-card:hover {
@@ -100,6 +102,18 @@ body {
 .order-card.express {
   border: 2px solid var(--orange-primary);
   box-shadow: 0 2px 8px rgba(245, 130, 32, 0.25);
+}
+
+.order-card.collected {
+  opacity: 0.5;
+  background: #fafafa;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+}
+
+.order-card.collected:hover {
+  opacity: 0.6;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .order-header {
@@ -155,7 +169,12 @@ body {
 .order-body {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
+  flex: 1;
+}
+
+.student-info {
+  margin-bottom: 2px;
 }
 
 .student-info h3 {
@@ -163,40 +182,76 @@ body {
   font-weight: 600;
   margin-bottom: 4px;
   color: var(--black-primary);
+  line-height: 1.3;
 }
 
 .student-id {
   font-size: 14px;
   color: var(--gray-dark);
+  line-height: 1.4;
+}
+
+.document-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .document-name {
   font-size: 14px;
   color: var(--black-primary);
   font-weight: 500;
+  line-height: 1.4;
+  flex: 1;
+  min-width: 0;
+  word-break: break-word;
+  text-align: left;
+}
+.download-link {
+  font-size: 13px;
+  color: var(--orange-primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+  align-self: flex-start;
+}
+
+.download-link:hover {
+  color: var(--orange-dark);
+  text-decoration: underline;
 }
 
 .print-details {
   display: flex;
-  gap: 15px;
+  flex-wrap: wrap;
+  gap: 12px;
   font-size: 13px;
   color: var(--gray-dark);
-  padding: 10px 0;
-  border-top: 1px solid var(--gray-light);
-  border-bottom: 1px solid var(--gray-light);
+  padding: 12px 0;
+  border-top: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+  line-height: 1.4;
+}
+
+.print-details span {
+  white-space: nowrap;
 }
 
 .order-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 5px;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 4px;
 }
 
 .eta {
   font-size: 14px;
   color: var(--gray-dark);
   font-weight: 500;
+  line-height: 1.4;
 }
 
 .action-button {
@@ -210,6 +265,7 @@ body {
   cursor: pointer;
   transition: background 0.2s;
   min-height: 44px;
+  white-space: nowrap;
 }
 
 .action-button:hover {
@@ -218,6 +274,22 @@ body {
 
 .action-button:active {
   transform: scale(0.98);
+}
+
+.order-card.collected .student-info h3,
+.order-card.collected .order-id,
+.order-card.collected .document-name {
+  color: var(--gray-dark);
+}
+
+.order-card.collected .student-id,
+.order-card.collected .print-details,
+.order-card.collected .eta {
+  color: #9ca3af;
+}
+
+.order-card.collected .download-link {
+  color: var(--gray-dark);
 }
 
 @media (max-width: 768px) {
@@ -235,54 +307,44 @@ body {
     width: 100%;
     justify-content: space-between;
   }
+  
+  .order-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  
+  .action-button {
+    width: 100%;
+  }
 }
 
-.order-card.collected {
-  opacity: 0.5;
-  background: #fafafa;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  border: 1px solid #e5e7eb;
-}
-
-.order-card.collected:hover {
-  opacity: 0.6;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-.order-card.collected .student-info h3,
-.order-card.collected .order-id,
-.order-card.collected .document-name {
-  color: var(--gray-dark);
-}
-
-.order-card.collected .student-id,
-.order-card.collected .print-details,
-.order-card.collected .eta {
-  color: #9ca3af;
-}
-
-.document-info {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.download-link {
-  font-size: 13px;
+.download-button {
+  font-size: 12px;
   color: var(--orange-primary);
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 600;
   white-space: nowrap;
-  transition: color 0.2s;
+  transition: all 0.2s;
+  padding: 4px 12px;
+  border: 1px solid var(--orange-primary);
+  border-radius: 4px;
+  background: transparent;
+  flex-shrink: 0;
+  align-self: flex-start;
 }
 
-.download-link:hover {
-  color: var(--orange-dark);
-  text-decoration: underline;
+.download-button:hover {
+  background: var(--orange-primary);
+  color: white;
 }
 
-.order-card.collected .download-link {
+.order-card.collected .download-button {
   color: var(--gray-dark);
+  border-color: var(--gray-dark);
 }
 
+.order-card.collected .download-button:hover {
+  background: var(--gray-dark);
+  color: white;
+}
