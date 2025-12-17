@@ -1,11 +1,9 @@
-import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import logo from "../../assets/logo.png"
 import "./auth.css"
 
 export default function Signup() {
   const navigate = useNavigate()
-  const [role, setRole] = useState("student")
 
   return (
     <div className="auth-page">
@@ -15,40 +13,26 @@ export default function Signup() {
 
         <h2 className="auth-title">Create Account</h2>
         <p className="auth-subtitle">
-          Register as Student or Shopkeeper
+          Register using your student details
         </p>
-
-        {/* Role Toggle */}
-        <div className="role-toggle">
-          <button
-            type="button"
-            className={`role-btn ${role === "student" ? "active" : ""}`}
-            onClick={() => setRole("student")}
-          >
-            Student
-          </button>
-
-          <button
-            type="button"
-            className={`role-btn ${role === "shop" ? "active" : ""}`}
-            onClick={() => setRole("shop")}
-          >
-            Shopkeeper
-          </button>
-        </div>
 
         {/* Form */}
         <div className="auth-form">
-          <input className="auth-input" placeholder="Full Name" />
-          <input className="auth-input" placeholder="Email" />
+          <input
+            className="auth-input"
+            placeholder="Full Name"
+          />
 
-          {role === "student" && (
-            <input className="auth-input" placeholder="Student ID" />
-          )}
+          <input
+            className="auth-input"
+            placeholder="Email"
+            type="email"
+          />
 
-          {role === "shop" && (
-            <input className="auth-input" placeholder="Shop Name / Block No." />
-          )}
+          <input
+            className="auth-input"
+            placeholder="Student ID"
+          />
 
           <input
             type="password"
@@ -58,11 +42,9 @@ export default function Signup() {
 
           <button
             className="auth-btn"
-            onClick={() =>
-              role === "student" ? navigate("/student") : navigate("/shop")
-            }
+            onClick={() => navigate("/student")}
           >
-            Sign Up as {role === "student" ? "Student" : "Shopkeeper"}
+            Sign Up
           </button>
         </div>
 
