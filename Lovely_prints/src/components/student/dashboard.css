@@ -7,7 +7,7 @@
 }
 
 /* Header */
-.dashboard-header {
+.dashboard-header1 {
   background-color: #2E2E2E;
   padding: 1rem 1.5rem;
   display: flex;
@@ -15,7 +15,7 @@
   align-items: center;
 }
 
-.dashboard-left {
+.dashboard-left1 {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -32,20 +32,64 @@
   color: #F58220;
 }
 
-.profile-circle {
-  width: 38px;
-  height: 38px;
+/* Profile wrapper */
+.profile-wrapper {
+  position: relative;
+}
+
+/* Profile circle */
+.profile-circle1 {
+  width: 36px;
+  height: 36px;
   background-color: #F58220;
   border-radius: 50%;
   color: black;
-  font-weight: bold;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* Logout dropdown */
+.profile-menu {
+  position: absolute;
+  top: 52px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #2E2E2E;
+  border-radius: 8px;
+  min-width: 80px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+  z-index: 20;
+}
+
+/* Logout button */
+.profile-menu button {
+  width: 100%;
+  padding: 0.55rem 0.9rem;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+
+.profile-menu button:hover {
+  background-color: #F58220;
+  color: #e61414;
+  font-weight: 600;
+}
+
+
 /* Content */
-.dashboard-content {
+.dashboard-content1 {
   padding: 1.5rem;
 }
 
@@ -57,7 +101,7 @@
 }
 
 /* Cards */
-.dashboard-card {
+.dashboard-card1 {
   background-color: #2E2E2E;
   padding: 1.25rem;
   border-radius: 12px;
@@ -65,19 +109,19 @@
   cursor: pointer;
 }
 
-.dashboard-card:hover {
+.dashboard-card1:hover {
   transform: translateY(-4px);
 }
 
 /* Card Grid */
-.card-grid {
+.card-grid1 {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1rem;
 }
 
 /* Orders */
-.order-card {
+.order-card1 {
   background-color: #2E2E2E;
   padding: 1rem;
   border-radius: 10px;

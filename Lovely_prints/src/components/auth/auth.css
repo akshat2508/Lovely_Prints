@@ -46,6 +46,7 @@
   color: #ccc;
   font-size: 0.9rem;
   margin-top: 4px;
+  margin-bottom: 8px;
 }
 
 /* Inputs */
@@ -95,35 +96,6 @@
   text-decoration: underline;
 }
 
-/* ===== ROLE TOGGLE ===== */
-
-.role-toggle {
-  display: flex;
-  gap: 10px;
-  margin: 1.5rem 0;
-}
-
-.role-btn {
-  flex: 1;
-  padding: 0.6rem;
-  background-color: #121212;
-  color: #ccc;
-  border-radius: 8px;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.role-btn.active {
-  background-color: #F58220;
-  color: white;
-}
-
-.role-btn:hover {
-  background-color: #C65A00;
-  color: white;
-}
 
 /* Form spacing */
 .auth-form {
