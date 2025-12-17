@@ -43,21 +43,21 @@ async signIn(email, password) {
   });
 }
 
-  async signOut() {
-    return await supabase.auth.signOut();
-  }
+async getCurrentUser(token) {
+ return await supabaseAnon.auth.getUser(token);
+}
+ async signOut() {
+  return await supabaseAnon.auth.signOut();
+}
 
-  async getCurrentUser() {
-    return await supabase.auth.getUser();
-  }
+async getUserById(userId) {
+  return await supabaseAnon
+    .from('users')
+    .select('*')
+    .eq('id', userId)
+    .single();
+}
 
-  async getUserById(userId) {
-    return await supabase
-      .from('users')
-      .select('*')
-      .eq('id', userId)
-      .single();
-  }
 
   async updateUser(userId, updates) {
     return await supabase
@@ -68,37 +68,39 @@ async signIn(email, password) {
       .single();
   }
 
-  async getAllShops() {
-    return await supabase
-      .from('shops')
-      .select('*')
-      .eq('is_active', true);
-  }
-
+  
   async getShopById(shopId) {
     return await supabase
-      .from('shops')
-      .select('*')
-      .eq('id', shopId)
-      .single();
+    .from('shops')
+    .select('*')
+    .eq('id', shopId)
+    .single();
   }
-
+  
   async createShop(shopData) {
     return await supabase
-      .from('shops')
-      .insert(shopData)
-      .select()
-      .single();
+    .from('shops')
+    .insert(shopData)
+    .select()
+    .single();
   }
-
+  
   async updateShop(shopId, updates) {
     return await supabase
-      .from('shops')
-      .update(updates)
-      .eq('id', shopId)
-      .select()
-      .single();
+    .from('shops')
+    .update(updates)
+    .eq('id', shopId)
+    .select()
+    .single();
   }
+  
+  async getAllShops() {
+  return await supabaseAnon
+    .from('shops')
+    .select('*')
+    .eq('is_active', true);
+}
+
 
  async createOrder(orderData, token) {
   const supabaseUser = getUserSupabase(token);
@@ -111,8 +113,10 @@ async signIn(email, password) {
 }
 
 
-  async getOrderById(orderId) {
-    return await supabase
+  async getOrderById(orderId ,token) {
+      const supabaseUser = getUserSupabase(token);
+
+    return await supabaseUser
       .from('orders')
       .select('*, documents(*)')
       .eq('id', orderId)
@@ -129,22 +133,28 @@ async signIn(email, password) {
     .order('created_at', { ascending: false });
 }
 
-  async getOrdersByShopId(shopId) {
-    return await supabase
-      .from('orders')
-      .select('*, users(name, email), documents(*)')
-      .eq('shop_id', shopId)
-      .order('created_at', { ascending: false });
-  }
+ async getOrdersByShopId(shopId, token) {
+  const supabaseUser = getUserSupabase(token);
 
-  async updateOrderStatus(orderId, status) {
-    return await supabase
-      .from('orders')
-      .update({ status })
-      .eq('id', orderId)
-      .select()
-      .single();
-  }
+  return await supabaseUser
+    .from('orders')
+    .select('*, users(name, email), documents(*)')
+    .eq('shop_id', shopId)
+    .order('created_at', { ascending: false });
+}
+
+
+async updateOrderStatus(orderId, status, token) {
+  const supabaseUser = getUserSupabase(token);
+
+  return await supabaseUser
+    .from('orders')
+    .update({ status })
+    .eq('id', orderId)
+    .select()
+    .single();
+}
+
 
   async deleteOrder(orderId) {
     return await supabase
@@ -169,6 +179,165 @@ async createDocument(documentData, token) {
       .select('*')
       .eq('order_id', orderId);
   }
+
+  async getDocumentForDownload(documentId, token) {
+  const supabaseUser = getUserSupabase(token);
+
+  return await supabaseUser
+    .from('documents')
+    .select(`
+      id,
+      file_url,
+      orders (
+        student_id,
+        shop_id,
+        shops (
+          owner_id
+        )
+      )
+    `)
+    .eq('id', documentId)
+    .single();
+}
+async getPrintOptionsByShop(shopId, token) {
+  const supabaseUser = getUserSupabase(token);
+
+  return await supabaseUser
+    .from('print_options')
+    .select(
+      `
+      id,
+      paper_type,
+      color_mode,
+      finish_type,
+      price_per_page
+      `
+    )
+    .eq('shop_id', shopId)
+    .eq('is_active', true)
+    .order('paper_type', { ascending: true });
+}
+
+async createPrintOption(printOptionData, token) {
+  const supabaseUser = getUserSupabase(token);
+
+  return await supabaseUser
+    .from('print_options')
+    .insert(printOptionData)
+    .select()
+    .single();
+}
+
+async getShopOptions(shopId) {
+  const paper = await supabaseAnon
+    .from('paper_types')
+    .select('*')
+    .eq('shop_id', shopId)
+    .eq('is_active', true);
+
+  const color = await supabaseAnon
+    .from('color_modes')
+    .select('*')
+    .eq('shop_id', shopId)
+    .eq('is_active', true);
+
+  const finish = await supabaseAnon
+    .from('finish_types')
+    .select('*')
+    .eq('shop_id', shopId)
+    .eq('is_active', true);
+
+  return {
+    paper_types: paper.data,
+    color_modes: color.data,
+    finish_types: finish.data
+  };
+}
+async getPrintOptionsByShop(shopId) {
+  return await supabaseAnon
+    .from('print_options')
+    .select('*')
+    .eq('shop_id', shopId)
+    .eq('is_active', true);
+}
+
+async getPaperTypesByShop(shopId) {
+  return await supabaseAnon
+    .from('paper_types')
+    .select('*')
+    .eq('shop_id', shopId)
+    .eq('is_active', true)
+    .order('created_at');
+}
+async createPaperType(data, token) {
+  const supabaseUser = getUserSupabase(token);
+
+  return await supabaseUser
+    .from('paper_types')
+    .insert(data)
+    .select()
+    .single();
+}
+
+async getColorModesByShop(shopId) {
+  return await supabaseAnon
+    .from('color_modes')
+    .select('*')
+    .eq('shop_id', shopId)
+    .eq('is_active', true)
+    .order('created_at');
+}
+
+async createColorMode(colorData, token) {
+  const supabaseUser = getUserSupabase(token);
+
+  return await supabaseUser
+    .from('color_modes')
+    .insert(colorData)
+    .select()
+    .single();
+}
+
+
+async getFinishTypesByShop(shopId) {
+  return await supabaseAnon
+    .from('finish_types')
+    .select('*')
+    .eq('shop_id', shopId)
+    .eq('is_active', true);
+}
+
+async createFinishType(finishData, token) {
+  const supabaseUser = getUserSupabase(token);
+
+  return await supabaseUser
+    .from('finish_types')
+    .insert(finishData)
+    .select()
+    .single();
+}
+
+async getFinishTypesByShop(shopId) {
+  return await supabaseAnon
+    .from('finish_types')
+    .select('*')
+    .eq('shop_id', shopId)
+    .eq('is_active', true)
+    .order('created_at');
+}
+
+
+async createFinishType(data, token) {
+  const supabaseUser = getUserSupabase(token);
+
+  return await supabaseUser
+    .from('finish_types')
+    .insert(data)
+    .select()
+    .single();
+}
+
+
 }
 
 export default new SupabaseService();

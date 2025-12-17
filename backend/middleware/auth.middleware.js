@@ -1,3 +1,4 @@
+// middleware/auth.middleware.js
 import supabaseService from '../services/supabase.service.js';
 
 const authMiddleware = async (req, res, next) => {
@@ -22,8 +23,11 @@ const authMiddleware = async (req, res, next) => {
       });
     }
 
-    // 🔴 THIS IS THE KEY
+    // ✅ attach full user
     req.user = data.user;
+
+    // ✅ normalize app role (THIS IS CRITICAL)
+    req.user.appRole = data.user.user_metadata?.role || null;
 
     next();
   } catch (err) {

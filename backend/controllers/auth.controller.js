@@ -50,7 +50,10 @@ export const logout = async (req, res, next) => {
 
 export const getCurrentUser = async (req, res, next) => {
   try {
-    const { data, error } = await supabaseService.getCurrentUser();
+    const token = req.headers.authorization.split(' ')[1];
+
+    const { data, error } =
+      await supabaseService.getCurrentUser(token);
 
     if (error) {
       return errorResponse(res, error.message, 401);

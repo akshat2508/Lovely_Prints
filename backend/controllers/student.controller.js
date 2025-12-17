@@ -86,34 +86,46 @@ export const addDocumentToOrder = async (req, res, next) => {
     const {
       fileKey,
       fileName,
-      page_count = 1,
-      price_per_page = 1
+      page_count,
+      copies,
+      paper_type_id,
+      color_mode_id,
+      finish_type_id
     } = req.body;
 
-    if (!fileKey || !fileName) {
-      return res.status(400).json({
-        success: false,
-        message: 'fileKey and fileName are required'
-      });
+    // validation
+    if (
+      !fileKey ||
+      !fileName ||
+      !page_count ||
+      !copies ||
+      !paper_type_id ||
+      !color_mode_id ||
+      !finish_type_id
+    ) {
+      return errorResponse(res, 'All fields are required', 400);
     }
 
-    const documentData = {
-      order_id: orderId,
-      file_url: fileKey,
-      file_name: fileName,
-      page_count,
-      price_per_page
-    };
-
-    const { data, error } =
-      await supabaseService.createDocument(documentData, token);
+    const { data, error } = await supabaseService.createDocument(
+      {
+        order_id: orderId,
+        file_url: fileKey,
+        file_name: fileName,
+        page_count,
+        copies,
+        paper_type_id,
+        color_mode_id,
+        finish_type_id
+      },
+      token
+    );
 
     if (error) {
       return errorResponse(res, error.message, 400);
     }
 
-    return successResponse(res, data, 'Document attached successfully', 201);
-  } catch (error) {
-    next(error);
+    return successResponse(res, data, 'Document added successfully', 201);
+  } catch (err) {
+    next(err);
   }
 };
