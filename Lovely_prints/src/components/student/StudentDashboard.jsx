@@ -4,33 +4,36 @@ import logo from "../../assets/logo.png"
 import "./dashboard.css"
 
 const StudentDashboard = () => {
+  const [showMenu, setShowMenu] = useState(false)
+  const [showCreateModal, setShowCreateModal] = useState(false)
+  const [showTrackModal, setShowTrackModal] = useState(false)
+  const [filter, setFilter] = useState("All")
+
   const navigate = useNavigate()
 
-  const [showMenu, setShowMenu] = useState(false)
-  const [showModal, setShowModal] = useState(false)
-  const [filter, setFilter] = useState("all")
+  const handleLogout = () => {
+    navigate("/login")
+  }
 
-  // ✅ Static orders (for now)
+  /* ✅ Orders with STATUS TAGS */
   const orders = [
     {
       id: "LP1023",
-      price: 45,
-      status: "progress",
-      timeline: ["Uploaded", "Accepted", "Printing"],
+      status: "In Progress",
+      price: 45
     },
     {
       id: "LP1018",
-      price: 30,
-      status: "completed",
-      timeline: ["Uploaded", "Accepted", "Printing", "Ready", "Completed"],
-    },
+      status: "Completed",
+      price: 30
+    }
   ]
 
-  // ✅ Filter logic
-  const filteredOrders =
-    filter === "all"
-      ? orders
-      : orders.filter((o) => o.status === filter)
+  /* ✅ Filter based on tags */
+  const filteredOrders = orders.filter(order => {
+    if (filter === "All") return true
+    return order.status === filter
+  })
 
   return (
     <div className="dashboard">
@@ -52,81 +55,78 @@ const StudentDashboard = () => {
 
           {showMenu && (
             <div className="profile-menu">
-              <button onClick={() => navigate("/login")}>Logout</button>
+              <button onClick={handleLogout}>Logout</button>
             </div>
           )}
         </div>
       </header>
 
+      {/* Content */}
       <main className="dashboard-content1">
 
-        {/* Top Actions Row */}
-<div className="top-actions-row">
-  <button
-    className="create-order-btn"
-    onClick={() => setShowModal(true)}
-  >
-    + Create New Print Order
-  </button>
+        {/* Top Actions */}
+        <div className="top-actions">
+          <button
+            className="new-order-btn"
+            onClick={() => setShowCreateModal(true)}
+          >
+            + Create New Print Order
+          </button>
 
-  <div className="order-filters">
-    <button
-      className={filter === "all" ? "active-filter" : ""}
-      onClick={() => setFilter("all")}
-    >
-      All
-    </button>
-    <button
-      className={filter === "progress" ? "active-filter" : ""}
-      onClick={() => setFilter("progress")}
-    >
-      In Progress
-    </button>
-    <button
-      className={filter === "completed" ? "active-filter" : ""}
-      onClick={() => setFilter("completed")}
-    >
-      Completed
-    </button>
-  </div>
-</div>
+          <div className="filters">
+            {["All", "In Progress", "Completed"].map(item => (
+              <button
+                key={item}
+                className={`filter-btn ${filter === item ? "active" : ""}`}
+                onClick={() => setFilter(item)}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        </div>
 
-        {/* Orders */}
-        <section className="orders-section">
-          {filteredOrders.map((order) => (
-            <div key={order.id} className="order-card1">
-              <div>
-                <strong>Order #{order.id}</strong>
+        {/* Recent Orders */}
+        <h2 className="section-heading">Recent Orders</h2>
 
-                <div className="status-timeline">
-                  {["Uploaded", "Accepted", "Printing", "Ready", "Completed"].map(
-                    (step) => (
-                      <span
-                        key={step}
-                        className={
-                          order.timeline.includes(step)
-                            ? step === "Printing" && order.status === "progress"
-                              ? "active"
-                              : "done"
-                            : ""
-                        }
-                      >
-                        {step}
-                      </span>
-                    )
-                  )}
-                </div>
-              </div>
+        {filteredOrders.length === 0 && (
+          <p style={{ color: "#777" }}>No orders found.</p>
+        )}
 
-              <span>₹{order.price}</span>
+        {filteredOrders.map(order => (
+          <div className="order-card1" key={order.id}>
+            <div>
+              <strong>Order #{order.id}</strong>
+              <p
+                className={
+                  order.status === "Completed"
+                    ? "status-complete"
+                    : "status-progress"
+                }
+              >
+                {order.status}
+              </p>
             </div>
-          ))}
-        </section>
+
+            <div className="order-actions">
+              <span className="order-price">₹{order.price}</span>
+
+              {order.status !== "Completed" && (
+                <button
+                  className="track-btn"
+                  onClick={() => setShowTrackModal(true)}
+                >
+                  Track Order
+                </button>
+              )}
+            </div>
+          </div>
+        ))}
 
       </main>
 
-      {/* MODAL (UNCHANGED) */}
-      {showModal && (
+      {/* CREATE ORDER MODAL */}
+      {showCreateModal && (
         <div className="modal-overlay">
           <div className="modal-card">
             <h2 className="modal-title">Create Print Order</h2>
@@ -145,7 +145,11 @@ const StudentDashboard = () => {
               <option>Passport Size</option>
             </select>
 
-            <input className="modal-input" placeholder="Number of Copies" />
+            <input
+              type="number"
+              className="modal-input"
+              placeholder="Number of Copies"
+            />
 
             <select className="modal-input">
               <option>Orientation</option>
@@ -156,26 +160,68 @@ const StudentDashboard = () => {
             <select className="modal-input">
               <option>Urgency</option>
               <option>Normal</option>
-              <option>High (+ ₹10)</option>
+              <option>High (+₹10)</option>
             </select>
 
-            <label className="upload-field">
+            <label className="upload-box">
               📄 Upload Document
               <input type="file" hidden />
             </label>
 
             <div className="modal-actions">
               <button
-                className="modal-cancel"
-                onClick={() => setShowModal(false)}
+                className="cancel-btn"
+                onClick={() => setShowCreateModal(false)}
               >
                 Cancel
               </button>
-              <button className="modal-submit">Submit Order</button>
+              <button className="submit-btn">Submit Order</button>
             </div>
           </div>
         </div>
       )}
+
+      {/* TRACK ORDER MODAL */}
+      {showTrackModal && (
+        <div className="modal-overlay">
+          <div className="modal-card">
+            <h2 className="modal-title">Track Order #LP1023</h2>
+
+            <div className="timeline">
+              <div className="timeline-item completed">
+                <span className="timeline-dot"></span>
+                <span className="timeline-text">Uploaded</span>
+              </div>
+              <div className="timeline-item completed">
+                <span className="timeline-dot"></span>
+                <span className="timeline-text">Accepted by Shop</span>
+              </div>
+              <div className="timeline-item active">
+                <span className="timeline-dot"></span>
+                <span className="timeline-text">Printing</span>
+              </div>
+              <div className="timeline-item">
+                <span className="timeline-dot"></span>
+                <span className="timeline-text">Ready for Pickup</span>
+              </div>
+              <div className="timeline-item">
+                <span className="timeline-dot"></span>
+                <span className="timeline-text">Completed</span>
+              </div>
+            </div>
+
+            <div className="modal-actions">
+              <button
+                className="cancel-btn"
+                onClick={() => setShowTrackModal(false)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   )
 }
