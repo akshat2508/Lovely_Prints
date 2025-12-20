@@ -17,117 +17,68 @@ export default function PricingSettings() {
   ]);
 
   const handleToggle = (setter, id) => {
-    setter(prev => prev.map(item => 
-      item.id === id ? { ...item, enabled: !item.enabled } : item
-    ));
+    setter(prev =>
+      prev.map(item =>
+        item.id === id ? { ...item, enabled: !item.enabled } : item
+      )
+    );
   };
 
   const handlePriceChange = (setter, id, value) => {
-    setter(prev => prev.map(item => 
-      item.id === id ? { ...item, price: parseFloat(value) || 0 } : item
-    ));
+    setter(prev =>
+      prev.map(item =>
+        item.id === id ? { ...item, price: Number(value) || 0 } : item
+      )
+    );
   };
 
-  const handleSave = () => {
-    console.log('Pricing settings saved');
-  };
+  const renderSection = (title, items, setter, prefix) => (
+    <div className="config-section">
+      <h3>{title}</h3>
+
+      {items.map(item => (
+        <div key={item.id} className="config-row">
+          <label className="config-label">
+            <input
+              type="checkbox"
+              checked={item.enabled}
+              onChange={() => handleToggle(setter, item.id)}
+            />
+            <span>{item.name}</span>
+          </label>
+
+          <div className="price-control">
+            <span className="currency">₹</span>
+            <input
+              type="number"
+              min="0"
+              step="0.5"
+              value={item.price}
+              disabled={!item.enabled}
+              onChange={(e) =>
+                handlePriceChange(setter, item.id, e.target.value)
+              }
+            />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <div className="pricing-settings">
-      <h2>Pricing Configuration</h2>
+      <h2 className="pricing-title">Pricing Configuration</h2>
+
+
+      <div className="config-grid">
+        {renderSection('Paper Types', paperTypes, setPaperTypes, 'paper')}
+        {renderSection('Color Modes', colorModes, setColorModes, 'color')}
+        {renderSection('Finish Types', finishTypes, setFinishTypes, 'finish')}
+      </div>
       
-      <div className="pricing-section">
-        <h3>Paper Types</h3>
-        <div className="pricing-options">
-          {paperTypes.map(item => (
-            <div key={item.id} className="pricing-item">
-              <div className="pricing-checkbox">
-                <input
-                  type="checkbox"
-                  id={`paper-${item.id}`}
-                  checked={item.enabled}
-                  onChange={() => handleToggle(setPaperTypes, item.id)}
-                />
-                <label htmlFor={`paper-${item.id}`}>{item.name}</label>
-              </div>
-              <div className="pricing-input">
-                <input
-                  type="number"
-                  min="0"
-                  step="0.5"
-                  value={item.price}
-                  disabled={!item.enabled}
-                  onChange={(e) => handlePriceChange(setPaperTypes, item.id, e.target.value)}
-                />
-                <span className="currency">₹</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="pricing-section">
-        <h3>Color Modes</h3>
-        <div className="pricing-options">
-          {colorModes.map(item => (
-            <div key={item.id} className="pricing-item">
-              <div className="pricing-checkbox">
-                <input
-                  type="checkbox"
-                  id={`color-${item.id}`}
-                  checked={item.enabled}
-                  onChange={() => handleToggle(setColorModes, item.id)}
-                />
-                <label htmlFor={`color-${item.id}`}>{item.name}</label>
-              </div>
-              <div className="pricing-input">
-                <input
-                  type="number"
-                  min="0"
-                  step="0.5"
-                  value={item.price}
-                  disabled={!item.enabled}
-                  onChange={(e) => handlePriceChange(setColorModes, item.id, e.target.value)}
-                />
-                <span className="currency">₹</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="pricing-section">
-        <h3>Finish Types</h3>
-        <div className="pricing-options">
-          {finishTypes.map(item => (
-            <div key={item.id} className="pricing-item">
-              <div className="pricing-checkbox">
-                <input
-                  type="checkbox"
-                  id={`finish-${item.id}`}
-                  checked={item.enabled}
-                  onChange={() => handleToggle(setFinishTypes, item.id)}
-                />
-                <label htmlFor={`finish-${item.id}`}>{item.name}</label>
-              </div>
-              <div className="pricing-input">
-                <input
-                  type="number"
-                  min="0"
-                  step="0.5"
-                  value={item.price}
-                  disabled={!item.enabled}
-                  onChange={(e) => handlePriceChange(setFinishTypes, item.id, e.target.value)}
-                />
-                <span className="currency">₹</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
 
       <div className="pricing-actions">
-        <button className="save-button" onClick={handleSave}>
+        <button className="save-button" onClick={() => console.log('Saved')}>
           Save Changes
         </button>
       </div>
