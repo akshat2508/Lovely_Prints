@@ -14,6 +14,9 @@ import paperTypeRoutes from './routes/paperType.routes.js';
 import colorModeRoutes from './routes/colorMode.routes.js';
 import finishTypeRoutes from './routes/finishType.routes.js';
 import paymentRoutes from './routes/payment.routes.js';
+import webhookRoutes from './routes/webhook.routes.js';
+
+
 const app = express();
 
 app.use(cors());
@@ -32,6 +35,8 @@ app.use('/api/shops', paperTypeRoutes);
 app.use('/api/shops', colorModeRoutes);
 app.use('/api/shops', finishTypeRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/webhooks', webhookRoutes);
+
 
 app.use(errorMiddleware);
 

@@ -385,6 +385,43 @@ async markOrderPaid(orderId) {
     })
     .eq('id', orderId);
 }
+//webhook helper functions
+
+async markPaymentWebhookSuccess(
+  razorpayOrderId,
+  razorpayPaymentId,
+  payload
+) {
+  return await supabaseAnon
+    .from('payments')
+    .update({
+      status: 'success',
+      razorpay_payment_id: razorpayPaymentId,
+      webhook_payload: payload,
+      updated_at: new Date()
+    })
+    .eq('razorpay_order_id', razorpayOrderId);
+}
+
+async markOrderPaidByRazorpayOrder(razorpayOrderId) {
+  const { data: payment } = await supabaseAnon
+    .from('payments')
+    .select('order_id')
+    .eq('razorpay_order_id', razorpayOrderId)
+    .single();
+
+  if (!payment) return;
+
+  return await supabaseAnon
+    .from('orders')
+    .update({
+      is_paid: true,
+      status: 'confirmed',
+      updated_at: new Date()
+    })
+    .eq('id', payment.order_id);
+}
+
 
 }
 
