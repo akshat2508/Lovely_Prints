@@ -24,13 +24,6 @@ export default function PricingSettings() {
     );
   };
 
-  const handlePriceChange = (setter, id, value) => {
-    setter(prev =>
-      prev.map(item =>
-        item.id === id ? { ...item, price: Number(value) || 0 } : item
-      )
-    );
-  };
 
   const renderSection = (title, items, setter, prefix) => (
     <div className="config-section">
@@ -51,13 +44,8 @@ export default function PricingSettings() {
             <span className="currency">₹</span>
             <input
               type="number"
-              min="0"
-              step="0.5"
               value={item.price}
-              disabled={!item.enabled}
-              onChange={(e) =>
-                handlePriceChange(setter, item.id, e.target.value)
-              }
+              disabled
             />
           </div>
         </div>
@@ -67,15 +55,13 @@ export default function PricingSettings() {
 
   return (
     <div className="pricing-settings">
-      <h2 className="pricing-title">Pricing Configuration</h2>
-
+      <h2 className="pricing-title">Availability Configuration</h2>
 
       <div className="config-grid">
         {renderSection('Paper Types', paperTypes, setPaperTypes, 'paper')}
         {renderSection('Color Modes', colorModes, setColorModes, 'color')}
         {renderSection('Finish Types', finishTypes, setFinishTypes, 'finish')}
       </div>
-      
 
       <div className="pricing-actions">
         <button className="save-button" onClick={() => console.log('Saved')}>
