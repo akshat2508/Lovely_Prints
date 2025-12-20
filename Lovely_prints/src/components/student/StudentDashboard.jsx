@@ -5,11 +5,35 @@ import "./dashboard.css"
 
 const StudentDashboard = () => {
   const [showMenu, setShowMenu] = useState(false)
+  const [showCreateModal, setShowCreateModal] = useState(false)
+  const [showTrackModal, setShowTrackModal] = useState(false)
+  const [filter, setFilter] = useState("All")
+
   const navigate = useNavigate()
 
   const handleLogout = () => {
     navigate("/login")
   }
+
+  /* ✅ Orders with STATUS TAGS */
+  const orders = [
+    {
+      id: "LP1023",
+      status: "In Progress",
+      price: 45
+    },
+    {
+      id: "LP1018",
+      status: "Completed",
+      price: 30
+    }
+  ]
+
+  /* ✅ Filter based on tags */
+  const filteredOrders = orders.filter(order => {
+    if (filter === "All") return true
+    return order.status === filter
+  })
 
   return (
     <div className="dashboard">
@@ -21,7 +45,6 @@ const StudentDashboard = () => {
           <span className="dashboard-title">Lovely Prints</span>
         </div>
 
-        {/* Profile */}
         <div className="profile-wrapper">
           <div
             className="profile-circle1"
@@ -41,59 +64,164 @@ const StudentDashboard = () => {
       {/* Content */}
       <main className="dashboard-content1">
 
-        {/* Quick Actions */}
-        <section>
-          <h2 className="section-heading">Quick Actions</h2>
+        {/* Top Actions */}
+        <div className="top-actions">
+          <button
+            className="new-order-btn"
+            onClick={() => setShowCreateModal(true)}
+          >
+            + Create New Print Order
+          </button>
 
-          <div className="card-grid1">
-            <div className="dashboard-card1">
-              <h3>New Print Order</h3>
-              <p>Upload documents & configure print options</p>
-            </div>
-
-            <div className="dashboard-card1">
-              <h3>Track Order</h3>
-              <p>Check real-time order status</p>
-            </div>
-
-            <div className="dashboard-card1">
-              <h3>Order History</h3>
-              <p>View previous orders & receipts</p>
-            </div>
+          <div className="filters">
+            {["All", "In Progress", "Completed"].map(item => (
+              <button
+                key={item}
+                className={`filter-btn ${filter === item ? "active" : ""}`}
+                onClick={() => setFilter(item)}
+              >
+                {item}
+              </button>
+            ))}
           </div>
-        </section>
+        </div>
 
         {/* Recent Orders */}
-        <section style={{ marginTop: "2.5rem" }}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              marginBottom: "1rem",
-            }}
-          >
-            <h2 className="section-heading">Recent Orders</h2>
-            <button className="new-order-btn">+ Place New Order</button>
-          </div>
+        <h2 className="section-heading">Recent Orders</h2>
 
-          <div className="order-card1">
-            <div>
-              <strong>Order #LP1023</strong>
-              <p className="status-progress">In Progress</p>
-            </div>
-            <span>₹45</span>
-          </div>
+        {filteredOrders.length === 0 && (
+          <p style={{ color: "#777" }}>No orders found.</p>
+        )}
 
-          <div className="order-card1">
+        {filteredOrders.map(order => (
+          <div className="order-card1" key={order.id}>
             <div>
-              <strong>Order #LP1018</strong>
-              <p className="status-complete">Completed</p>
+              <strong>Order #{order.id}</strong>
+              <p
+                className={
+                  order.status === "Completed"
+                    ? "status-complete"
+                    : "status-progress"
+                }
+              >
+                {order.status}
+              </p>
             </div>
-            <span>₹30</span>
+
+            <div className="order-actions">
+              <span className="order-price">₹{order.price}</span>
+
+              {order.status !== "Completed" && (
+                <button
+                  className="track-btn"
+                  onClick={() => setShowTrackModal(true)}
+                >
+                  Track Order
+                </button>
+              )}
+            </div>
           </div>
-        </section>
+        ))}
 
       </main>
+
+      {/* CREATE ORDER MODAL */}
+      {showCreateModal && (
+        <div className="modal-overlay">
+          <div className="modal-card">
+            <h2 className="modal-title">Create Print Order</h2>
+
+            <select className="modal-input">
+              <option>Select Shop Location</option>
+              <option>Block 27</option>
+              <option>Block 38</option>
+              <option>UniMall</option>
+            </select>
+
+            <select className="modal-input">
+              <option>Paper Type</option>
+              <option>A4</option>
+              <option>Bond Paper</option>
+              <option>Passport Size</option>
+            </select>
+
+            <input
+              type="number"
+              className="modal-input"
+              placeholder="Number of Copies"
+            />
+
+            <select className="modal-input">
+              <option>Orientation</option>
+              <option>Portrait</option>
+              <option>Landscape</option>
+            </select>
+
+            <select className="modal-input">
+              <option>Urgency</option>
+              <option>Normal</option>
+              <option>High (+₹10)</option>
+            </select>
+
+            <label className="upload-box">
+              📄 Upload Document
+              <input type="file" hidden />
+            </label>
+
+            <div className="modal-actions">
+              <button
+                className="cancel-btn"
+                onClick={() => setShowCreateModal(false)}
+              >
+                Cancel
+              </button>
+              <button className="submit-btn">Submit Order</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TRACK ORDER MODAL */}
+      {showTrackModal && (
+        <div className="modal-overlay">
+          <div className="modal-card">
+            <h2 className="modal-title">Track Order #LP1023</h2>
+
+            <div className="timeline">
+              <div className="timeline-item completed">
+                <span className="timeline-dot"></span>
+                <span className="timeline-text">Uploaded</span>
+              </div>
+              <div className="timeline-item completed">
+                <span className="timeline-dot"></span>
+                <span className="timeline-text">Accepted by Shop</span>
+              </div>
+              <div className="timeline-item active">
+                <span className="timeline-dot"></span>
+                <span className="timeline-text">Printing</span>
+              </div>
+              <div className="timeline-item">
+                <span className="timeline-dot"></span>
+                <span className="timeline-text">Ready for Pickup</span>
+              </div>
+              <div className="timeline-item">
+                <span className="timeline-dot"></span>
+                <span className="timeline-text">Completed</span>
+              </div>
+            </div>
+
+            <div className="modal-actions">
+              <button
+                className="cancel-btn"
+                onClick={() => setShowTrackModal(false)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   )
 }
