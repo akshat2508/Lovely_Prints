@@ -53,7 +53,7 @@ export default function ShopDashboard() {
       copies: 15,
       isExpress: true,
       eta: '1:00 PM',
-      status: 'pending'
+      status: 'confirmed'
     },
     {
       id: 'ORD005',
@@ -65,7 +65,7 @@ export default function ShopDashboard() {
       copies: 3,
       isExpress: false,
       eta: '4:00 PM',
-      status: 'collected'
+      status: 'completed'
     }
   ]);
 
