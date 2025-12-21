@@ -1,69 +1,100 @@
 
+# 📘 Lovely Prints – Backend API Documentation
 
-# 📘 Campus Digital Print Service – API Documentation
-
-This document defines **all backend APIs**, expected **request/response formats**, **authentication rules**, and **frontend usage flows** for the Campus Digital Print Service system.
-
----
-
-## 🔐 Authentication & Authorization
-
-### 🔑 Auth Mechanism
-
-* Authentication is handled via **Supabase JWT**
-* After login/signup, frontend must store the `access_token`
-* Every protected API call must include:
-
-```
-Authorization: Bearer <access_token>
-```
+Campus Digital Print Service
+Backend: **Node.js + Express + Supabase + Razorpay**
 
 ---
 
-### 👤 User Roles
+## 🌐 Base URL
 
-Roles are stored in:
-
-```
-user.user_metadata.role
+```txt
+http://localhost:3000/api
 ```
 
-Possible values:
-
-* `student`
-* `shop_owner`
-* `admin`
-
-Frontend **must route UI based on role**.
-
----
-
-## 🔑 Auth APIs
-
-### Register
+All requests (except auth + public shop listing) require:
 
 ```http
-POST /api/auth/register
+Authorization: Bearer <ACCESS_TOKEN>
 ```
 
-**Body**
+---
+
+## 👥 Roles
+
+| Role         | Description                      |
+| ------------ | -------------------------------- |
+| `student`    | Places orders, uploads documents |
+| `shop_owner` | Manages shop, pricing, orders    |
+| `admin`      | (future use)                     |
+
+Role is stored in **Supabase Auth → user_metadata.role**
+Backend enforces roles using middleware.
+
+---
+
+# 🔐 Authentication
+
+## 1️⃣ Register
+
+**POST** `/auth/register`
 
 ```json
 {
-  "email": "user@email.com",
-  "password": "password",
-  "name": "Student Name",
+  "name": "Student One",
+  "email": "student@gmail.com",
+  "password": "password123",
   "role": "student"
+}
+```
+
+**Response**
+
+```json
+{
+  "success": true,
+  "message": "User registered successfully"
 }
 ```
 
 ---
 
-### Login
+## 2️⃣ Login
 
-```http
-POST /api/auth/login
+**POST** `/auth/login`
+
+```json
+{
+  "email": "student@gmail.com",
+  "password": "password123"
+}
 ```
+
+**Response**
+
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "access_token": "JWT_TOKEN",
+    "user": {
+      "id": "uuid",
+      "role": "student"
+    }
+  }
+}
+```
+
+➡️ **Frontend**: Store `access_token` in memory / localStorage.
+
+---
+
+## 3️⃣ Get Current User
+
+**GET** `/auth/me`
+
+🔒 Requires token
 
 **Response**
 
@@ -73,12 +104,8 @@ POST /api/auth/login
   "data": {
     "user": {
       "id": "uuid",
-      "user_metadata": {
-        "role": "student"
-      }
-    },
-    "session": {
-      "access_token": "JWT_TOKEN"
+      "email": "student@gmail.com",
+      "role": "student"
     }
   }
 }
@@ -86,150 +113,22 @@ POST /api/auth/login
 
 ---
 
-### Get Current User
+# 🏪 Shops (Public + Student)
 
-```http
-GET /api/auth/me
-```
+## 4️⃣ Get All Active Shops
 
-**Headers**
-
-```
-Authorization: Bearer <token>
-```
-
----
-
-## 🏪 Shop APIs (Public + Shop Owner)
-
-### Get All Shops (Public)
-
-```http
-GET /api/shops
-```
-
----
-
-### Get Shop by ID
-
-```http
-GET /api/shops/:id
-```
-
----
-
-### Get Shop Print Options (Public)
-
-```http
-GET /api/shops/:shopId/options
-```
+**GET** `/shops`
 
 **Response**
 
 ```json
 {
-  "paper_types": [],
-  "color_modes": [],
-  "finish_types": []
-}
-```
-
----
-
-### Get Shop Orders (Shop Owner Only)
-
-```http
-GET /api/shops/:id/orders
-```
-
-**Headers**
-
-```
-Authorization: Bearer <token>
-```
-
----
-
-### Update Order Status (Shop Owner)
-
-```http
-PATCH /api/shops/orders/:orderId/status
-```
-
-**Body**
-
-```json
-{
-  "status": "printing"
-}
-```
-
-Allowed statuses:
-
-* pending
-* confirmed
-* printing
-* ready
-* completed
-* cancelled
-
----
-
-## 🧍 Student APIs
-
-### Get Student Profile
-
-```http
-GET /api/students/profile
-```
-
----
-
-### Update Student Profile
-
-```http
-PUT /api/students/profile
-```
-
----
-
-### Create Order
-
-```http
-POST /api/students/orders
-```
-
-**Body**
-
-```json
-{
-  "shop_id": "uuid",
-  "description": "Optional notes"
-}
-```
-
----
-
-### Get Student Orders
-
-```http
-GET /api/students/orders
-```
-
-**Response**
-
-```json
-{
+  "success": true,
   "data": [
     {
-      "id": "orderId",
-      "status": "pending",
-      "total_price": 12,
-      "shops": {
-        "shop_name": "Lovely Prints",
-        "block": "A Block"
-      },
-      "documents": []
+      "id": "shop_uuid",
+      "shop_name": "Lovely Prints",
+      "block": "A Block"
     }
   ]
 }
@@ -237,41 +136,100 @@ GET /api/students/orders
 
 ---
 
-## 📄 Document & File APIs
+## 5️⃣ Get Shop Details
 
-### Upload File
+**GET** `/shops/:shopId`
 
-```http
-POST /api/files/upload
+---
+
+## 6️⃣ Get Shop Print Options (Student)
+
+**GET** `/shops/:shopId/options`
+
+**Response**
+
+```json
+{
+  "success": true,
+  "data": {
+    "paper_types": [
+      { "id": "uuid", "name": "A4", "base_price": 1 }
+    ],
+    "color_modes": [
+      { "id": "uuid", "name": "BW", "extra_price": 0 }
+    ],
+    "finish_types": [
+      { "id": "uuid", "name": "Glossy", "extra_price": 2 }
+    ]
+  }
+}
 ```
 
-**FormData**
+➡️ **Frontend**:
+Populate dropdowns / radio buttons from this API.
+**Never calculate prices on frontend.**
 
-```
-file: PDF / DOC / JPG / PNG
+---
+
+# 🎓 Student APIs
+
+## 7️⃣ Create Order
+
+**POST** `/students/orders`
+
+🔒 Role: `student`
+
+```json
+{
+  "shop_id": "shop_uuid",
+  "description": "Print my resume"
+}
 ```
 
 **Response**
 
 ```json
 {
-  "fileKey": "uploads/filename.pdf"
+  "success": true,
+  "data": {
+    "id": "order_uuid",
+    "order_no": 2,
+    "status": "pending",
+    "is_paid": false
+  }
 }
 ```
 
 ---
 
-### Add Document to Order
+## 8️⃣ Upload File
 
-```http
-POST /api/students/orders/:orderId/documents
-```
+**POST** `/files/upload`
 
-**Body**
+Form-Data:
+
+* `file`: PDF / DOC / Image
+
+**Response**
 
 ```json
 {
-  "fileKey": "uploads/file.pdf",
+  "success": true,
+  "data": {
+    "fileKey": "uploads/1765993757539-resume.pdf"
+  }
+}
+```
+
+---
+
+## 9️⃣ Attach Document to Order
+
+**POST** `/students/orders/:orderId/documents`
+
+```json
+{
+  "fileKey": "uploads/1765993757539-resume.pdf",
   "fileName": "resume.pdf",
   "page_count": 2,
   "copies": 3,
@@ -281,117 +239,206 @@ POST /api/students/orders/:orderId/documents
 }
 ```
 
-⚠️ **Frontend must NOT calculate price**
-Price is computed by backend triggers.
+**Response**
+
+```json
+{
+  "success": true,
+  "message": "Document added successfully",
+  "data": {
+    "total_price": 6
+  }
+}
+```
+
+➡️ **Backend**:
+
+* Calculates document price
+* Updates order total via trigger
 
 ---
 
-### Download Document (Student / Shop Owner)
+## 🔁 Get Student Orders
 
-```http
-GET /api/documents/:documentId/download
+**GET** `/students/orders`
+
+**Response**
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "order_uuid",
+      "order_no": 2,
+      "status": "ready",
+      "is_paid": true,
+      "total_price": 12,
+      "documents": [...]
+    }
+  ]
+}
+```
+
+➡️ **Frontend**:
+Poll / refresh after status changes.
+
+---
+
+# 💳 Payments (Razorpay – Single Merchant Mode)
+
+## 10️⃣ Create Payment Order
+
+**POST** `/payments/create-order`
+
+```json
+{
+  "orderId": "order_uuid"
+}
 ```
 
 **Response**
 
 ```json
 {
-  "url": "SIGNED_S3_URL"
+  "success": true,
+  "data": {
+    "id": "razorpay_order_id",
+    "amount": 9600,
+    "currency": "INR"
+  }
 }
 ```
 
+➡️ **Frontend**:
+
+* Use Razorpay Checkout
+* Collect `payment_id`, `signature`
+
 ---
 
-## 🧾 Pricing Configuration APIs (Shop Owner)
+## 11️⃣ Verify Payment
 
-### Paper Types
-
-```http
-POST /api/shops/:shopId/paper-types
-```
+**POST** `/payments/verify`
 
 ```json
 {
-  "name": "A4",
-  "base_price": 2
+  "razorpay_order_id": "order_xxx",
+  "razorpay_payment_id": "pay_xxx",
+  "razorpay_signature": "signature",
+  "orderId": "order_uuid"
 }
 ```
 
----
-
-### Color Modes
-
-```http
-POST /api/shops/:shopId/color-modes
-```
+**Response**
 
 ```json
 {
-  "name": "Color",
-  "extra_price": 5
+  "success": true,
+  "message": "Payment successful"
 }
 ```
 
+➡️ Backend:
+
+* Verifies signature
+* Marks payment success
+* Sets:
+
+  * `orders.is_paid = true`
+  * `orders.status = confirmed`
+
 ---
 
-### Finish Types
+# 🏪 Shop Owner APIs
 
-```http
-POST /api/shops/:shopId/finish-types
-```
+## 12️⃣ Get Shop Orders
+
+**GET** `/shops/:shopId/orders`
+
+🔒 Role: `shop_owner`
+
+**Response**
 
 ```json
 {
-  "name": "Glossy",
-  "extra_price": 3
+  "success": true,
+  "data": [
+    {
+      "order_no": 2,
+      "status": "confirmed",
+      "documents": [...]
+    }
+  ]
 }
 ```
 
 ---
 
-## 🔁 Application Flow Summary
+## 13️⃣ Update Order Status
 
-### 🎓 Student Flow
+**PATCH** `/orders/:orderId/status`
 
-1. Login
-2. View shops
-3. Select shop
-4. Fetch shop print options
-5. Create order
-6. Upload file
-7. Attach document with configuration
-8. Track order status
+```json
+{
+  "status": "ready"
+}
+```
 
----
+Allowed:
 
-### 🏪 Shop Owner Flow
+```txt
+pending → confirmed → printing → ready → completed
+```
 
-1. Login
-2. Configure pricing options
-3. View incoming orders
-4. Download documents
-5. Update order status
-6. Mark orders ready/completed
+➡️ Reflected instantly on student dashboard.
 
 ---
 
-## ⚠️ Important Rules (Frontend Must Follow)
+## 14️⃣ Secure Document Download
 
-* ❌ Never calculate prices in frontend
-* ✅ Always send Bearer token
-* ❌ Never trust client-side role
-* ✅ Read role from `user_metadata`
-* ❌ Do not hardcode print configs
+**GET** `/documents/:documentId/download`
+
+🔒 Student (own order) or Shop Owner (own shop)
+
+**Response**
+
+```json
+{
+  "success": true,
+  "data": {
+    "url": "SIGNED_S3_URL"
+  }
+}
+```
+
+⏱️ URL expires in 5 minutes.
 
 ---
 
-## 🧩 Frontend Service Mapping
+# ⚠️ Error Format (Standard)
 
-| Service File        | Responsibility      |
-| ------------------- | ------------------- |
-| `authService.js`    | login, register, me |
-| `studentService.js` | orders, documents   |
-| `shopService.js`    | orders, pricing     |
-| `api.js`            | axios + token       |
+```json
+{
+  "success": false,
+  "message": "Access denied"
+}
+```
+
+Frontend should:
+
+* Show toast
+* Redirect if 401/403
+
+---
+
+# 🧠 Important Design Notes
+
+* ❌ Frontend never calculates price
+* ✅ Pricing controlled by shop owner
+* ✅ RLS + Role Middleware both active
+* ✅ Order numbers reset daily
+* ✅ Secure downloads only
+* ✅ Payments verified server-side
 
 ---

@@ -7,6 +7,11 @@ const supabaseAnon = createClient(
   config.supabase.url,
   config.supabase.key
 );
+const supabaseAdmin = createClient(
+  config.supabase.url,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
+
 
 // User client (RLS-aware, per request)
 const getUserSupabase = (token) => {
@@ -335,6 +340,86 @@ async createFinishType(data, token) {
     .insert(data)
     .select()
     .single();
+}
+
+//Functions for payments
+async createPayment(data) {
+  return await supabaseAnon
+    .from('payments')
+    .insert(data);
+}
+
+async markPaymentSuccess(orderId, paymentId, signature) {
+  return await supabaseAnon
+    .from('payments')
+    .update({
+      razorpay_payment_id: paymentId,
+      razorpay_signature: signature,
+      status: 'paid',
+    })
+    .eq('razorpay_order_id', orderId);
+}
+
+async markOrderPaid(orderId) {
+  return await supabaseAnon
+    .from('orders')
+    .update({ is_paid: true, status: 'confirmed' })
+    .eq('id', orderId);
+}
+// supabase.service.js
+async getOrderForPayment(orderId) {
+  return await supabaseAnon
+    .from('orders')
+    .select('*')
+    .eq('id', orderId)
+    .single();
+}
+
+async markOrderPaid(orderId) {
+  return await supabaseAdmin
+    .from('orders')
+    .update({
+      is_paid: true,
+      status: 'confirmed',
+      paid_at: new Date().toISOString(),
+    })
+    .eq('id', orderId);
+}
+//webhook helper functions
+
+async markPaymentWebhookSuccess(
+  razorpayOrderId,
+  razorpayPaymentId,
+  payload
+) {
+  return await supabaseAnon
+    .from('payments')
+    .update({
+      status: 'success',
+      razorpay_payment_id: razorpayPaymentId,
+      webhook_payload: payload,
+      updated_at: new Date()
+    })
+    .eq('razorpay_order_id', razorpayOrderId);
+}
+
+async markOrderPaidByRazorpayOrder(razorpayOrderId) {
+  const { data: payment } = await supabaseAnon
+    .from('payments')
+    .select('order_id')
+    .eq('razorpay_order_id', razorpayOrderId)
+    .single();
+
+  if (!payment) return;
+
+  return await supabaseAnon
+    .from('orders')
+    .update({
+      is_paid: true,
+      status: 'confirmed',
+      updated_at: new Date()
+    })
+    .eq('id', payment.order_id);
 }
 
 
