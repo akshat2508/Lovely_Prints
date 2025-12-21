@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import OrderList from './OrderList';
 import './shop.css';
+import PricingSettings from './PricingSettings';
+
 
 export default function ShopDashboard() {
   const [orders, setOrders] = useState([
@@ -51,7 +53,7 @@ export default function ShopDashboard() {
       copies: 15,
       isExpress: true,
       eta: '1:00 PM',
-      status: 'pending'
+      status: 'confirmed'
     },
     {
       id: 'ORD005',
@@ -63,7 +65,7 @@ export default function ShopDashboard() {
       copies: 3,
       isExpress: false,
       eta: '4:00 PM',
-      status: 'collected'
+      status: 'completed'
     }
   ]);
 
@@ -75,6 +77,8 @@ export default function ShopDashboard() {
     );
   };
 
+  const [activeTab, setActiveTab] = useState('orders');
+
   return (
     <div className="shop-dashboard">
       <header className="dashboard-header">
@@ -84,7 +88,28 @@ export default function ShopDashboard() {
           <span className="shop-status open">Open</span>
         </div>
       </header>
-      <OrderList orders={orders} onStatusChange={handleStatusChange} />
+
+    <div className="shop-tabs">
+    <button
+      className={`tab-btn ${activeTab === 'orders' ? 'active' : ''}`}
+      onClick={() => setActiveTab('orders')}
+    >
+      Orders
+    </button>
+
+    <button
+      className={`tab-btn ${activeTab === 'settings' ? 'active' : ''}`}
+      onClick={() => setActiveTab('settings')}
+    >
+      Availability & Pricing
+    </button>
+    </div>
+        {activeTab === 'orders' && (
+        <OrderList orders={orders} onStatusChange={handleStatusChange} />
+       )}
+
+        {activeTab === 'settings' && <PricingSettings />}
+
     </div>
   );
 }

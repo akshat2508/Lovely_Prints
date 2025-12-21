@@ -104,17 +104,6 @@ body {
   box-shadow: 0 2px 8px rgba(245, 130, 32, 0.25);
 }
 
-.order-card.collected {
-  opacity: 0.5;
-  background: #fafafa;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  border: 1px solid #e5e7eb;
-}
-
-.order-card.collected:hover {
-  opacity: 0.6;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
 
 .order-header {
   display: flex;
@@ -162,8 +151,14 @@ body {
   background: var(--success-green);
 }
 
-.status-badge.collected {
-  background: var(--gray-dark);
+.status-badge.completed {
+  background: #9ca3af;
+  color: #374151;
+}
+
+.status-badge.confirmed {
+  background: #3b82f6; /* blue */
+  color: white;
 }
 
 .order-body {
@@ -275,22 +270,37 @@ body {
 .action-button:active {
   transform: scale(0.98);
 }
+/* Completed order – visually inactive */
 
-.order-card.collected .student-info h3,
-.order-card.collected .order-id,
-.order-card.collected .document-name {
+.order-card.completed {
+  opacity: 0.55;
+  background: #f3f4f6;
+  box-shadow: none;
+  border: 1px solid #e5e7eb;
+}
+
+.order-card.completed:hover {
+  box-shadow: none;
+}
+
+/* Text de-emphasis */
+
+.order-card.completed .student-info h3,
+.order-card.completed .order-id,
+.order-card.completed .document-name {
   color: var(--gray-dark);
 }
 
-.order-card.collected .student-id,
-.order-card.collected .print-details,
-.order-card.collected .eta {
+.order-card.completed .student-id,
+.order-card.completed .print-details,
+.order-card.completed .eta {
   color: #9ca3af;
 }
 
-.order-card.collected .download-link {
+.order-card.completed .download-link {
   color: var(--gray-dark);
 }
+
 
 @media (max-width: 768px) {
   .order-list {
@@ -339,12 +349,175 @@ body {
   color: white;
 }
 
-.order-card.collected .download-button {
-  color: var(--gray-dark);
-  border-color: var(--gray-dark);
+.shop-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
-.order-card.collected .download-button:hover {
-  background: var(--gray-dark);
+.tab-btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  background: white;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.tab-btn.active {
+  background: var(--orange-primary);
   color: white;
+  border-color: var(--orange-primary);
+}
+
+
+/* ===== Pricing Settings ===== */
+
+.pricing-settings {
+  background: white;
+  padding: 24px;
+  border-radius: 8px;
+  max-width: 900px;   /* ⬅ wider */
+  margin: 0 auto;     /* ⬅ centers it */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.pricing-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.config-section {
+  margin-bottom: 24px;
+}
+
+.config-section h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.config-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.config-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.price-control {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.price-control input {
+  width: 70px;
+  padding: 4px 6px;
+}
+
+.price-control input:disabled {
+  background: #f3f4f6;
+  border: 1px dashed #d1d5db;
+  cursor: not-allowed;
+}
+
+.currency {
+  font-size: 14px;
+}
+
+.pricing-actions {
+  text-align: right;
+  margin-top: 20px;
+}
+
+.save-button {
+  padding: 10px 16px;
+  background: var(--orange-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.save-button:hover {
+  background: var(--orange-dark);
+}
+
+.config-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.config-section {
+  background: #fafafa;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+/* Responsive fallback */
+@media (max-width: 900px) {
+  .config-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pricing-note {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 16px;
+}
+
+/* =========================
+   COMPLETED ORDER – FULL CARD
+   ========================= */
+
+.order-card.completed {
+  background: #f3f4f6;              /* light grey background */
+  opacity: 0.6;                     /* fade whole card */
+  box-shadow: none;                 /* remove elevation */
+  border: 1px solid #e5e7eb;        /* neutral border */
+  pointer-events: none;             /* disable interaction */
+}
+
+/* Prevent hover effects */
+.order-card.completed:hover {
+  box-shadow: none;
+  transform: none;
+}
+
+/* Remove express highlight if completed */
+.order-card.completed.express {
+  border-color: #e5e7eb;
+}
+
+/* Text de-emphasis */
+.order-card.completed .student-info h3,
+.order-card.completed .order-id,
+.order-card.completed .document-name {
+  color: #6b7280;
+}
+
+.order-card.completed .student-id,
+.order-card.completed .print-details,
+.order-card.completed .eta {
+  color: #9ca3af;
+}
+
+/* Status badge still visible */
+.order-card.completed .status-badge {
+  opacity: 1;
 }

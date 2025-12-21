@@ -10,9 +10,16 @@ export default function OrderList({ orders, onStatusChange }) {
     );
   }
 
-  const activeOrders = orders.filter(order => order.status !== 'collected');
-  const collectedOrders = orders.filter(order => order.status === 'collected');
-  const sortedOrders = [...activeOrders, ...collectedOrders];
+  const activeOrders = orders.filter(
+  order => !['completed', 'cancelled'].includes(order.status)
+  );
+
+  const completedOrders = orders.filter(
+  order => ['completed', 'cancelled'].includes(order.status)
+  );
+
+  const sortedOrders = [...activeOrders, ...completedOrders];
+
 
   return (
     <div className="order-list">

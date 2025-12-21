@@ -2,30 +2,42 @@ import React from 'react';
 
 export default function OrderDetails({ order, onStatusChange }) {
   const getNextStatus = (currentStatus) => {
-    const statusFlow = {
-      pending: 'printing',
-      printing: 'ready',
-      ready: 'collected',
-      collected: null
-    };
-    return statusFlow[currentStatus];
+  const statusFlow = {
+    pending: 'confirmed',
+    confirmed: 'printing',
+    printing: 'ready',
+    ready: 'completed',
+    completed: null,
+    cancelled: null
   };
+  return statusFlow[currentStatus];
+};
+
 
   const getActionLabel = (currentStatus) => {
-    const labels = {
-      pending: 'Start Printing',
-      printing: 'Mark Ready',
-      ready: 'Mark Collected',
-      collected: null
-    };
-    return labels[currentStatus];
+  const labels = {
+    pending: 'Confirm Order',
+    confirmed: 'Start Printing',
+    printing: 'Mark Ready',
+    ready: 'Mark Completed',
+    completed: null,
+    cancelled: null
   };
+  return labels[currentStatus];
+};
+
 
   const nextStatus = getNextStatus(order.status);
   const actionLabel = getActionLabel(order.status);
 
   return (
-    <div className={`order-card ${order.isExpress ? 'express' : ''} ${order.status === 'collected' ? 'collected' : ''}`}>
+    <div
+  className={`order-card
+    ${order.isExpress ? 'express' : ''}
+    ${order.status === 'completed' ? 'completed' : ''}
+  `}
+>
+
       <div className="order-header">
         <div className="order-id">#{order.id}</div>
         {order.isExpress && <span className="express-badge">⚡ Express</span>}
