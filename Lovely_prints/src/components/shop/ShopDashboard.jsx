@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import OrderList from './OrderList';
 import './shop.css';
 import PricingSettings from './PricingSettings';
+import OrderPreview from './OrderPreview';
 
 
 export default function ShopDashboard() {
@@ -78,6 +79,7 @@ export default function ShopDashboard() {
   };
 
   const [activeTab, setActiveTab] = useState('orders');
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   return (
     <div className="shop-dashboard">
@@ -104,9 +106,23 @@ export default function ShopDashboard() {
       Availability & Pricing
     </button>
     </div>
-        {activeTab === 'orders' && (
-        <OrderList orders={orders} onStatusChange={handleStatusChange} />
-       )}
+                {activeTab === 'orders' && (
+          <>
+            <OrderList
+              orders={orders}
+              onStatusChange={handleStatusChange}
+              onSelectOrder={setSelectedOrder}
+            />
+
+            {selectedOrder && (
+              <OrderPreview
+                order={selectedOrder}
+                onClose={() => setSelectedOrder(null)}
+              />
+            )}
+          </>
+        )}
+
 
         {activeTab === 'settings' && <PricingSettings />}
 
