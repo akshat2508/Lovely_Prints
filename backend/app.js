@@ -1,12 +1,14 @@
 // app.js
 import express from 'express';
 import cors from 'cors';
+
+import webhookRoutes from './routes/webhook.routes.js';
+
 import authRoutes from './routes/auth.routes.js';
 import studentRoutes from './routes/student.routes.js';
 import shopRoutes from './routes/shop.routes.js';
 import orderRoutes from './routes/order.routes.js';
 import fileRoutes from './routes/file.routes.js';
-import errorMiddleware from './middleware/error.middleware.js';
 import documentRoutes from './routes/document.routes.js';
 import printOptionRoutes from './routes/printOptions.routes.js';
 import printOptionsRoutes from './routes/printOptions.routes.js';
@@ -14,12 +16,14 @@ import paperTypeRoutes from './routes/paperType.routes.js';
 import colorModeRoutes from './routes/colorMode.routes.js';
 import finishTypeRoutes from './routes/finishType.routes.js';
 import paymentRoutes from './routes/payment.routes.js';
-import webhookRoutes from './routes/webhook.routes.js';
-
+import errorMiddleware from './middleware/error.middleware.js';
 
 const app = express();
 
 app.use(cors());
+
+//  ✅ WEBHOOKS FIRST (raw body)
+app.use('/api/webhooks', webhookRoutes);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -35,8 +39,6 @@ app.use('/api/shops', paperTypeRoutes);
 app.use('/api/shops', colorModeRoutes);
 app.use('/api/shops', finishTypeRoutes);
 app.use('/api/payments', paymentRoutes);
-app.use('/api/webhooks', webhookRoutes);
-
 
 app.use(errorMiddleware);
 
