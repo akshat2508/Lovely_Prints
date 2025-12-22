@@ -1,0 +1,44 @@
+// src/services/api.js
+import axios from "axios";
+
+/**
+ * Base Axios instance
+ * Backend runs on /api/*
+ */
+const api = axios.create({
+  baseURL: "https://qqzr49p8-3000.inc1.devtunnels.ms/api/",
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+/**
+ * Attach JWT token automatically
+ */
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("access_token");
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+/**
+ * Optional: handle expired token globally
+ */
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("access_token");
+    }
+    return Promise.reject(error);
+  }
+);
+
+export default api;
