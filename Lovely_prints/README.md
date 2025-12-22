@@ -441,4 +441,13 @@ Frontend should:
 * ✅ Secure downloads only
 * ✅ Payments verified server-side
 
+
+## 🧩 Frontend Service Mapping
+
+| Service File        | Responsibility      |
+| ------------------- | ------------------- |
+| `authService.js`    | login, register, me |
+| `studentService.js` | orders, documents   |
+| `shopService.js`    | orders, pricing     |
+| `api.js`            | axios + token       |
 ---
