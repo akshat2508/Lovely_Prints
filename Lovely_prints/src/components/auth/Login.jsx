@@ -1,9 +1,38 @@
+import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import logo from "../../assets/logo.png"
-import "./auth.css"   // 👈 local css
+import { loginUser } from "../../services/authService"
+import "./auth.css"
 
 export default function Login() {
   const navigate = useNavigate()
+
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
+
+  const handleLogin = async () => {
+    setError("")
+    setLoading(true)
+
+    try {
+      const res = await loginUser({ email, password })
+
+      const role = res.data.user.user_metadata.role
+
+      // ✅ Route based on role
+      if (role === "student") navigate("/student")
+      else if (role === "shop_owner") navigate("/shop")
+      else if (role === "admin") navigate("/admin")
+      else navigate("/login")
+
+    } catch (err) {
+      setError(err.response?.data?.message || "Login failed")
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <div className="auth-page">
@@ -21,6 +50,8 @@ export default function Login() {
             type="email"
             placeholder="Email"
             className="auth-input"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
 
@@ -29,15 +60,24 @@ export default function Login() {
             type="password"
             placeholder="Password"
             className="auth-input"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
         </div>
+
+        {error && (
+          <p style={{ color: "tomato", marginTop: "0.8rem", fontSize: "0.85rem" }}>
+            {error}
+          </p>
+        )}
 
         <div style={{ marginTop: "1.5rem" }}>
           <button
             className="auth-btn"
-            onClick={() => navigate("/student")}
+            onClick={handleLogin}
+            disabled={loading}
           >
-            Login
+            {loading ? "Logging in..." : "Login"}
           </button>
         </div>
 
