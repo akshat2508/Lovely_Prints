@@ -1,7 +1,7 @@
 import React from 'react';
 import OrderDetails from './OrderDetails';
 
-export default function OrderList({ orders, onStatusChange }) {
+export default function OrderList({ orders, onStatusChange, onSelectOrder }) {
   if (orders.length === 0) {
     return (
       <div className="order-list-empty">
@@ -28,6 +28,7 @@ export default function OrderList({ orders, onStatusChange }) {
           key={order.id}
           order={order}
           onStatusChange={onStatusChange}
+          onClick={() => onSelectOrder(order)}
         />
       ))}
     </div>
