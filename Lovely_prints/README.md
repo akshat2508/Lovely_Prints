@@ -451,3 +451,5 @@ Frontend should:
 | `shopService.js`    | orders, pricing     |
 | `api.js`            | axios + token       |
 ---
+
+Updated readme
