@@ -1,44 +1,100 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import logo from "../../assets/logo.png"
+import { getStudentOrders } from "../../services/studentService"
 import "./dashboard.css"
 
+/* Backend order flow */
+const STATUS_FLOW = [
+  "pending",
+  "confirmed",
+  "printing",
+  "ready",
+  "completed"
+]
+
+/* Backend → UI labels */
+const STATUS_LABELS = {
+  pending: "Pending",
+  confirmed: "Confirmed",
+  printing: "Printing",
+  ready: "Ready for Pickup",
+  completed: "Delivered",
+  cancelled: "Cancelled"
+}
+
 const StudentDashboard = () => {
+  const navigate = useNavigate()
+
+  /* UI State */
   const [showMenu, setShowMenu] = useState(false)
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [showTrackModal, setShowTrackModal] = useState(false)
   const [filter, setFilter] = useState("All")
 
-  const navigate = useNavigate()
+  /* Data State */
+  const [orders, setOrders] = useState([])
+  const [loadingOrders, setLoadingOrders] = useState(false)
+  const [selectedOrder, setSelectedOrder] = useState(null)
 
+  /* Logout */
   const handleLogout = () => {
     navigate("/login")
   }
 
-  /* ✅ Orders with STATUS TAGS */
-  const orders = [
-    {
-      id: "LP1023",
-      status: "In Progress",
-      price: 45
-    },
-    {
-      id: "LP1018",
-      status: "Completed",
-      price: 30
-    }
-  ]
+  /* Normalize backend status → filter label */
+  const normalizeStatus = (status) => {
+    if (status === "completed") return "Delivered"
+    return "In Progress"
+  }
 
-  /* ✅ Filter based on tags */
+  /* Fetch orders */
+  const fetchOrders = async () => {
+    try {
+      setLoadingOrders(true)
+      const res = await getStudentOrders()
+
+      if (res?.success) {
+        setOrders(res.data || [])
+      }
+    } catch (err) {
+      console.error("Failed to fetch orders", err)
+    } finally {
+      setLoadingOrders(false)
+    }
+  }
+
+  /* Initial fetch */
+  useEffect(() => {
+    fetchOrders()
+  }, [])
+
+  /* Poll every 20s */
+  useEffect(() => {
+    const interval = setInterval(fetchOrders, 20000)
+    return () => clearInterval(interval)
+  }, [])
+
+  /* Filter logic */
   const filteredOrders = orders.filter(order => {
     if (filter === "All") return true
-    return order.status === filter
+    return normalizeStatus(order.status) === filter
   })
+
+  /* Timeline helper */
+  const getTimelineState = (step, currentStatus) => {
+    const stepIndex = STATUS_FLOW.indexOf(step)
+    const currentIndex = STATUS_FLOW.indexOf(currentStatus)
+
+    if (stepIndex < currentIndex) return "completed"
+    if (stepIndex === currentIndex) return "active"
+    return ""
+  }
 
   return (
     <div className="dashboard">
 
-      {/* Header */}
+      {/* HEADER */}
       <header className="dashboard-header1">
         <div className="dashboard-left1">
           <img src={logo} alt="Lovely Prints" className="dashboard-logo" />
@@ -61,10 +117,10 @@ const StudentDashboard = () => {
         </div>
       </header>
 
-      {/* Content */}
+      {/* CONTENT */}
       <main className="dashboard-content1">
 
-        {/* Top Actions */}
+        {/* TOP ACTIONS */}
         <div className="top-actions">
           <button
             className="new-order-btn"
@@ -86,35 +142,44 @@ const StudentDashboard = () => {
           </div>
         </div>
 
-        {/* Recent Orders */}
+        {/* ORDERS */}
         <h2 className="section-heading">Recent Orders</h2>
 
-        {filteredOrders.length === 0 && (
+        {loadingOrders && (
+          <p style={{ color: "#777" }}>Loading orders...</p>
+        )}
+
+        {!loadingOrders && filteredOrders.length === 0 && (
           <p style={{ color: "#777" }}>No orders found.</p>
         )}
 
         {filteredOrders.map(order => (
           <div className="order-card1" key={order.id}>
             <div>
-              <strong>Order #{order.id}</strong>
+              <strong>Order #{order.order_no}</strong>
               <p
                 className={
-                  order.status === "Completed"
+                  order.status === "completed"
                     ? "status-complete"
                     : "status-progress"
                 }
               >
-                {order.status}
+                {STATUS_LABELS[order.status]}
               </p>
             </div>
 
             <div className="order-actions">
-              <span className="order-price">₹{order.price}</span>
+              <span className="order-price">
+                ₹{order.total_price}
+              </span>
 
-              {order.status !== "Completed" && (
+              {order.status !== "completed" && (
                 <button
                   className="track-btn"
-                  onClick={() => setShowTrackModal(true)}
+                  onClick={() => {
+                    setSelectedOrder(order)
+                    setShowTrackModal(true)
+                  }}
                 >
                   Track Order
                 </button>
@@ -125,7 +190,7 @@ const StudentDashboard = () => {
 
       </main>
 
-      {/* CREATE ORDER MODAL */}
+      {/* CREATE ORDER MODAL (UI ONLY) */}
       {showCreateModal && (
         <div className="modal-overlay">
           <div className="modal-card">
@@ -175,39 +240,34 @@ const StudentDashboard = () => {
               >
                 Cancel
               </button>
-              <button className="submit-btn">Submit Order</button>
+              <button className="submit-btn">
+                Submit Order
+              </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* TRACK ORDER MODAL */}
-      {showTrackModal && (
+      {/* TRACK ORDER MODAL (REAL STATUS) */}
+      {showTrackModal && selectedOrder && (
         <div className="modal-overlay">
           <div className="modal-card">
-            <h2 className="modal-title">Track Order #LP1023</h2>
+            <h2 className="modal-title">
+              Track Order #{selectedOrder.order_no}
+            </h2>
 
             <div className="timeline">
-              <div className="timeline-item completed">
-                <span className="timeline-dot"></span>
-                <span className="timeline-text">Uploaded</span>
-              </div>
-              <div className="timeline-item completed">
-                <span className="timeline-dot"></span>
-                <span className="timeline-text">Accepted by Shop</span>
-              </div>
-              <div className="timeline-item active">
-                <span className="timeline-dot"></span>
-                <span className="timeline-text">Printing</span>
-              </div>
-              <div className="timeline-item">
-                <span className="timeline-dot"></span>
-                <span className="timeline-text">Ready for Pickup</span>
-              </div>
-              <div className="timeline-item">
-                <span className="timeline-dot"></span>
-                <span className="timeline-text">Completed</span>
-              </div>
+              {STATUS_FLOW.map(step => (
+                <div
+                  key={step}
+                  className={`timeline-item ${getTimelineState(step, selectedOrder.status)}`}
+                >
+                  <span className="timeline-dot"></span>
+                  <span className="timeline-text">
+                    {STATUS_LABELS[step]}
+                  </span>
+                </div>
+              ))}
             </div>
 
             <div className="modal-actions">
