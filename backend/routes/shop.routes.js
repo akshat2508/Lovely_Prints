@@ -7,7 +7,8 @@ import {
   createShop,
   updateShop,
   getShopOrders,
-  getShopPrintOptions
+  getShopPrintOptions,
+  getMyShopOrders
 } from '../controllers/shop.controller.js';
 import { updateOrderStatus } from '../controllers/shop.controller.js';
 
@@ -39,6 +40,14 @@ router.put(
   updateShop
 );
 
+
+router.get(
+  '/me/orders',
+  authMiddleware,
+  requireRole('shop_owner'),
+  getMyShopOrders
+);
+
 router.get(
   '/:id/orders',
   authMiddleware,
@@ -46,12 +55,12 @@ router.get(
   getShopOrders
 );
 
-router.put(
-  '/orders/:orderId/status',
-  authMiddleware,
-  requireRole('shop_owner'),
-  updateOrderStatus
-);
+// router.put(
+//   '/orders/:orderId/status',
+//   authMiddleware,
+//   requireRole('shop_owner'),
+//   updateOrderStatus
+// );
 
 
 export default router;

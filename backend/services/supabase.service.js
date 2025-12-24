@@ -423,6 +423,64 @@ async markOrderPaidByRazorpayOrder(razorpayOrderId) {
 }
 
 
+async getOrdersForOwner(token) {
+  // 1️⃣ Get user from token
+  const { data: userData, error: userError } =
+    await this.getUserFromToken(token);
+
+  if (userError || !userData?.user) {
+    return { error: userError || new Error('Invalid user') };
+  }
+
+  const userId = userData.user.id;
+
+  // 2️⃣ Get shop owned by user
+  const { data: shop, error: shopError } = await supabaseAnon
+    .from('shops')
+    .select('id')
+    .eq('owner_id', userId)
+    .single();
+
+  if (shopError || !shop) {
+    return { error: shopError || new Error('Shop not found for owner') };
+  }
+
+  // 3️⃣ Fetch orders + documents + print options
+  const supabaseUser = getUserSupabase(token);
+return await supabaseAdmin
+  .from('orders')
+  .select(`
+    id,
+    order_no,
+    status,
+    created_at,
+    student_id,
+
+    student:users!fk_order_student (
+      name
+    ),
+
+    documents (
+      id,
+      file_name,
+      file_url,
+      page_count,
+      copies,
+      total_price,
+
+      paper_types ( name ),
+      color_modes ( name ),
+      finish_types ( name )
+    )
+  `)
+  .eq('shop_id', shop.id)
+  .order('created_at', { ascending: false });
+
+    
+}
+
+
+
 }
 
 export default new SupabaseService();

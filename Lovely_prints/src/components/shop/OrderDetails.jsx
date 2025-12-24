@@ -1,44 +1,56 @@
-import React from 'react';
+import React, { useState } from "react";
+import { getDocumentDownloadUrl } from "../../services/shopService";
 
 export default function OrderDetails({ order, onStatusChange, onClick }) {
-  const getNextStatus = (currentStatus) => {
-    const statusFlow = {
-      pending: 'confirmed',
-      confirmed: 'printing',
-      printing: 'ready',
-      ready: 'completed',
-      completed: null,
-      cancelled: null
+  const [downloading, setDownloading] = useState(false);
+  const [updating, setUpdating] = useState(false);
+
+  const getNextStatus = (status) => {
+    const flow = {
+      pending: "confirmed",
+      confirmed: "printing",
+      printing: "ready",
+      ready: "completed",
     };
-    return statusFlow[currentStatus];
+    return flow[status];
   };
 
-  const getActionLabel = (currentStatus) => {
+  const getActionLabel = (status) => {
     const labels = {
-      pending: 'Confirm Order',
-      confirmed: 'Start Printing',
-      printing: 'Mark Ready',
-      ready: 'Mark Completed',
-      completed: null,
-      cancelled: null
+      pending: "Confirm",
+      confirmed: "Start Printing",
+      printing: "Mark Ready",
+      ready: "Complete",
     };
-    return labels[currentStatus];
+    return labels[status];
   };
 
   const nextStatus = getNextStatus(order.status);
-  const actionLabel = getActionLabel(order.status);
+
+  const handleDownload = async (e) => {
+    e.stopPropagation();
+    try {
+      setDownloading(true);
+      const url = await getDocumentDownloadUrl(order.documentId);
+      window.open(url, "_blank");
+    } catch {
+      alert("Failed to download document");
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  const handleStatusUpdate = async (e) => {
+    e.stopPropagation();
+    setUpdating(true);
+    await onStatusChange(order.id, nextStatus);
+    setUpdating(false);
+  };
 
   return (
-    <div
-      className={`order-card
-        ${order.isExpress ? 'express' : ''}
-        ${order.status === 'completed' ? 'completed' : ''}
-      `}
-      onClick={onClick}
-    >
+    <div className="order-card" onClick={onClick}>
       <div className="order-header">
-        <div className="order-id">#{order.id}</div>
-        {order.isExpress && <span className="express-badge">⚡ Express</span>}
+        <div className="order-id">#{order.orderNo}</div>
         <span className={`status-badge ${order.status}`}>
           {order.status}
         </span>
@@ -47,44 +59,36 @@ export default function OrderDetails({ order, onStatusChange, onClick }) {
       <div className="order-body">
         <div className="student-info">
           <h3>{order.studentName}</h3>
-          <p className="student-id">{order.studentId}</p>
+          <p>{order.studentId}</p>
         </div>
 
         <div className="document-info">
-          <p className="document-name">{order.documentName}</p>
-          {order.documentUrl && (
-            <a
-              href={order.documentUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="download-button"
-              onClick={(e) => e.stopPropagation()}
-            >
-              Download
-            </a>
-          )}
+          <p>{order.documentName}</p>
+          <button
+            className="download-button"
+            disabled={downloading}
+            onClick={handleDownload}
+          >
+            {downloading ? "Preparing..." : "Download"}
+          </button>
         </div>
 
         <div className="print-details">
           <span>Paper: {order.paperType}</span>
-          <span>Size: {order.size}</span>
+          <span>Color: {order.colorMode}</span>
+          <span>Finish: {order.finishType}</span>
           <span>Copies: {order.copies}</span>
         </div>
 
-        <div className="order-footer">
-          <span className="eta">ETA: {order.eta}</span>
-          {nextStatus && (
-            <button
-              className="action-button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onStatusChange(order.id, nextStatus);
-              }}
-            >
-              {actionLabel}
-            </button>
-          )}
-        </div>
+        {nextStatus && (
+          <button
+            className="action-button"
+            disabled={updating}
+            onClick={handleStatusUpdate}
+          >
+            {updating ? "Updating..." : getActionLabel(order.status)}
+          </button>
+        )}
       </div>
     </div>
   );
