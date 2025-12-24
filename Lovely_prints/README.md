@@ -350,13 +350,16 @@ Poll / refresh after status changes.
 
 ---
 
-# 🏪 Shop Owner APIs
+# 🏪 Shop Owner APIs (UPDATED)
 
-## 12️⃣ Get Shop Orders
+---
 
-**GET** `/shops/:shopId/orders`
+## 12️⃣ Get Shop Orders (Owner Scoped)
+
+**GET** `/shops/me/orders`
 
 🔒 Role: `shop_owner`
+🔐 Shop is derived from **access token** (no shopId required)
 
 **Response**
 
@@ -365,19 +368,43 @@ Poll / refresh after status changes.
   "success": true,
   "data": [
     {
+      "id": "order_uuid",
       "order_no": 2,
       "status": "confirmed",
-      "documents": [...]
+      "student_id": "student_uuid",
+      "student": {
+        "name": "Rahul Sharma"
+      },
+      "documents": [
+        {
+          "id": "document_uuid",
+          "file_name": "resume.pdf",
+          "page_count": 2,
+          "copies": 3,
+          "total_price": 12,
+          "paper_types": { "name": "A4" },
+          "color_modes": { "name": "BW" },
+          "finish_types": { "name": "Glossy" }
+        }
+      ]
     }
   ]
 }
 ```
 
+### 🧠 Notes
+
+* Shop ownership is resolved via `shops.owner_id = auth.uid()`
+* Student name is fetched via secure server-side join
+* Uses **service role internally** to bypass RLS safely
+
 ---
 
-## 13️⃣ Update Order Status
+## 13️⃣ Update Order Status (FINAL)
 
-**PATCH** `/orders/:orderId/status`
+**PUT** `/orders/:orderId/status`
+
+🔒 Role: `shop_owner`
 
 ```json
 {
@@ -385,21 +412,41 @@ Poll / refresh after status changes.
 }
 ```
 
-Allowed:
+### Allowed Status Flow
 
 ```txt
 pending → confirmed → printing → ready → completed
 ```
 
-➡️ Reflected instantly on student dashboard.
+**Response**
+
+```json
+{
+  "success": true,
+  "message": "Order status updated successfully",
+  "data": {
+    "id": "order_uuid",
+    "status": "ready"
+  }
+}
+```
+
+### 🧠 Backend Behavior
+
+* Validates status transition
+* Uses RLS to ensure shop owner owns the order
+* Reflected instantly in student dashboard
 
 ---
 
-## 14️⃣ Secure Document Download
+## 14️⃣ Secure Document Download (UPDATED)
 
 **GET** `/documents/:documentId/download`
 
-🔒 Student (own order) or Shop Owner (own shop)
+🔒 Access:
+
+* Student → owns the order
+* Shop Owner → owns the shop
 
 **Response**
 
@@ -412,9 +459,30 @@ pending → confirmed → printing → ready → completed
 }
 ```
 
-⏱️ URL expires in 5 minutes.
+⏱️ URL expires in **5 minutes**
+
+### ⚠️ Important
+
+* ❌ Document URLs are **never stored or exposed directly**
+* ✅ Signed URLs are generated **per request**
+* ✅ Secure by design
 
 ---
+
+# 🧠 Important Design Notes (UPDATED)
+
+* ❌ Frontend never calculates price
+* ❌ Frontend never uses direct file URLs
+* ✅ Pricing controlled by shop owner
+* ✅ Shop ownership derived from token
+* ✅ RLS + role middleware both active
+* ✅ Orders scoped per shop owner
+* ✅ Secure downloads only
+* ✅ Payments verified server-side
+* ✅ Status transitions validated on backend
+
+
+
 
 # ⚠️ Error Format (Standard)
 
@@ -431,16 +499,6 @@ Frontend should:
 * Redirect if 401/403
 
 ---
-
-# 🧠 Important Design Notes
-
-* ❌ Frontend never calculates price
-* ✅ Pricing controlled by shop owner
-* ✅ RLS + Role Middleware both active
-* ✅ Order numbers reset daily
-* ✅ Secure downloads only
-* ✅ Payments verified server-side
-
 
 ## 🧩 Frontend Service Mapping
 
