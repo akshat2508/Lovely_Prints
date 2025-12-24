@@ -183,3 +183,25 @@ export const updateOrderStatus = async (req, res, next) => {
     next(err);
   }
 };
+
+
+export const getMyShopOrders = async (req, res, next) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+
+    if (!token) {
+      return errorResponse(res, 'Authorization token missing', 401);
+    }
+
+    const { data, error } =
+      await supabaseService.getOrdersForOwner(token);
+
+    if (error) {
+      return errorResponse(res, error.message, 400);
+    }
+
+    return successResponse(res, data, 'My shop orders retrieved');
+  } catch (err) {
+    next(err);
+  }
+};

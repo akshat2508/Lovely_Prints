@@ -1,7 +1,17 @@
 import React from 'react';
+import { getDocumentDownloadUrl } from '../../services/shopService';
 
 export default function OrderPreview({ order, onClose }) {
   if (!order) return null;
+
+  const handleDownload = async () => {
+    try {
+      const url = await getDocumentDownloadUrl(order.documentId);
+      window.open(url, '_blank');
+    } catch (err) {
+      alert('Failed to download document');
+    }
+  };
 
   return (
     <div className="order-preview-overlay" onClick={onClose}>
@@ -18,8 +28,8 @@ export default function OrderPreview({ order, onClose }) {
         {/* Order Meta */}
         <div className="preview-section meta">
           <div className="preview-row">
-            <span className="preview-label">Order ID</span>
-            <span>#{order.id}</span>
+            <span className="preview-label">Order No</span>
+            <span>#{order.orderNo}</span>
           </div>
 
           <span className={`status-badge ${order.status}`}>
@@ -33,12 +43,12 @@ export default function OrderPreview({ order, onClose }) {
 
           <div className="preview-row">
             <span className="preview-label">Name</span>
-            <span>{order.studentName}</span>
+            <span>{order.studentName || '—'}</span>
           </div>
 
           <div className="preview-row">
             <span className="preview-label">Student ID</span>
-            <span>{order.studentId}</span>
+            <span>{order.studentId || '—'}</span>
           </div>
         </div>
 
@@ -58,12 +68,13 @@ export default function OrderPreview({ order, onClose }) {
 
           <div className="preview-specs">
             <span className="spec-pill">Paper: {order.paperType}</span>
-            <span className="spec-pill">Size: {order.size}</span>
+            <span className="spec-pill">Color: {order.colorMode}</span>
+            <span className="spec-pill">Finish: {order.finishType}</span>
             <span className="spec-pill">Copies: {order.copies}</span>
           </div>
         </div>
 
-        {/* ETA */}
+        {/* ETA (placeholder for now) */}
         <div className="preview-section eta">
           <div className="preview-row">
             <span className="preview-label">Estimated Time</span>
@@ -72,18 +83,14 @@ export default function OrderPreview({ order, onClose }) {
         </div>
 
         {/* Actions */}
-        {order.documentUrl && (
-          <div className="preview-actions">
-            <a
-              href={order.documentUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="preview-download"
-            >
-              Download Document
-            </a>
-          </div>
-        )}
+        <div className="preview-actions">
+          <button
+            className="preview-download"
+            onClick={handleDownload}
+          >
+            Download Document
+          </button>
+        </div>
       </div>
     </div>
   );

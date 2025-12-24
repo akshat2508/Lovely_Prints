@@ -39,7 +39,13 @@ export const updateOrderStatus = async (req, res, next) => {
     const { id } = req.params;
     const { status } = req.body;
 
-    const { data, error } = await supabaseService.updateOrderStatus(id, status);
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      return errorResponse(res, 'Authorization token missing', 401);
+    }
+
+    const { data, error } =
+      await supabaseService.updateOrderStatus(id, status, token);
 
     if (error) {
       return errorResponse(res, error.message, 400);
@@ -50,6 +56,7 @@ export const updateOrderStatus = async (req, res, next) => {
     next(error);
   }
 };
+
 
 export const deleteOrder = async (req, res, next) => {
   try {
