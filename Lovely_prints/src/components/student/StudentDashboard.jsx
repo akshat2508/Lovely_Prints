@@ -1,19 +1,16 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import logo from "../../assets/logo.png"
-import { getStudentOrders } from "../../services/studentService"
+import {
+  getStudentOrders,
+  getAllShops,
+  getShopPrintOptions
+} from "../../services/studentService"
 import "./dashboard.css"
 
-/* Backend order flow */
-const STATUS_FLOW = [
-  "pending",
-  "confirmed",
-  "printing",
-  "ready",
-  "completed"
-]
+/* Backend order lifecycle */
+const STATUS_FLOW = ["pending", "confirmed", "printing", "ready", "completed"]
 
-/* Backend → UI labels */
 const STATUS_LABELS = {
   pending: "Pending",
   confirmed: "Confirmed",
@@ -26,37 +23,41 @@ const STATUS_LABELS = {
 const StudentDashboard = () => {
   const navigate = useNavigate()
 
-  /* UI State */
+  /* UI state */
   const [showMenu, setShowMenu] = useState(false)
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [showTrackModal, setShowTrackModal] = useState(false)
   const [filter, setFilter] = useState("All")
 
-  /* Data State */
+  /* Orders */
   const [orders, setOrders] = useState([])
   const [loadingOrders, setLoadingOrders] = useState(false)
   const [selectedOrder, setSelectedOrder] = useState(null)
 
-  /* Logout */
-  const handleLogout = () => {
-    navigate("/login")
-  }
+  /* Create order (API driven) */
+  const [shops, setShops] = useState([])
+  const [selectedShop, setSelectedShop] = useState("")
+  const [shopOptions, setShopOptions] = useState(null)
+  const [loadingOptions, setLoadingOptions] = useState(false)
 
-  /* Normalize backend status → filter label */
-  const normalizeStatus = (status) => {
-    if (status === "completed") return "Delivered"
-    return "In Progress"
-  }
+  /* Controlled dropdowns */
+  const [paperType, setPaperType] = useState("")
+  const [colorMode, setColorMode] = useState("")
+  const [finishType, setFinishType] = useState("")
+
+  /* Logout */
+  const handleLogout = () => navigate("/login")
+
+  /* Normalize for filters */
+  const normalizeStatus = (status) =>
+    status === "completed" ? "Completed" : "In Progress"
 
   /* Fetch orders */
   const fetchOrders = async () => {
     try {
       setLoadingOrders(true)
       const res = await getStudentOrders()
-
-      if (res?.success) {
-        setOrders(res.data || [])
-      }
+      if (res?.success) setOrders(res.data || [])
     } catch (err) {
       console.error("Failed to fetch orders", err)
     } finally {
@@ -64,18 +65,60 @@ const StudentDashboard = () => {
     }
   }
 
-  /* Initial fetch */
   useEffect(() => {
     fetchOrders()
   }, [])
 
-  /* Poll every 20s */
   useEffect(() => {
     const interval = setInterval(fetchOrders, 20000)
     return () => clearInterval(interval)
   }, [])
 
-  /* Filter logic */
+  /* Fetch shops when modal opens */
+  useEffect(() => {
+    if (!showCreateModal) return
+
+    const fetchShops = async () => {
+      try {
+        const res = await getAllShops()
+        if (res?.success) setShops(res.data)
+      } catch (err) {
+        console.error("Failed to fetch shops", err)
+      }
+    }
+
+    fetchShops()
+  }, [showCreateModal])
+
+  /* 🔥 FIXED: Fetch print options (correct response mapping) */
+  useEffect(() => {
+    if (!selectedShop) return
+
+    setPaperType("")
+    setColorMode("")
+    setFinishType("")
+    setShopOptions(null)
+
+    const fetchOptions = async () => {
+      try {
+        setLoadingOptions(true)
+        const res = await getShopPrintOptions(selectedShop)
+
+        // ✅ IMPORTANT FIX: res.data is already the inner `data`
+        if (res?.success) {
+          setShopOptions(res.data)
+        }
+      } catch (err) {
+        console.error("Failed to fetch shop options", err)
+      } finally {
+        setLoadingOptions(false)
+      }
+    }
+
+    fetchOptions()
+  }, [selectedShop])
+
+  /* Filter orders */
   const filteredOrders = orders.filter(order => {
     if (filter === "All") return true
     return normalizeStatus(order.status) === filter
@@ -85,7 +128,6 @@ const StudentDashboard = () => {
   const getTimelineState = (step, currentStatus) => {
     const stepIndex = STATUS_FLOW.indexOf(step)
     const currentIndex = STATUS_FLOW.indexOf(currentStatus)
-
     if (stepIndex < currentIndex) return "completed"
     if (stepIndex === currentIndex) return "active"
     return ""
@@ -120,7 +162,7 @@ const StudentDashboard = () => {
       {/* CONTENT */}
       <main className="dashboard-content1">
 
-        {/* TOP ACTIONS */}
+        {/* ACTIONS */}
         <div className="top-actions">
           <button
             className="new-order-btn"
@@ -145,12 +187,9 @@ const StudentDashboard = () => {
         {/* ORDERS */}
         <h2 className="section-heading">Recent Orders</h2>
 
-        {loadingOrders && (
-          <p style={{ color: "#777" }}>Loading orders...</p>
-        )}
-
+        {loadingOrders && <p className="muted">Loading orders...</p>}
         {!loadingOrders && filteredOrders.length === 0 && (
-          <p style={{ color: "#777" }}>No orders found.</p>
+          <p className="muted">No orders found.</p>
         )}
 
         {filteredOrders.map(order => (
@@ -169,9 +208,7 @@ const StudentDashboard = () => {
             </div>
 
             <div className="order-actions">
-              <span className="order-price">
-                ₹{order.total_price}
-              </span>
+              <span className="order-price">₹{order.total_price}</span>
 
               {order.status !== "completed" && (
                 <button
@@ -187,45 +224,65 @@ const StudentDashboard = () => {
             </div>
           </div>
         ))}
-
       </main>
 
-      {/* CREATE ORDER MODAL (UI ONLY) */}
+      {/* CREATE ORDER MODAL */}
       {showCreateModal && (
         <div className="modal-overlay">
           <div className="modal-card">
             <h2 className="modal-title">Create Print Order</h2>
 
-            <select className="modal-input">
-              <option>Select Shop Location</option>
-              <option>Block 27</option>
-              <option>Block 38</option>
-              <option>UniMall</option>
-            </select>
-
-            <select className="modal-input">
-              <option>Paper Type</option>
-              <option>A4</option>
-              <option>Bond Paper</option>
-              <option>Passport Size</option>
-            </select>
-
-            <input
-              type="number"
+            {/* Shop */}
+            <select
               className="modal-input"
-              placeholder="Number of Copies"
-            />
-
-            <select className="modal-input">
-              <option>Orientation</option>
-              <option>Portrait</option>
-              <option>Landscape</option>
+              value={selectedShop}
+              onChange={(e) => setSelectedShop(e.target.value)}
+            >
+              <option value="">Select Shop</option>
+              {shops.map(shop => (
+                <option key={shop.id} value={shop.id}>
+                  {shop.shop_name} ({shop.block})
+                </option>
+              ))}
             </select>
 
-            <select className="modal-input">
-              <option>Urgency</option>
-              <option>Normal</option>
-              <option>High (+₹10)</option>
+            {/* Paper Type */}
+            <select
+              className="modal-input"
+              value={paperType}
+              onChange={(e) => setPaperType(e.target.value)}
+              disabled={!shopOptions}
+            >
+              <option value="">Select Paper Type</option>
+              {shopOptions?.paper_types.map(p => (
+                <option key={p.id} value={p.id}>{p.name}</option>
+              ))}
+            </select>
+
+            {/* Color Mode */}
+            <select
+              className="modal-input"
+              value={colorMode}
+              onChange={(e) => setColorMode(e.target.value)}
+              disabled={!shopOptions}
+            >
+              <option value="">Select Color Mode</option>
+              {shopOptions?.color_modes.map(c => (
+                <option key={c.id} value={c.id}>{c.name}</option>
+              ))}
+            </select>
+
+            {/* Finish Type */}
+            <select
+              className="modal-input"
+              value={finishType}
+              onChange={(e) => setFinishType(e.target.value)}
+              disabled={!shopOptions}
+            >
+              <option value="">Select Finish Type</option>
+              {shopOptions?.finish_types.map(f => (
+                <option key={f.id} value={f.id}>{f.name}</option>
+              ))}
             </select>
 
             <label className="upload-box">
@@ -233,14 +290,24 @@ const StudentDashboard = () => {
               <input type="file" hidden />
             </label>
 
+            {loadingOptions && <p className="muted">Loading print options...</p>}
+
             <div className="modal-actions">
               <button
                 className="cancel-btn"
-                onClick={() => setShowCreateModal(false)}
+                onClick={() => {
+                  setShowCreateModal(false)
+                  setSelectedShop("")
+                  setShopOptions(null)
+                }}
               >
                 Cancel
               </button>
-              <button className="submit-btn">
+
+              <button
+                className="submit-btn"
+                disabled={!paperType || !colorMode || !finishType}
+              >
                 Submit Order
               </button>
             </div>
@@ -248,7 +315,7 @@ const StudentDashboard = () => {
         </div>
       )}
 
-      {/* TRACK ORDER MODAL (REAL STATUS) */}
+      {/* TRACK ORDER MODAL */}
       {showTrackModal && selectedOrder && (
         <div className="modal-overlay">
           <div className="modal-card">

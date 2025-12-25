@@ -1,7 +1,8 @@
 import api from "./api"
 
+/* ================= ORDERS ================= */
+
 /**
- * Fetch all orders for logged-in student
  * GET /students/orders
  */
 export const getStudentOrders = async () => {
@@ -10,7 +11,6 @@ export const getStudentOrders = async () => {
 }
 
 /**
- * Create new order
  * POST /students/orders
  */
 export const createStudentOrder = async (payload) => {
@@ -19,7 +19,6 @@ export const createStudentOrder = async (payload) => {
 }
 
 /**
- * Upload document to order
  * POST /students/orders/:orderId/documents
  */
 export const uploadOrderDocument = async (orderId, formData) => {
@@ -27,10 +26,35 @@ export const uploadOrderDocument = async (orderId, formData) => {
     `/students/orders/${orderId}/documents`,
     formData,
     {
-      headers: {
-        "Content-Type": "multipart/form-data"
-      }
+      headers: { "Content-Type": "multipart/form-data" }
     }
   )
+  return res.data
+}
+
+/* ================= SHOPS ================= */
+
+/**
+ * GET /shops
+ * Fetch all active shops
+ */
+export const getAllShops = async () => {
+  const res = await api.get("/shops")
+  return res.data
+}
+
+/**
+ * GET /shops/:shopId
+ */
+export const getShopDetails = async (shopId) => {
+  const res = await api.get(`/shops/${shopId}`)
+  return res.data
+}
+
+/**
+ * GET /shops/:shopId/options
+ */
+export const getShopPrintOptions = async (shopId) => {
+  const res = await api.get(`/shops/${shopId}/options`)
   return res.data
 }
