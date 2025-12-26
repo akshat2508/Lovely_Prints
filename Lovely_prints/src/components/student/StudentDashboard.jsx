@@ -185,46 +185,85 @@ const StudentDashboard = () => {
         </div>
 
         {/* ORDERS */}
-        <h2 className="section-heading">Recent Orders</h2>
+<h2 className="section-heading">Recent Orders</h2>
 
-        {loadingOrders && <p className="muted">Loading orders...</p>}
-        {!loadingOrders && filteredOrders.length === 0 && (
-          <p className="muted">No orders found.</p>
+{loadingOrders && <p className="muted-text">Loading orders...</p>}
+{!loadingOrders && filteredOrders.length === 0 && (
+  <p className="muted-text">No orders found.</p>
+)}
+
+{filteredOrders.map(order => {
+  const doc = order.documents?.[0];
+
+  return (
+    <div className="order-card1" key={order.id}>
+      <div className="order-left">
+        {/* Order Number */}
+        <strong className="order-title">Order #{order.order_no}</strong>
+
+        {/* Shop */}
+        <p className="order-shop">
+          <span className="icon"></span> {order.shops?.shop_name}
+          <span className="order-block"> ({order.shops?.block})</span>
+        </p>
+
+        {/* Notes (only if exists) */}
+        {order.notes && (
+          <p className="order-notes">
+            <span className="icon"></span> {order.notes}
+          </p>
         )}
 
-        {filteredOrders.map(order => (
-          <div className="order-card1" key={order.id}>
-            <div>
-              <strong>Order #{order.order_no}</strong>
-              <p
-                className={
-                  order.status === "completed"
-                    ? "status-complete"
-                    : "status-progress"
-                }
-              >
-                {STATUS_LABELS[order.status]}
-              </p>
-            </div>
+        {/* Document details */}
+        {doc && (
+          <>
+            <p className="order-doc">
+              <span className="icon"></span>
+              {doc.file_name}
+              <span className="muted"> — {doc.page_count} page(s)</span>
+            </p>
 
-            <div className="order-actions">
-              <span className="order-price">₹{order.total_price}</span>
+            <p className="order-printinfo muted">
+              {doc.paper_types?.name} • {doc.finish_types?.name} • {doc.color_modes?.name}
+            </p>
+          </>
+        )}
 
-              {order.status !== "completed" && (
-                <button
-                  className="track-btn"
-                  onClick={() => {
-                    setSelectedOrder(order)
-                    setShowTrackModal(true)
-                  }}
-                >
-                  Track Order
-                </button>
-              )}
-            </div>
-          </div>
-        ))}
-      </main>
+        {/* Status */}
+        <p className={`order-status ${order.status}`}>
+          {STATUS_LABELS[order.status]}
+        </p>
+
+        {/* Payment */}
+        <p className={`order-paid ${order.is_paid ? "paid" : "unpaid"}`}>
+          {order.is_paid ? "✔ Paid" : "✖ Not Paid"}
+        </p>
+
+        {/* Price */}
+        <p className="order-price-mobile">₹{order.total_price}</p>
+      </div>
+
+      {/* Right actions */}
+      <div className="order-right">
+        <span className="order-price">₹{order.total_price}</span>
+
+        {order.status !== "completed" && (
+          <button
+            className="track-btn"
+            onClick={() => {
+              setSelectedOrder(order);
+              setShowTrackModal(true);
+            }}
+          >
+            Track Order
+          </button>
+        )}
+      </div>
+    </div>
+  );
+})}
+
+</main>
 
       {/* CREATE ORDER MODAL */}
       {showCreateModal && (
