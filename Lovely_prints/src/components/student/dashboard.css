@@ -342,3 +342,95 @@
     flex-wrap: wrap;
   }
 }
+
+/* Layout inside order card */
+.order-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+/* Title */
+.order-title {
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+
+/* Icons spacing */
+.icon {
+  margin-right: 4px;
+}
+
+/* Shop text */
+.order-shop {
+  font-weight: 600;
+  color: #ffa44a;
+}
+
+/* Block name lighter */
+.order-block {
+  font-weight: 400;
+  color: #e2b387;
+}
+
+/* Notes italic */
+.order-notes {
+  color: #ffd9a0;
+  font-style: italic;
+}
+
+/* Document line */
+.order-doc {
+  color: #b4d2ff;
+}
+
+/* Light secondary text */
+.muted,
+.order-printinfo {
+  color: #b5b5b5;
+  font-size: 0.85rem;
+}
+
+/* Status coloring */
+.order-status {
+  margin-top: 4px;
+  font-weight: 600;
+}
+.order-status.printing { color: #f0c14a; }
+.order-status.ready { color: #61dafb; }
+.order-status.completed { color: #30e67c; }
+
+/* Payment */
+.order-paid {
+  margin-top: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.order-paid.paid { color: #30e67c; }
+.order-paid.unpaid { color: #ff6b6b; }
+
+/* Right column */
+.order-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+/* Price secondary for mobile */
+.order-price-mobile {
+  display: none;
+}
+
+/* Responsive alignment */
+@media (max-width: 670px) {
+  .order-right {
+    display: none;
+  }
+  .order-price-mobile {
+    display: block;
+    margin-top: 8px;
+    font-weight: 700;
+  }
+}
