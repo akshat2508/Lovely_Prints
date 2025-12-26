@@ -138,13 +138,45 @@ async getUserById(userId) {
     .order('created_at', { ascending: false });
 }
 
- async getOrdersByShopId(shopId, token) {
+async getOrdersByStudentId(studentId, token) {
   const supabaseUser = getUserSupabase(token);
 
   return await supabaseUser
     .from('orders')
-    .select('*, users(name, email), documents(*)')
-    .eq('shop_id', shopId)
+    .select(`
+      id,
+      order_no,
+      status,
+      total_price,
+      notes,
+      is_paid,
+      paid_at,
+      created_at,
+      updated_at,
+
+      shops (
+        shop_name,
+        block
+      ),
+
+      documents (
+        id,
+        file_name,
+        file_url,
+        page_count,
+        copies,
+        total_price,
+
+        paper_type_id,
+        color_mode_id,
+        finish_type_id,
+
+        paper_types ( name ),
+        color_modes ( name ),
+        finish_types ( name )
+      )
+    `)
+    .eq('student_id', studentId)
     .order('created_at', { ascending: false });
 }
 
