@@ -434,3 +434,119 @@
     font-weight: 700;
   }
 }
+
+/* ================= CREATE ORDER FORM FIXES ================= */
+
+/* Modal content spacing */
+.modal-card {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Extra spacing between inputs */
+.modal-card select,
+.modal-card input[type="number"] {
+  margin-bottom: 0.9rem;
+}
+
+/* Number inputs */
+.modal-input1 {
+  width: 100%;
+  padding: 0.7rem;
+  border-radius: 8px;
+  background-color: #121212;
+  border: none;
+  color: white;
+  outline: none;
+}
+
+.modal-input1:focus {
+  outline: 1px solid #F58220;
+}
+
+/* Upload box improvement */
+.upload-box1 {
+  display: block;
+  padding: 0.9rem;
+  background-color: #121212;
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  border: 1px dashed #444;
+  transition: all 0.2s ease;
+}
+
+.upload-box1:hover {
+  border-color: #F58220;
+  color: #F58220;
+}
+
+/* Selected file name */
+.upload-filename1 {
+  font-size: 0.8rem;
+  margin-top: 6px;
+  color: #b5b5b5;
+  text-align: center;
+}
+
+/* Submit button full width */
+.submit-btn1 {
+  width: 100%;
+  background-color: #F58220;
+  border: none;
+  padding: 0.7rem;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.submit-btn1:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+}
+
+/* Cancel button full width on mobile */
+.cancel-btn1 {
+  width: 100%;
+  background: #444;
+  border: none;
+  padding: 0.6rem;
+  border-radius: 10px;
+  color: white;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+/* Desktop modal buttons */
+@media (min-width: 480px) {
+  .modal-actions {
+    flex-direction: row;
+  }
+
+  .submit-btn1,
+  .cancel-btn1 {
+    width: auto;
+  }
+}
+
+/* ================= FILE INPUT FIX ================= */
+
+/* Hide ugly browser file input */
+input[type="file"] {
+  display: none;
+}
+
+/* ================= SAFETY: ORDER CARD ALIGNMENT ================= */
+
+.order-card1 {
+  align-items: flex-start;
+}
+
+/* Prevent text overflow */
+.order-doc,
+.order-printinfo,
+.order-notes {
+  word-break: break-word;
+}
