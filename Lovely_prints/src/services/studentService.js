@@ -21,39 +21,37 @@ export const createStudentOrder = async (payload) => {
 /**
  * POST /students/orders/:orderId/documents
  */
-export const uploadOrderDocument = async (orderId, formData) => {
+export const attachDocumentToOrder = async (orderId, payload) => {
   const res = await api.post(
     `/students/orders/${orderId}/documents`,
-    formData,
-    {
-      headers: { "Content-Type": "multipart/form-data" }
-    }
+    payload
   )
+  return res.data
+}
+
+/* ================= FILE UPLOAD ================= */
+
+/**
+ * POST /files/upload
+ */
+export const uploadFile = async (file) => {
+  const formData = new FormData()
+  formData.append("file", file)
+
+  const res = await api.post("/files/upload", formData, {
+    headers: { "Content-Type": "multipart/form-data" }
+  })
+
   return res.data
 }
 
 /* ================= SHOPS ================= */
 
-/**
- * GET /shops
- * Fetch all active shops
- */
 export const getAllShops = async () => {
   const res = await api.get("/shops")
   return res.data
 }
 
-/**
- * GET /shops/:shopId
- */
-export const getShopDetails = async (shopId) => {
-  const res = await api.get(`/shops/${shopId}`)
-  return res.data
-}
-
-/**
- * GET /shops/:shopId/options
- */
 export const getShopPrintOptions = async (shopId) => {
   const res = await api.get(`/shops/${shopId}/options`)
   return res.data
