@@ -10,6 +10,7 @@ import {
   attachDocumentToOrder,
 } from "../../services/studentService";
 import "./dashboard.css";
+import Payments from "./Payments"
 
 const STATUS_FLOW = ["pending", "confirmed", "printing", "ready", "completed"];
 
@@ -219,6 +220,13 @@ const StudentDashboard = () => {
                     Track Order
                   </button>
                 )}
+                {!order.is_paid && (
+  <Payments
+    order={order}
+    onSuccess={() => fetchOrders()}
+  />
+)}
+
               </div>
             </div>
           );

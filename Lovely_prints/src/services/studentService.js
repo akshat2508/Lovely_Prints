@@ -56,3 +56,21 @@ export const getShopPrintOptions = async (shopId) => {
   const res = await api.get(`/shops/${shopId}/options`)
   return res.data
 }
+
+/* ================= PAYMENTS ================= */
+
+/**
+ * POST /payments/create-order
+ */
+export const createPaymentOrder = async (orderId) => {
+  const res = await api.post("/payments/create-order", { orderId })
+  return res.data
+}
+
+/**
+ * POST /payments/verify
+ */
+export const verifyPayment = async (payload) => {
+  const res = await api.post("/payments/verify", payload)
+  return res.data
+}
