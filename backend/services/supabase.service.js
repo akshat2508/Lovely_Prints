@@ -128,15 +128,6 @@ async getUserById(userId) {
       .single();
   }
 
-  async getOrdersByStudentId(studentId, token) {
-  const supabaseUser = getUserSupabase(token);
-
-  return await supabaseUser
-    .from('orders')
-    .select('*, shops(shop_name, block), documents(*)')
-    .eq('student_id', studentId)
-    .order('created_at', { ascending: false });
-}
 
 async getOrdersByStudentId(studentId, token) {
   const supabaseUser = getUserSupabase(token);
@@ -387,17 +378,12 @@ async markPaymentSuccess(orderId, paymentId, signature) {
     .update({
       razorpay_payment_id: paymentId,
       razorpay_signature: signature,
-      status: 'paid',
+      status: 'success',
     })
     .eq('razorpay_order_id', orderId);
 }
 
-async markOrderPaid(orderId) {
-  return await supabaseAnon
-    .from('orders')
-    .update({ is_paid: true, status: 'confirmed' })
-    .eq('id', orderId);
-}
+
 // supabase.service.js
 async getOrderForPayment(orderId) {
   return await supabaseAnon
@@ -510,6 +496,15 @@ return await supabaseAdmin
 
     
 }
+
+async getPaymentByRazorpayOrder(razorpayOrderId) {
+  return await supabaseAnon
+    .from('payments')
+    .select('status')
+    .eq('razorpay_order_id', razorpayOrderId)
+    .single();
+}
+
 
 
 

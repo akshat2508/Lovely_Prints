@@ -8,7 +8,6 @@ export const createPaymentOrder = async (req, res) => {
     const studentId = req.user.id;
     const { orderId } = req.body;
 
-    // 1️⃣ Fetch order WITHOUT RLS
     const { data: order, error } =
       await supabaseService.getOrderForPayment(orderId);
 
@@ -16,7 +15,6 @@ export const createPaymentOrder = async (req, res) => {
       return errorResponse(res, 'Order not found', 404);
     }
 
-    // 2️⃣ Ownership check
     if (order.student_id !== studentId) {
       return errorResponse(res, 'Unauthorized', 403);
     }
@@ -29,13 +27,11 @@ export const createPaymentOrder = async (req, res) => {
       return errorResponse(res, 'Invalid order amount', 400);
     }
 
-    // 3️⃣ Create Razorpay order
     const razorpayOrder = await paymentService.createOrder(
       order.total_price,
       orderId
     );
 
-    // 4️⃣ Save payment
     await supabaseService.createPayment({
       order_id: orderId,
       student_id: studentId,
@@ -52,35 +48,49 @@ export const createPaymentOrder = async (req, res) => {
 };
 
 export const verifyPayment = async (req, res) => {
-  const {
-    razorpay_order_id,
-    razorpay_payment_id,
-    razorpay_signature,
-    orderId,
-  } = req.body;
+  try {
+    const {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+      orderId,
+    } = req.body;
 
-  const body = razorpay_order_id + '|' + razorpay_payment_id;
+    /* 1️⃣ Idempotency check */
+    const { data: existingPayment } =
+      await supabaseService.getPaymentByRazorpayOrder(
+        razorpay_order_id
+      );
 
-  const expectedSignature = crypto
-    .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
-    .update(body)
-    .digest('hex');
+    if (existingPayment?.status === 'success') {
+      return successResponse(res, null, 'Payment already verified');
+    }
 
-  if (expectedSignature !== razorpay_signature) {
-    return errorResponse(res, 'Payment verification failed', 400);
+    /* 2️⃣ Signature verification */
+    const body = razorpay_order_id + '|' + razorpay_payment_id;
+
+    const expectedSignature = crypto
+      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+      .update(body)
+      .digest('hex');
+
+    if (expectedSignature !== razorpay_signature) {
+      return errorResponse(res, 'Payment verification failed', 400);
+    }
+
+    /* 3️⃣ Mark payment success */
+    await supabaseService.markPaymentSuccess(
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature
+    );
+
+    /* 4️⃣ Mark order paid */
+    await supabaseService.markOrderPaid(orderId);
+
+    return successResponse(res, null, 'Payment successful');
+  } catch (err) {
+    console.error(err);
+    return errorResponse(res, 'Payment verification error', 500);
   }
-
-  // 1️⃣ Update payment
- // 1️⃣ Update payment record
-await supabaseService.markPaymentSuccess(
-  razorpay_order_id,
-  razorpay_payment_id,
-  razorpay_signature
-);
-
-// 2️⃣ Mark order paid
-await supabaseService.markOrderPaid(orderId);
-
-return successResponse(res, null, 'Payment successful');
-
 };
