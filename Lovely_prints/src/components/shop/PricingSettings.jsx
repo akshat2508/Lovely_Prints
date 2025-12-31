@@ -31,15 +31,13 @@ export default function PricingSettings() {
         const id = shopRes.data.data.id;
         setShopId(id);
 
-        const [paper, color, finish] = await Promise.all([
-          api.get(`/shops/${id}/paper-types`),
-          api.get(`/shops/${id}/color-modes`),
-          api.get(`/shops/${id}/finish-types`)
-        ]);
+        const res = await api.get(`/shops/${id}/options`);
 
-        setPaperTypes(paper.data.data);
-        setColorModes(color.data.data);
-        setFinishTypes(finish.data.data);
+setPaperTypes(res.data.data.paper_types);
+setColorModes(res.data.data.color_modes);
+setFinishTypes(res.data.data.finish_types);
+
+
       } catch (err) {
         console.error(err);
         alert("Failed to load pricing config ❌");
