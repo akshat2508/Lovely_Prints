@@ -3,7 +3,8 @@ import authMiddleware from '../middleware/auth.middleware.js';
 import requireRole from '../middleware/role.middleware.js';
 import {
   createFinishType,
-  getFinishTypesByShop
+  getFinishTypesByShop,
+  updateFinishType
 } from '../controllers/finishType.controller.js';
 
 const router = express.Router();
@@ -18,6 +19,13 @@ router.post(
 router.get(
   '/:shopId/finish-types',
   getFinishTypesByShop
+);
+
+router.patch(
+  '/finish-types/:id',
+  authMiddleware,
+  requireRole('shop_owner'),
+  updateFinishType
 );
 
 export default router;

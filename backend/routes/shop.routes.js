@@ -8,7 +8,8 @@ import {
   updateShop,
   getShopOrders,
   getShopPrintOptions,
-  getMyShopOrders
+  getMyShopOrders,
+  getMyShop
 } from '../controllers/shop.controller.js';
 import { updateOrderStatus } from '../controllers/shop.controller.js';
 
@@ -18,6 +19,13 @@ const router = express.Router();
 // Public routes
 // --------------------
 router.get('/', getAllShops);
+router.get(
+  '/me',
+  authMiddleware,
+  requireRole('shop_owner'),
+  getMyShop
+);
+
 router.get('/:id', getShopById);
 
 // Get print options (paper / color / finish) for a shop

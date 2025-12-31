@@ -205,3 +205,19 @@ export const getMyShopOrders = async (req, res, next) => {
     next(err);
   }
 };
+
+export const getMyShop = async (req, res, next) => {
+  try {
+    const userId = req.user.id; // from auth middleware
+
+    const { data, error } = await supabaseService.getShopByOwner(userId);
+
+    if (error || !data) {
+      return errorResponse(res, 'Shop not found for owner', 404);
+    }
+
+    return successResponse(res, data, 'Shop retrieved successfully');
+  } catch (err) {
+    next(err);
+  }
+};

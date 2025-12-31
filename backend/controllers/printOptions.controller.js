@@ -20,31 +20,40 @@ export const getPrintOptionsByShop = async (req, res, next) => {
 
 export const createPrintOption = async (req, res, next) => {
   try {
+    const ownerId = req.user.id;
+
     const {
-      shop_id,
       paper_type,
       color_mode,
       finish_type,
       price_per_page
     } = req.body;
 
-    if (!shop_id || !paper_type || !color_mode || !finish_type || !price_per_page) {
+    if (!paper_type || !color_mode || !finish_type || !price_per_page) {
       return errorResponse(res, 'All fields are required', 400);
     }
 
-   const token = req.headers.authorization.split(' ')[1];
+    // 1️⃣ Find shop owned by this user
+    const { data: shop, error: shopError } =
+      await supabaseService.getShopByOwner(ownerId);
 
-const { data, error } = await supabaseService.createPrintOption(
-  {
-    shop_id,
-    paper_type,
-    color_mode,
-    finish_type,
-    price_per_page
-  },
-  token
-);
+    if (shopError || !shop) {
+      return errorResponse(res, 'Shop not found for owner', 404);
+    }
 
+    const token = req.headers.authorization.split(' ')[1];
+
+    // 2️⃣ Create print option with derived shop_id
+    const { data, error } = await supabaseService.createPrintOption(
+      {
+        shop_id: shop.id,
+        paper_type,
+        color_mode,
+        finish_type,
+        price_per_page
+      },
+      token
+    );
 
     if (error) {
       return errorResponse(res, error.message, 400);

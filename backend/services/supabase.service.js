@@ -75,7 +75,7 @@ async getUserById(userId) {
 
   
   async getShopById(shopId) {
-    return await supabase
+    return await supabaseAnon
     .from('shops')
     .select('*')
     .eq('id', shopId)
@@ -506,6 +506,49 @@ async getPaymentByRazorpayOrder(razorpayOrderId) {
 }
 
 
+async getShopByOwner(ownerId) {
+  return await supabaseAnon
+    .from('shops')
+    .select('id')
+    .eq('owner_id', ownerId)
+    .single();
+}
+
+// paper type
+async updatePaperType(id, is_active, token) {
+  const supabaseUser = getUserSupabase(token);
+
+  return await supabaseUser
+    .from('paper_types')
+    .update({ is_active })
+    .eq('id', id)
+    .select()
+    .single();
+}
+
+// color mode
+async updateColorMode(id, is_active, token) {
+  const supabaseUser = getUserSupabase(token);
+
+  return await supabaseUser
+    .from('color_modes')
+    .update({ is_active })
+    .eq('id', id)
+    .select()
+    .single();
+}
+
+// finish type
+async updateFinishType(id, is_active, token) {
+  const supabaseUser = getUserSupabase(token);
+
+  return await supabaseUser
+    .from('finish_types')
+    .update({ is_active })
+    .eq('id', id)
+    .select()
+    .single();
+}
 
 
 }

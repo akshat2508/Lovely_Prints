@@ -44,3 +44,20 @@ export const getPaperTypesByShop = async (req, res, next) => {
     next(err);
   }
 };
+
+export const updatePaperType = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { is_active } = req.body;
+    const token = req.headers.authorization.split(' ')[1];
+
+    const { data, error } =
+      await supabaseService.updatePaperType(id, is_active, token);
+
+    if (error) return errorResponse(res, error.message, 400);
+
+    return successResponse(res, data, 'Paper type updated');
+  } catch (err) {
+    next(err);
+  }
+};
