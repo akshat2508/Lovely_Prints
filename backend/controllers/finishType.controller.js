@@ -44,3 +44,20 @@ export const getFinishTypesByShop = async (req, res, next) => {
     next(err);
   }
 };
+
+export const updateFinishType = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { is_active } = req.body;
+    const token = req.headers.authorization.split(' ')[1];
+
+    const { data, error } =
+      await supabaseService.updateFinishType(id, is_active, token);
+
+    if (error) return errorResponse(res, error.message, 400);
+
+    return successResponse(res, data, 'Finish type updated');
+  } catch (err) {
+    next(err);
+  }
+};

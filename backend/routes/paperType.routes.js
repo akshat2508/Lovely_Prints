@@ -3,7 +3,8 @@ import authMiddleware from '../middleware/auth.middleware.js';
 import requireRole from '../middleware/role.middleware.js';
 import {
   createPaperType,
-  getPaperTypesByShop
+  getPaperTypesByShop,
+  updatePaperType
 } from '../controllers/paperType.controller.js';
 
 const router = express.Router();
@@ -21,5 +22,13 @@ router.get(
   '/:shopId/paper-types',
   getPaperTypesByShop
 );
+
+router.patch(
+  '/paper-types/:id',
+  authMiddleware,
+  requireRole('shop_owner'),
+  updatePaperType
+);
+
 
 export default router;

@@ -59,3 +59,40 @@ export const getDocumentDownloadUrl = async (documentId) => {
   const res = await api.get(`/documents/${documentId}/download`);
   return res.data.data.url;
 };
+
+
+
+/* ================= PRINT CONFIG ================= */
+
+export const getPaperTypes = async (shopId) => {
+  const res = await api.get(`/shops/${shopId}/paper-types`);
+  return res.data;
+};
+
+export const getColorModes = async (shopId) => {
+  const res = await api.get(`/shops/${shopId}/color-modes`);
+  return res.data;
+};
+
+export const getFinishTypes = async (shopId) => {
+  const res = await api.get(`/shops/${shopId}/finish-types`);
+  return res.data;
+};
+
+
+/* ================= CREATE OPTIONS ================= */
+
+export const createPaperType = async (shopId, payload) => {
+  const res = await api.post(`/shops/${shopId}/paper-types`, payload);
+  return res.data;
+};
+
+export const createColorMode = async (shopId, payload) => {
+  const res = await api.post(`/shops/${shopId}/color-modes`, payload);
+  return res.data;
+};
+
+export const createFinishType = async (shopId, payload) => {
+  const res = await api.post(`/shops/${shopId}/finish-types`, payload);
+  return res.data;
+};

@@ -33,7 +33,7 @@ app.use('/api/shops', shopRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/files', fileRoutes);
 app.use('/api/documents', documentRoutes);
-app.use('/api', printOptionRoutes);
+// app.use('/api', printOptionRoutes);
 app.use('/api/print-options', printOptionsRoutes);
 app.use('/api/shops', paperTypeRoutes);
 app.use('/api/shops', colorModeRoutes);
