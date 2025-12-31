@@ -97,13 +97,16 @@ export const getShopPrintOptions = async (req, res, next) => {
   try {
     const { shopId } = req.params;
 
-    const data = await supabaseService.getShopOptions(shopId);
+    const token = req.headers.authorization?.split(' ')[1];
+
+    const data = await supabaseService.getShopOptions(shopId, token);
 
     return successResponse(res, data, 'Shop print options retrieved');
   } catch (err) {
     next(err);
   }
 };
+
 
 export const createPaperType = async (req, res, next) => {
   try {

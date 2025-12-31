@@ -129,3 +129,16 @@ export const addDocumentToOrder = async (req, res, next) => {
     next(err);
   }
 };
+
+
+export const getShopPrintOptionsStudent = async (req, res, next) => {
+  try {
+    const { shopId } = req.params;
+
+    const data = await supabaseService.getShopOptionsStudent(shopId);
+
+    return successResponse(res, data, 'Shop print options retrieved');
+  } catch (err) {
+    next(err);
+  }
+};

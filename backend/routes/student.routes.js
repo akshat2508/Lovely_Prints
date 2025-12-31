@@ -7,6 +7,7 @@ import {
   getOrders,
   createOrder,
   addDocumentToOrder,
+  getShopPrintOptionsStudent
 } from '../controllers/student.controller.js';
 
 const router = express.Router();
@@ -47,5 +48,13 @@ router.post(
   requireRole('student'),
   addDocumentToOrder
 );
+// student → get active print options for a shop
+router.get(
+  '/shops/:shopId/options',
+  authMiddleware,
+  requireRole('student'),
+  getShopPrintOptionsStudent
+);
+
 
 export default router;

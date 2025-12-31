@@ -53,7 +53,7 @@ export const getAllShops = async () => {
 }
 
 export const getShopPrintOptions = async (shopId) => {
-  const res = await api.get(`/shops/${shopId}/options`)
+  const res = await api.get(`students/shops/${shopId}/options`)
   return res.data
 }
 

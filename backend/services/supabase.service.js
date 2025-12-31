@@ -256,7 +256,36 @@ async createPrintOption(printOptionData, token) {
     .single();
 }
 
-async getShopOptions(shopId) {
+async getShopOptions(shopId, token) {
+  const supabaseUser = getUserSupabase(token);
+
+  const paper = await supabaseUser
+    .from('paper_types')
+    .select('*')
+    .eq('shop_id', shopId)
+    .order('created_at');
+
+  const color = await supabaseUser
+    .from('color_modes')
+    .select('*')
+    .eq('shop_id', shopId)
+    .order('created_at');
+
+  const finish = await supabaseUser
+    .from('finish_types')
+    .select('*')
+    .eq('shop_id', shopId)
+    .order('created_at');
+
+  return {
+    paper_types: paper.data,
+    color_modes: color.data,
+    finish_types: finish.data
+  };
+}
+
+
+async getShopOptionsStudent(shopId) {
   const paper = await supabaseAnon
     .from('paper_types')
     .select('*')
@@ -327,23 +356,23 @@ async createColorMode(colorData, token) {
 }
 
 
-async getFinishTypesByShop(shopId) {
-  return await supabaseAnon
-    .from('finish_types')
-    .select('*')
-    .eq('shop_id', shopId)
-    .eq('is_active', true);
-}
+// async getFinishTypesByShop(shopId) {
+//   return await supabaseAnon
+//     .from('finish_types')
+//     .select('*')
+//     .eq('shop_id', shopId)
+//     .eq('is_active', true);
+// }
 
-async createFinishType(finishData, token) {
-  const supabaseUser = getUserSupabase(token);
+// async createFinishType(finishData, token) {
+//   const supabaseUser = getUserSupabase(token);
 
-  return await supabaseUser
-    .from('finish_types')
-    .insert(finishData)
-    .select()
-    .single();
-}
+//   return await supabaseUser
+//     .from('finish_types')
+//     .insert(finishData)
+//     .select()
+//     .single();
+// }
 
 async getFinishTypesByShop(shopId) {
   return await supabaseAnon
