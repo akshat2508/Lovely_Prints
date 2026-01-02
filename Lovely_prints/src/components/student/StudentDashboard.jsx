@@ -10,7 +10,7 @@ import {
   attachDocumentToOrder,
 } from "../../services/studentService";
 import "./dashboard.css";
-import Payments from "./Payments"
+import Payments from "./Payments";
 
 const STATUS_FLOW = ["pending", "confirmed", "printing", "ready", "completed"];
 
@@ -86,6 +86,7 @@ const StudentDashboard = () => {
     const fetchOptions = async () => {
       const res = await getShopPrintOptions(selectedShop);
       if (res?.success) setShopOptions(res.data);
+      console.table(res.data);
     };
 
     fetchOptions();
@@ -140,6 +141,34 @@ const StudentDashboard = () => {
       setSubmitting(false);
     }
   };
+
+  const selectedPaper = shopOptions?.paper_types?.find(
+    (p) => p.id === paperType
+  );
+
+  const selectedColor = shopOptions?.color_modes?.find(
+    (c) => c.id === colorMode
+  );
+
+  const selectedFinish = shopOptions?.finish_types?.find(
+    (f) => f.id === finishType
+  );
+
+  const totalPrice = (() => {
+    if (!selectedPaper) return 0;
+
+    const paperPrice = Number(selectedPaper.base_price || 0);
+    const colorPrice = Number(selectedColor?.extra_price || 0);
+    const finishPrice = Number(selectedFinish?.extra_price || 0);
+
+    return (
+      (paperPrice + colorPrice + finishPrice) *
+      Number(pageCount) *
+      Number(copies)
+    );
+  })();
+  const canSubmit =
+    selectedShop && paperType && colorMode && finishType && selectedFile;
 
   return (
     <div className="dashboard">
@@ -221,12 +250,8 @@ const StudentDashboard = () => {
                   </button>
                 )}
                 {!order.is_paid && (
-  <Payments
-    order={order}
-    onSuccess={() => fetchOrders()}
-  />
-)}
-
+                  <Payments order={order} onSuccess={() => fetchOrders()} />
+                )}
               </div>
             </div>
           );
@@ -234,127 +259,140 @@ const StudentDashboard = () => {
       </main>
 
       {showCreateModal && (
-  <div className="modal-overlay">
-    <div className="modal-card">
-      <h2 className="modal-title">Create Print Order</h2>
+        <div className="modal-overlay">
+          <div className="modal-card">
+            <h2 className="modal-title">Create Print Order</h2>
 
-      {/* Shop */}
-      <select
-        className="modal-input1"
-        value={selectedShop}
-        onChange={(e) => setSelectedShop(e.target.value)}
-      >
-        <option value="">Select Shop</option>
-        {shops.map((s) => (
-          <option key={s.id} value={s.id}>
-            {s.shop_name}
-          </option>
-        ))}
-      </select>
+            {/* Shop */}
+            <select
+              className="modal-input1"
+              value={selectedShop}
+              onChange={(e) => setSelectedShop(e.target.value)}
+            >
+              <option value="">Select Shop</option>
+              {shops.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.shop_name}
+                </option>
+              ))}
+            </select>
 
-      {/* Paper Type */}
-      <select
-        className="modal-input1"
-        value={paperType}
-        onChange={(e) => setPaperType(e.target.value)}
-      >
-        <option value="">Paper Type</option>
-        {shopOptions?.paper_types.map((p) => (
-          <option key={p.id} value={p.id}>
-            {p.name}
-          </option>
-        ))}
-      </select>
+            {/* Paper Type */}
+            <select
+              className="modal-input1"
+              value={paperType}
+              onChange={(e) => setPaperType(e.target.value)}
+            >
+              <option value="">Paper Type</option>
+              {shopOptions?.paper_types.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
 
-      {/* Color Mode */}
-      <select
-        className="modal-input1"
-        value={colorMode}
-        onChange={(e) => setColorMode(e.target.value)}
-      >
-        <option value="">Color Mode</option>
-        {shopOptions?.color_modes.map((c) => (
-          <option key={c.id} value={c.id}>
-            {c.name}
-          </option>
-        ))}
-      </select>
+            {/* Color Mode */}
+            <select
+              className="modal-input1"
+              value={colorMode}
+              onChange={(e) => setColorMode(e.target.value)}
+            >
+              <option value="">Color Mode</option>
+              {shopOptions?.color_modes.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
 
-      {/* Finish Type */}
-      <select
-        className="modal-input1"
-        value={finishType}
-        onChange={(e) => setFinishType(e.target.value)}
-      >
-        <option value="">Finish Type</option>
-        {shopOptions?.finish_types.map((f) => (
-          <option key={f.id} value={f.id}>
-            {f.name}
-          </option>
-        ))}
-      </select>
+            {/* Finish Type */}
+            <select
+              className="modal-input1"
+              value={finishType}
+              onChange={(e) => setFinishType(e.target.value)}
+            >
+              <option value="">Finish Type</option>
+              {shopOptions?.finish_types.map((f) => (
+                <option key={f.id} value={f.id}>
+                  {f.name}
+                </option>
+              ))}
+            </select>
 
-      {/* Page Count */}
-      <label>Page Count
-      <input
-        type="number"
-        className="modal-input1"
-        placeholder="Page Count"
-        min={1}
-        value={pageCount}
-        onChange={(e) => setPageCount(Number(e.target.value))}
-      />
-      </label>
+            {/* Page Count */}
+            <label>
+              Page Count
+              <input
+                type="number"
+                className="modal-input1"
+                placeholder="Page Count"
+                min={1}
+                value={pageCount}
+                onChange={(e) => setPageCount(Number(e.target.value))}
+              />
+            </label>
 
-      {/* Copies */}
-        <label>No. of copies
-      <input
-        type="number"
-        className="modal-input1"
-        placeholder="Copies"
-        min={1}
-        value={copies}
-        onChange={(e) => setCopies(Number(e.target.value))}
-      />
-      </label>
+            {/* Copies */}
+            <label>
+              No. of copies
+              <input
+                type="number"
+                className="modal-input1"
+                placeholder="Copies"
+                min={1}
+                value={copies}
+                onChange={(e) => setCopies(Number(e.target.value))}
+              />
+            </label>
 
-      {/* File Upload */}
-      <label className="upload-box1">
-        Upload Document (PDF / DOC)
-        <input
-          type="file"
-          accept=".pdf,.doc,.docx"
-          onChange={(e) => setSelectedFile(e.target.files[0])}
-        />
-      </label>
+            {/* File Upload */}
+            <label className="upload-box1">
+              Upload Document (PDF / DOC)
+              <input
+                type="file"
+                accept=".pdf,.doc,.docx"
+                onChange={(e) => setSelectedFile(e.target.files[0])}
+              />
+            </label>
 
-      {selectedFile && (
-        <div className="upload-filename1">
-          {selectedFile.name}
+            {selectedFile && (
+              <div className="upload-filename1">{selectedFile.name}</div>
+            )}
+            {selectedPaper && (
+              <div className="price-preview">
+                <p>
+                  <strong>Price Breakdown</strong>
+                </p>
+                <p>Paper: ₹{selectedPaper.base_price}</p>
+                <p>Color: ₹{selectedColor?.extra_price || 0}</p>
+                <p>Finish: ₹{selectedFinish?.extra_price || 0}</p>
+                <hr />
+                <p>
+                  <strong>Total: ₹{totalPrice}</strong>
+                </p>
+              </div>
+            )}
+
+            {/* Actions */}
+            <div className="modal-actions">
+              <button
+                className="submit-btn1"
+                disabled={submitting || !canSubmit}
+                onClick={handleSubmitOrder}
+              >
+                {submitting ? "Submitting..." : "Submit Order"}
+              </button>
+
+              <button
+                className="cancel-btn1"
+                onClick={() => setShowCreateModal(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
         </div>
       )}
-
-      {/* Actions */}
-      <div className="modal-actions">
-        <button
-          className="submit-btn1"
-          disabled={submitting}
-          onClick={handleSubmitOrder}
-        >
-          {submitting ? "Submitting..." : "Submit Order"}
-        </button>
-
-        <button
-          className="cancel-btn1"
-          onClick={() => setShowCreateModal(false)}
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
 
       {showTrackModal && selectedOrder && (
         <div className="modal-overlay">
