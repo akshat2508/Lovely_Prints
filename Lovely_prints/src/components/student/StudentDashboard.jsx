@@ -11,6 +11,7 @@ import {
 } from "../../services/studentService";
 import "./dashboard.css";
 import Payments from "./Payments";
+import { PDFDocument } from "pdf-lib";
 
 const STATUS_FLOW = ["pending", "confirmed", "printing", "ready", "completed"];
 
@@ -170,6 +171,12 @@ const StudentDashboard = () => {
   const canSubmit =
     selectedShop && paperType && colorMode && finishType && selectedFile;
 
+  const getPdfPageCount = async (file) => {
+    const arrayBuffer = await file.arrayBuffer();
+    const pdfDoc = await PDFDocument.load(arrayBuffer);
+    return pdfDoc.getPageCount();
+  };
+
   return (
     <div className="dashboard">
       <header className="dashboard-header1">
@@ -325,10 +332,8 @@ const StudentDashboard = () => {
               <input
                 type="number"
                 className="modal-input1"
-                placeholder="Page Count"
-                min={1}
                 value={pageCount}
-                onChange={(e) => setPageCount(Number(e.target.value))}
+                readOnly
               />
             </label>
 
@@ -350,8 +355,22 @@ const StudentDashboard = () => {
               Upload Document (PDF / DOC)
               <input
                 type="file"
-                accept=".pdf,.doc,.docx"
-                onChange={(e) => setSelectedFile(e.target.files[0])}
+                accept=".pdf"
+                onChange={async (e) => {
+                  const file = e.target.files[0];
+                  if (!file) return;
+
+                  setSelectedFile(file);
+
+                  // 🔥 Auto-detect page count
+                  try {
+                    const pages = await getPdfPageCount(file);
+                    setPageCount(pages);
+                  } catch (err) {
+                    console.error("Failed to read PDF pages", err);
+                    alert("Unable to read page count from PDF");
+                  }
+                }}
               />
             </label>
 
