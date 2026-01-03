@@ -10,7 +10,7 @@ import {
   attachDocumentToOrder,
 } from "../../services/studentService";
 import "./dashboard.css";
-import Payments from "./Payments";
+import { startPayment } from "./Payments";
 import { PDFDocument } from "pdf-lib";
 
 const STATUS_FLOW = ["pending", "confirmed", "printing", "ready", "completed"];
@@ -47,6 +47,8 @@ const StudentDashboard = () => {
   const [finishType, setFinishType] = useState("");
   const [pageCount, setPageCount] = useState(1);
   const [copies, setCopies] = useState(1);
+  /* New state to hold the freshly created order for payment */
+  const [orderReadyForPayment, setOrderReadyForPayment] = useState(null);
 
   /* File */
   const [selectedFile, setSelectedFile] = useState(null);
@@ -94,7 +96,7 @@ const StudentDashboard = () => {
   }, [selectedShop]);
 
   /* 🔥 CORE LOGIC */
-  const handleSubmitOrder = async () => {
+  const handleSubmitOrderAndPreparePayment = async () => {
     if (!selectedFile) return;
 
     try {
@@ -123,24 +125,41 @@ const StudentDashboard = () => {
         finish_type_id: finishType,
       });
 
-      // 4️⃣ Reset UI
-      setShowCreateModal(false);
-      setSelectedShop("");
-      setShopOptions(null);
-      setSelectedFile(null);
-      setPaperType("");
-      setColorMode("");
-      setFinishType("");
-      setPageCount(1);
-      setCopies(1);
+      // 4️⃣ Set this order to be ready for payment
+      const preparedOrder = {
+        ...orderRes.data,
+        total_price: totalPrice,
+      };
+      setOrderReadyForPayment(preparedOrder);
 
-      fetchOrders();
+      return preparedOrder; // ✅ return it so startPayment gets a valid order
     } catch (err) {
       console.error("Order creation failed", err);
       alert("Failed to create order");
+      return null;
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handlePaymentSuccess = () => {
+    // Close modal & reset all
+    setShowCreateModal(false);
+    setOrderReadyForPayment(null);
+    resetForm();
+
+    // Refresh orders in dashboard
+    fetchOrders();
+  };
+  const resetForm = () => {
+    setSelectedShop("");
+    setShopOptions(null);
+    setSelectedFile(null);
+    setPaperType("");
+    setColorMode("");
+    setFinishType("");
+    setPageCount(1);
+    setCopies(1);
   };
 
   const selectedPaper = shopOptions?.paper_types?.find(
@@ -255,9 +274,6 @@ const StudentDashboard = () => {
                   >
                     Track Order
                   </button>
-                )}
-                {!order.is_paid && (
-                  <Payments order={order} onSuccess={() => fetchOrders()} />
                 )}
               </div>
             </div>
@@ -394,17 +410,43 @@ const StudentDashboard = () => {
 
             {/* Actions */}
             <div className="modal-actions">
-              <button
-                className="submit-btn1"
-                disabled={submitting || !canSubmit}
-                onClick={handleSubmitOrder}
-              >
-                {submitting ? "Submitting..." : "Submit Order"}
-              </button>
+              {submitting ? (
+                <button className="submit-btn1" disabled>
+                  Processing...
+                </button>
+              ) : !selectedFile || !canSubmit ? (
+                <button className="submit-btn1" disabled>
+                  Fill all details
+                </button>
+              ) : (
+                <button
+                  className="submit-btn1"
+                  onClick={async () => {
+                    try {
+                      // 1️⃣ Submit order and prepare for payment
+                      const order = await handleSubmitOrderAndPreparePayment();
+
+                      // 2️⃣ Once order is ready, start Razorpay payment
+                      await startPayment(order, handlePaymentSuccess);
+                    } catch (err) {
+                      console.error(
+                        "Error submitting order or processing payment",
+                        err
+                      );
+                      alert("Something went wrong. Please try again.");
+                    }
+                  }}
+                >
+                  Submit & Proceed to Pay
+                </button>
+              )}
 
               <button
                 className="cancel-btn1"
-                onClick={() => setShowCreateModal(false)}
+                onClick={() => {
+                  setShowCreateModal(false);
+                  resetForm();
+                }}
               >
                 Cancel
               </button>
