@@ -63,6 +63,8 @@ export const createOrder = async (req, res, next) => {
       student_id: studentId,
       shop_id: req.body.shop_id,
       notes: req.body.description || null,
+      orientation: req.body.orientation || 'portrait',
+      is_urgent: Boolean(req.body.is_urgent),
     };
 
     const { data, error } =
