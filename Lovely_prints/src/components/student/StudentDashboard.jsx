@@ -47,6 +47,12 @@ const StudentDashboard = () => {
   const [finishType, setFinishType] = useState("");
   const [pageCount, setPageCount] = useState(1);
   const [copies, setCopies] = useState(1);
+  /* Order-level config */
+  const [orientation, setOrientation] = useState("portrait");
+  const [isUrgent, setIsUrgent] = useState(false);
+
+  const URGENCY_FEE = 10; // UI display only (DB is source of truth)
+
   /* New state to hold the freshly created order for payment */
   const [orderReadyForPayment, setOrderReadyForPayment] = useState(null);
 
@@ -106,6 +112,9 @@ const StudentDashboard = () => {
       const orderRes = await createStudentOrder({
         shop_id: selectedShop,
         description: "Print order",
+
+        orientation, // 👈 NEW
+        is_urgent: isUrgent, // 👈 NEW (urgency_fee handled by DB trigger)
       });
 
       const orderId = orderRes.data.id;
@@ -160,6 +169,8 @@ const StudentDashboard = () => {
     setFinishType("");
     setPageCount(1);
     setCopies(1);
+    setOrientation("portrait");
+    setIsUrgent(false);
   };
 
   const selectedPaper = shopOptions?.paper_types?.find(
@@ -181,11 +192,12 @@ const StudentDashboard = () => {
     const colorPrice = Number(selectedColor?.extra_price || 0);
     const finishPrice = Number(selectedFinish?.extra_price || 0);
 
-    return (
+    const base =
       (paperPrice + colorPrice + finishPrice) *
       Number(pageCount) *
-      Number(copies)
-    );
+      Number(copies);
+
+    return isUrgent ? base + URGENCY_FEE : base;
   })();
   const canSubmit =
     selectedShop && paperType && colorMode && finishType && selectedFile;
@@ -240,6 +252,20 @@ const StudentDashboard = () => {
                     <p className="order-printinfo">
                       {doc.paper_types?.name} • {doc.color_modes?.name} •{" "}
                       {doc.finish_types?.name}
+                      {/* Orientation */}
+                      {order.orientation && (
+                        <span className="order-meta_k">
+                          {" "}
+                          •{" "}
+                          {order.orientation === "portrait"
+                            ? "Portrait"
+                            : "Landscape"}
+                        </span>
+                      )}
+                      {/* Urgent badge */}
+                      {order.is_urgent && (
+                        <span className="order-urgent_k"> • ( Urgent )</span>
+                      )}
                     </p>
                   </>
                 )}
@@ -262,8 +288,16 @@ const StudentDashboard = () => {
 
               {/* Right side */}
               <div className="order-right">
+                <span className="order-date-k">
+                  {new Date(order.created_at).toLocaleString("en-US", {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </span>
                 <span className="order-price">₹{order.total_price}</span>
-
                 {order.status !== "completed" && (
                   <button
                     className="track-btn"
@@ -341,6 +375,18 @@ const StudentDashboard = () => {
                 </option>
               ))}
             </select>
+            {/* Orientation */}
+            <label>
+              Orientation
+              <select
+                className="modal-input1"
+                value={orientation}
+                onChange={(e) => setOrientation(e.target.value)}
+              >
+                <option value="portrait">Portrait</option>
+                <option value="landscape">Landscape</option>
+              </select>
+            </label>
 
             {/* Page Count */}
             <label>
@@ -389,6 +435,16 @@ const StudentDashboard = () => {
                 }}
               />
             </label>
+            {/* Urgent Print */}
+            <label className="urgent-toggle">
+              <input
+                type="checkbox"
+                checked={isUrgent}
+                onChange={(e) => setIsUrgent(e.target.checked)}
+              />
+              <span className="toggle-slider"></span>
+              <span className="toggle-text">Urgent print (+₹10)</span>
+            </label>
 
             {selectedFile && (
               <div className="upload-filename1">{selectedFile.name}</div>
@@ -401,6 +457,8 @@ const StudentDashboard = () => {
                 <p>Paper: ₹{selectedPaper.base_price}</p>
                 <p>Color: ₹{selectedColor?.extra_price || 0}</p>
                 <p>Finish: ₹{selectedFinish?.extra_price || 0}</p>
+                {isUrgent && <p>Urgent: ₹{URGENCY_FEE}</p>}
+
                 <hr />
                 <p>
                   <strong>Total: ₹{totalPrice}</strong>
