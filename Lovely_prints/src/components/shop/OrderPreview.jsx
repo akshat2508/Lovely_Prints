@@ -32,14 +32,47 @@ export default function OrderPreview({ order, onClose }) {
             <span>#{order.orderNo}</span>
           </div>
 
+            <div className='preview-row'>
+            <span className="preview-label">Status</span>
+
           <span className={`status-badge ${order.status}`}>
             {order.status}
           </span>
+          </div>
+            
+            <div className="preview-row">
+            <span className="preview-label">Urgency</span>
+            <span>
+              {order.isUrgent ? `Urgent (+₹${order.urgencyFee})` : "NO"}
+            </span>
+          </div>
+
+          <div className="preview-row">
+            <span className="preview-label">Payment</span>
+            <span>
+              {order.isPaid ? "Paid ✅" : "Not Paid ❌"}
+            </span>
+          </div>
+
+          {/* <div className="preview-row">
+            <span className="preview-label">Orientation</span>
+            <span>
+              {order.orientation === "landscape" ? "Landscape" : "Portrait"}
+            </span>
+          </div> */}
+
+          <div className="preview-row">
+            <span className="preview-label">Created At</span>
+            <span>
+              {new Date(order.createdAt).toLocaleString()}
+            </span>
+          </div>
+
         </div>
 
         {/* Student Info */}
         <div className="preview-section student">
-          <h4>Student Information</h4>
+          <h4>Customer Information</h4>
 
           <div className="preview-row">
             <span className="preview-label">Name</span>
@@ -47,7 +80,7 @@ export default function OrderPreview({ order, onClose }) {
           </div>
 
           <div className="preview-row">
-            <span className="preview-label">Student ID</span>
+            <span className="preview-label">Customer ID</span>
             <span>{order.studentId || '—'}</span>
           </div>
         </div>
@@ -71,6 +104,8 @@ export default function OrderPreview({ order, onClose }) {
             <span className="spec-pill">Color: {order.colorMode}</span>
             <span className="spec-pill">Finish: {order.finishType}</span>
             <span className="spec-pill">Copies: {order.copies}</span>
+            <span className="spec-pill">Orientation: {order.orientation}</span>
+
           </div>
         </div>
 
@@ -83,14 +118,22 @@ export default function OrderPreview({ order, onClose }) {
         </div>
 
         {/* Actions */}
-        <div className="preview-actions">
-          <button
-            className="preview-download"
-            onClick={handleDownload}
-          >
-            Download Document
-          </button>
-        </div>
+{order.isPaid && (
+  <div className="preview-actions">
+    <button
+      className="preview-download"
+      onClick={handleDownload}
+      disabled={order.status === "completed"}
+    >
+      {order.status === "completed"
+        ? "Completed"
+        : "Download Document"}
+    </button>
+  </div>
+)}
+
+
+
       </div>
     </div>
   );
