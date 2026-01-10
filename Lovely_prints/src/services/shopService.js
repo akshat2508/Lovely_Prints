@@ -11,10 +11,15 @@ const adaptOrder = (order) => {
     id: order.id,
     orderNo: order.order_no,
     status: order.status,
+    createdAt: order.created_at,
+    orientation: order.orientation,
+    isUrgent: order.is_urgent,
+    urgencyFee: order.urgency_fee,
+    isPaid: order.is_paid ?? false,
 
     // student
-   studentName: order.student?.name || "Unknown",
-studentId: order.student_id || "-",
+    studentName: order.student?.name || "Unknown",
+    studentId: order.student_id || "-",
 
     // document
     documentId: doc.id,
@@ -26,11 +31,11 @@ studentId: order.student_id || "-",
     finishType: doc.finish_types?.name || "-",
     copies: doc.copies || 1,
 
-    // placeholders (future)
+    // placeholders
     eta: "—",
-    isExpress: false,
   };
 };
+
 
 /**
  * GET orders for logged-in shop owner

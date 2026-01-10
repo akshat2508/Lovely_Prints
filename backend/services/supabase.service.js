@@ -506,6 +506,7 @@ return await supabaseAdmin
     orientation,
     is_urgent,
     urgency_fee,
+    is_paid,
     created_at,
     student_id,
 

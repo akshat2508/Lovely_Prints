@@ -4,6 +4,7 @@ import { getDocumentDownloadUrl } from "../../services/shopService";
 export default function OrderDetails({ order, onStatusChange, onClick }) {
   const [downloading, setDownloading] = useState(false);
   const [updating, setUpdating] = useState(false);
+const createdDate = new Date(order.createdAt);
 
   const getNextStatus = (status) => {
     const flow = {
@@ -27,18 +28,21 @@ export default function OrderDetails({ order, onStatusChange, onClick }) {
 
   const nextStatus = getNextStatus(order.status);
 
-  const handleDownload = async (e) => {
-    e.stopPropagation();
-    try {
-      setDownloading(true);
-      const url = await getDocumentDownloadUrl(order.documentId);
-      window.open(url, "_blank");
-    } catch {
-      alert("Failed to download document");
-    } finally {
-      setDownloading(false);
-    }
-  };
+const handleDownload = async (e) => {
+  e.stopPropagation();
+  if (order.status === "completed") return;
+
+  try {
+    setDownloading(true);
+    const url = await getDocumentDownloadUrl(order.documentId);
+    window.open(url, "_blank");
+  } catch {
+    alert("Failed to download document");
+  } finally {
+    setDownloading(false);
+  }
+};
+
 
   const handleStatusUpdate = async (e) => {
     e.stopPropagation();
@@ -49,38 +53,67 @@ export default function OrderDetails({ order, onStatusChange, onClick }) {
 
   return (
     <div className="order-card" onClick={onClick}>
-      <div className="order-header">
-        <div className="order-id">#{order.orderNo}</div>
-        <span className={`status-badge ${order.status}`}>
-          {order.status}
-        </span>
-      </div>
+     <div className="order-header">
+  <div className="order-id">#{order.orderNo}</div>
+
+  <span className={`status-badge ${order.status}`}>
+    {order.status}
+  </span>
+
+  {order.isUrgent && (
+    <span className="badge urgent">Urgent</span>
+  )}
+
+  <span className={`badge ${order.isPaid ? "paid" : "unpaid"}`}>
+    {order.isPaid ? "Paid" : "Not Paid"}
+  </span>
+</div>
+
 
       <div className="order-body">
         <div className="student-info">
           <h3>{order.studentName}</h3>
           <p>{order.studentId}</p>
         </div>
+        <div className="order-meta order-header">
+      <span>📅 {createdDate.toLocaleDateString('en-IN', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric'
+})}</span>
 
-        <div className="document-info">
-          <p>{order.documentName}</p>
-          <button
-            className="download-button"
-            disabled={downloading}
-            onClick={handleDownload}
-          >
-            {downloading ? "Preparing..." : "Download"}
-          </button>
+<span>⏰ {createdDate.toLocaleTimeString('en-IN', {
+  hour: '2-digit',
+  minute: '2-digit'
+})}</span>
         </div>
+
+       <div className="document-info">
+  <p>{order.documentName}</p>
+  <button
+    className="download-button"
+    disabled={!order.isPaid || order.status === "completed" || downloading}
+    onClick={handleDownload}
+  >
+    {!order.isPaid
+      ? "Not Paid"
+      : order.status === "completed"
+      ? "Completed"
+      : downloading
+      ? "Preparing..."
+      : "Download"}
+  </button>
+</div>
 
         <div className="print-details">
           <span>Paper: {order.paperType}</span>
           <span>Color: {order.colorMode}</span>
           <span>Finish: {order.finishType}</span>
           <span>Copies: {order.copies}</span>
+           {order.orientation === "landscape" ? "Landscape" : "Portrait"}
         </div>
 
-        {nextStatus && (
+        {nextStatus && order.isPaid && (
           <button
             className="action-button"
             disabled={updating}
