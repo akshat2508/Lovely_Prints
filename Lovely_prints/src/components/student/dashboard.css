@@ -139,7 +139,7 @@
 }
 
 .new-order-btn {
-  background: linear-gradient(135deg, #F58220 0%, #ff6b35 100%);
+  background: #F58220;
   padding: 0.8rem 1.6rem;
   border-radius: 8px;
   font-weight: 600;
@@ -492,10 +492,10 @@
 /* Right column */
 .order-right {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   gap: 0.65rem;
-  justify-content: space-evenly;
+  justify-content: flex-end;
   min-width: auto;
 }
 
@@ -630,7 +630,7 @@
 }
 
 .modal-card label {
-  /* display: block; */
+  display: block;
   color: #5f6368;
   font-size: 0.85rem;
   margin-bottom: 0.5rem;
@@ -904,93 +904,20 @@ html {
   background: rgba(245, 130, 32, 0.2);
   color: #1a1d29;
 }
-.order-meta_k {
-  font-size: 0.85rem;
-  color: #666;
-}
 
-.order-urgent_k {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #d32f2f;
-}
-
-.order-date-k {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #555;
-  background-color: #f5f7fa;
-  padding: 6px 12px;
-  border-radius: 8px;
-  display: inline-block;
-  letter-spacing: 0.3px;
-}
-
-/* Optional hover effect */
-.order-date-k:hover {
-  background-color: #e9eef5;
-  color: #333;
-}
-
-.urgent-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 14px;
+.logout-btn {
+  background: #F58220;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
   cursor: pointer;
-  user-select: none;
-  position: relative;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(245, 130, 32, 0.25);
 }
 
-/* Hide checkbox properly */
-.urgent-toggle input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* Toggle track */
-.toggle-slider {
-  position: relative;
-  width: 46px;
-  height: 24px;
-  background-color: #d1d5db;
-  border-radius: 999px;
-  flex-shrink: 0;
-  transition: background-color 0.25s ease;
-}
-
-/* Knob */
-.toggle-slider::before {
-  content: "";
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 18px;
-  height: 18px;
-  background: #ffffff;
-  border-radius: 50%;
-  transition: transform 0.25s ease;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-}
-
-/* Checked state */
-.urgent-toggle input:checked + .toggle-slider {
-  background-color: #ef4444;
-}
-
-.urgent-toggle input:checked + .toggle-slider::before {
-  transform: translateX(22px);
-}
-
-/* Text */
-.toggle-text {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #111827;
-  white-space: nowrap;
-}
-
-/* Active text */
-.urgent-toggle input:checked ~ .toggle-text {
-  color: #b91c1c;
+.logout-btn:hover {
+  background: #d9363e;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(245, 130, 32, 0.35);
 }
