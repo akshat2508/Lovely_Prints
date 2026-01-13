@@ -994,3 +994,22 @@ html {
 .urgent-toggle input:checked ~ .toggle-text {
   color: #b91c1c;
 }
+.logout-btn {
+  margin-left: 12px;
+  background: #F58220;       /* theme orange */
+  color: #fff;
+  border: 1px solid #121212;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.logout-btn:hover {
+  background: #d9363e;
+}
+
+.logout-btn:active {
+  transform: scale(0.96);
+}

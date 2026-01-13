@@ -10,6 +10,8 @@ import {
   attachDocumentToOrder,
 } from "../../services/studentService";
 import "./dashboard.css";
+import { logoutUser } from "../../services/authService";
+
 import { startPayment } from "./Payments";
 import { PDFDocument } from "pdf-lib";
 
@@ -26,6 +28,15 @@ const STATUS_LABELS = {
 
 const StudentDashboard = () => {
   const navigate = useNavigate();
+  const handleLogout = async () => {
+  try {
+    await logoutUser();
+    navigate("/login");
+  } catch (err) {
+    console.error("Logout failed", err);
+  }
+};
+
 
   /* Orders */
   const [orders, setOrders] = useState([]);
@@ -211,11 +222,19 @@ const StudentDashboard = () => {
   return (
     <div className="dashboard">
       <header className="dashboard-header1">
-        <img src={logo} alt="Lovely Prints" className="dashboard-logo" />
-        <button onClick={() => setShowCreateModal(true)}>
-          + Create New Print Order
-        </button>
-      </header>
+  <img src={logo} alt="Lovely Prints" className="dashboard-logo" />
+
+  <div className="header-actions">
+    <button onClick={() => setShowCreateModal(true)}>
+      + Create New Print Order
+    </button>
+
+    <button className="logout-btn" onClick={handleLogout}>
+      Logout
+    </button>
+  </div>
+</header>
+
 
       <main className="dashboard-content1">
         {loadingOrders && <p>Loading orders...</p>}

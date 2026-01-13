@@ -4,6 +4,9 @@ import "./shop.css";
 import PricingSettings from "./PricingSettings";
 import OrderPreview from "./OrderPreview";
 import { getShopOrders, updateOrderStatus } from "../../services/shopService";
+import { useNavigate } from "react-router-dom";
+import { logoutUser } from "../../services/authService";
+
 
 export default function ShopDashboard() {
   const [orders, setOrders] = useState([]);
@@ -13,6 +16,15 @@ export default function ShopDashboard() {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [urgentFilter, setUrgentFilter] = useState("all");
   // "all" | "urgent" | "normal"
+  const navigate = useNavigate();
+  const handleLogout = async () => {
+  try {
+    await logoutUser();
+    navigate("/login");
+  } catch (err) {
+    console.error("Logout failed", err);
+  }
+};
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -72,12 +84,18 @@ export default function ShopDashboard() {
     <div className="shop-dashboard">
       {/* Header */}
       <header className="dashboard-header">
-        <h1>Shop Dashboard</h1>
-        <div className="shop-info">
-          <span className="shop-number">Shop #7</span>
-          <span className="shop-status open">Open</span>
-        </div>
-      </header>
+  <h1>Shop Dashboard</h1>
+
+  <div className="shop-info">
+    <span className="shop-number">Shop #7</span>
+    <span className="shop-status open">Open</span>
+
+    <button className="logout-btn" onClick={handleLogout}>
+      Logout
+    </button>
+  </div>
+</header>
+
 
       {/* Tabs + Filters */}
       <div className="tabs-with-filters">
