@@ -141,6 +141,9 @@ async getOrdersByStudentId(studentId, token) {
       orientation,
       is_urgent,
       urgency_fee,
+      delivery_otp,
+      otp_verified,
+
       total_price,
       notes,
       is_paid,
@@ -586,6 +589,27 @@ async updateFinishType(id, is_active, token) {
     .single();
 }
 
+//NEW OTP SERVICE
+async getOrderOtpData(orderId) {
+  return await supabaseAdmin
+    .from("orders")
+    .select("delivery_otp, otp_verified")
+    .eq("id", orderId)
+    .single();
+}
+
+async markOrderDelivered(orderId) {
+  return await supabaseAdmin
+    .from("orders")
+    .update({
+      otp_verified: true,
+      otp_verified_at: new Date(),
+      status: "completed",
+    })
+    .eq("id", orderId)
+    .select()
+    .single();
+}
 
 }
 

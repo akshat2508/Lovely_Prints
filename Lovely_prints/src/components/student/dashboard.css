@@ -1013,3 +1013,41 @@ html {
 .logout-btn:active {
   transform: scale(0.96);
 }
+
+.otp-box {
+  margin: 16px 0;
+  padding: 14px;
+  border-radius: 8px;
+  background: #fff7ed;
+  border: 1px dashed #f58220;
+  text-align: center;
+}
+
+.otp-label {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.otp-code {
+  font-size: 1.6rem;
+  font-weight: bold;
+  letter-spacing: 3px;
+  color: #f58220;
+}
+
+.otp-hint {
+  font-size: 0.75rem;
+  color: #777;
+  margin-top: 6px;
+}
+
+.otp-verified {
+  margin: 12px 0;
+  padding: 10px;
+  border-radius: 6px;
+  background: #e8f5e9;
+  color: #2e7d32;
+  font-size: 0.85rem;
+  text-align: center;
+}

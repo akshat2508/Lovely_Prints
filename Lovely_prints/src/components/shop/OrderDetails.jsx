@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import { getDocumentDownloadUrl } from "../../services/shopService";
+import { verifyOrderOtp } from "../../services/shopService";
 
-export default function OrderDetails({ order, onStatusChange, onClick }) {
+export default function OrderDetails({ order, onStatusChange, onClick , onRefresh }) {
   const [downloading, setDownloading] = useState(false);
   const [updating, setUpdating] = useState(false);
+  const [showOtpModal, setShowOtpModal] = useState(false);
+const [otp, setOtp] = useState("");
+const [verifyingOtp, setVerifyingOtp] = useState(false);
+
 const createdDate = new Date(order.createdAt);
 
   const getNextStatus = (status) => {
@@ -44,12 +49,44 @@ const handleDownload = async (e) => {
 };
 
 
-  const handleStatusUpdate = async (e) => {
-    e.stopPropagation();
-    setUpdating(true);
-    await onStatusChange(order.id, nextStatus);
-    setUpdating(false);
-  };
+ const handleStatusUpdate = async (e) => {
+  e.stopPropagation();
+
+  // 🔐 If completing order → OTP required
+  if (nextStatus === "completed") {
+    setShowOtpModal(true);
+    return;
+  }
+
+  setUpdating(true);
+  await onStatusChange(order.id, nextStatus);
+  setUpdating(false);
+};
+
+const handleVerifyOtp = async () => {
+  if (!otp) {
+    alert("Please enter OTP");
+    return;
+  }
+
+  try {
+    setVerifyingOtp(true);
+    await verifyOrderOtp(order.id, otp);
+    setShowOtpModal(false);
+    setOtp("");
+
+    // refresh order list
+    // await onStatusChange(order.id, "completed");
+    await onRefresh();
+  } catch (err) {
+    alert(
+      err?.response?.data?.message || "Invalid OTP"
+    );
+  } finally {
+    setVerifyingOtp(false);
+  }
+};
+
 
   return (
     <div className="order-card" onClick={onClick}>
@@ -123,6 +160,43 @@ const handleDownload = async (e) => {
           </button>
         )}
       </div>
+      {showOtpModal && (
+  <div className="modal-overlay" onClick={() => setShowOtpModal(false)}>
+    <div
+      className="modal-card"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <h3>Enter Delivery OTP</h3>
+
+      <input
+        type="text"
+        value={otp}
+        onChange={(e) => setOtp(e.target.value)}
+        placeholder="6-digit OTP"
+        className="modal-input1"
+        maxLength={6}
+      />
+
+      <div className="modal-actions">
+        <button
+          className="submit-btn1"
+          disabled={verifyingOtp}
+          onClick={handleVerifyOtp}
+        >
+          {verifyingOtp ? "Verifying..." : "Verify & Complete"}
+        </button>
+
+        <button
+          className="cancel-btn1"
+          onClick={() => setShowOtpModal(false)}
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }
