@@ -101,3 +101,11 @@ export const createFinishType = async (shopId, payload) => {
   const res = await api.post(`/shops/${shopId}/finish-types`, payload);
   return res.data;
 };
+
+/**
+ * VERIFY delivery OTP (final delivery step)
+ */
+export const verifyOrderOtp = async (orderId, otp) => {
+  const res = await api.post(`/orders/${orderId}/verify-otp`, { otp });
+  return res.data;
+};

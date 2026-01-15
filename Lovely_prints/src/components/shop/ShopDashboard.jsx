@@ -79,6 +79,15 @@ export default function ShopDashboard() {
       setOrders(prevOrders);
     }
   };
+  const refreshOrders = async () => {
+  try {
+    const res = await getShopOrders();
+    setOrders(res.data);
+  } catch (err) {
+    console.error("Failed to refresh orders");
+  }
+};
+
 
   return (
     <div className="shop-dashboard">
@@ -157,10 +166,11 @@ export default function ShopDashboard() {
       {activeTab === "orders" && (
         <>
           <OrderList
-            orders={filteredOrders}
-            onStatusChange={handleStatusChange}
-            onSelectOrder={setSelectedOrder}
-          />
+  orders={filteredOrders}
+  onStatusChange={handleStatusChange}
+  onRefresh={refreshOrders}
+  onSelectOrder={setSelectedOrder}
+/>
 
           {selectedOrder && (
             <OrderPreview

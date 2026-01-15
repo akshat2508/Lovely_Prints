@@ -29,14 +29,13 @@ const STATUS_LABELS = {
 const StudentDashboard = () => {
   const navigate = useNavigate();
   const handleLogout = async () => {
-  try {
-    await logoutUser();
-    navigate("/login");
-  } catch (err) {
-    console.error("Logout failed", err);
-  }
-};
-
+    try {
+      await logoutUser();
+      navigate("/login");
+    } catch (err) {
+      console.error("Logout failed", err);
+    }
+  };
 
   /* Orders */
   const [orders, setOrders] = useState([]);
@@ -222,19 +221,18 @@ const StudentDashboard = () => {
   return (
     <div className="dashboard">
       <header className="dashboard-header1">
-  <img src={logo} alt="Lovely Prints" className="dashboard-logo" />
+        <img src={logo} alt="Lovely Prints" className="dashboard-logo" />
 
-  <div className="header-actions">
-    <button onClick={() => setShowCreateModal(true)}>
-      + Create New Print Order
-    </button>
+        <div className="header-actions">
+          <button onClick={() => setShowCreateModal(true)}>
+            + Create New Print Order
+          </button>
 
-    <button className="logout-btn" onClick={handleLogout}>
-      Logout
-    </button>
-  </div>
-</header>
-
+          <button className="logout-btn" onClick={handleLogout}>
+            Logout
+          </button>
+        </div>
+      </header>
 
       <main className="dashboard-content1">
         {loadingOrders && <p>Loading orders...</p>}
@@ -538,6 +536,23 @@ const StudentDashboard = () => {
             <h2 className="modal-title">
               Track Order #{selectedOrder.order_no}
             </h2>
+            {/* 🔐 Delivery OTP (Visible only when ready & not delivered) */}
+            {selectedOrder.status === "ready" &&
+              !selectedOrder.otp_verified &&
+              selectedOrder.delivery_otp && (
+                <div className="otp-box">
+                  <p className="otp-label">Pickup Code</p>
+                  <p className="otp-code">{selectedOrder.delivery_otp}</p>
+                  <p className="otp-hint">
+                    Show this code at the shop to collect your order
+                  </p>
+                </div>
+              )}
+            {selectedOrder.otp_verified && (
+              <div className="otp-verified">
+                ✅ Order has been successfully delivered
+              </div>
+            )}
 
             <div className="timeline">
               {STATUS_FLOW.map((step) => (
