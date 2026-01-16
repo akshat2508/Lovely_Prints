@@ -1,5 +1,6 @@
 import { useState } from "react"
 import OrderDetailsModal from "../modals/OrderDetailsModal"
+import "./orderCard-D.css"
 
 const STATUS_COLORS = {
   pending: "status-pending",
@@ -17,42 +18,46 @@ const OrderCard = ({ order }) => {
 
   return (
     <>
-      <div className="order-card-pro">
-        {/* Header */}
-        <div className="order-card-header">
-          <div>
+      <div className="order-card-D">
+        {/* ===== HEADER ===== */}
+        <div className="order-header-D">
+          <div className="order-header-left-D">
             <h3>Order #{order.order_no}</h3>
-            <p className="muted">
+            <p className="order-shop-D">
               {order.shops?.shop_name} • {order.shops?.block}
             </p>
           </div>
 
-          <div className="order-meta-right">
-            <span className={`status-badge-A ${STATUS_COLORS[order.status]}`}>
+          <div className="order-meta-D">
+            <span
+              className={`status-badge-D ${STATUS_COLORS[order.status]}`}
+            >
               {order.status.toUpperCase()}
             </span>
-            <strong>₹{order.total_price}</strong>
+            <span className="order-price-D">₹{order.total_price}</span>
           </div>
         </div>
 
-        {/* Quick info */}
+        {/* ===== QUICK SUMMARY ===== */}
         {doc && (
-          <p className="order-doc-summary">
+          <p className="order-summary-D">
             {doc.file_name} • {doc.page_count} pages × {doc.copies}
           </p>
         )}
 
-        {/* Expand */}
+        {/* ===== INLINE EXPAND ===== */}
         {expanded && doc && (
-          <div className="order-expand">
+          <div className="order-expand-D">
             <p>
               {doc.paper_types?.name} • {doc.color_modes?.name} •{" "}
               {doc.finish_types?.name}
-              {order.is_urgent && <span className="urgent-badge">URGENT</span>}
+              {order.is_urgent && (
+                <span className="urgent-badge-D">URGENT</span>
+              )}
             </p>
 
             <button
-              className="link-btn"
+              className="order-btn-secondary-D"
               onClick={() => setShowDetails(true)}
             >
               Open full details →
@@ -60,10 +65,10 @@ const OrderCard = ({ order }) => {
           </div>
         )}
 
-        {/* Actions */}
-        <div className="order-actions">
+        {/* ===== ACTIONS ===== */}
+        <div className="order-actions-D">
           <button
-            className="secondary-btn"
+            className="order-btn-secondary-D"
             onClick={() => setExpanded(!expanded)}
           >
             {expanded ? "Hide details" : "View details"}
@@ -71,7 +76,7 @@ const OrderCard = ({ order }) => {
 
           {order.status !== "completed" && (
             <button
-              className="primary-btn"
+              className="order-btn-primary-D"
               onClick={() => setShowDetails(true)}
             >
               Track Order
@@ -80,6 +85,7 @@ const OrderCard = ({ order }) => {
         </div>
       </div>
 
+      {/* ===== MODAL ===== */}
       {showDetails && (
         <OrderDetailsModal
           order={order}

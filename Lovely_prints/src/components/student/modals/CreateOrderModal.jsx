@@ -1,88 +1,85 @@
-import { useState } from "react"
-import { PDFDocument } from "pdf-lib"
+import { useState } from "react";
+import { PDFDocument } from "pdf-lib";
 
 import {
   createStudentOrder,
   uploadFile,
   attachDocumentToOrder,
-} from "../../../services/studentService"
+} from "../../../services/studentService";
 
-import { startPayment } from "../Payments"
-import "../dashboard.css" // reuse existing styles
+import { startPayment } from "../Payments";
+import "../dashboard.css";
 
-const URGENCY_FEE = 10
+const URGENCY_FEE = 10;
 
 const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
-  /* Print config */
-  const [paperType, setPaperType] = useState("")
-  const [colorMode, setColorMode] = useState("")
-  const [finishType, setFinishType] = useState("")
-  const [pageCount, setPageCount] = useState(1)
-  const [copies, setCopies] = useState(1)
-  const [orientation, setOrientation] = useState("portrait")
-  const [isUrgent, setIsUrgent] = useState(false)
+  /* ====== Print Config ====== */
+  const [paperType, setPaperType] = useState("");
+  const [colorMode, setColorMode] = useState("");
+  const [finishType, setFinishType] = useState("");
+  const [orientation, setOrientation] = useState("portrait");
+  const [copies, setCopies] = useState(1);
+  const [isUrgent, setIsUrgent] = useState(false);
 
-  /* File */
-  const [selectedFile, setSelectedFile] = useState(null)
+  /* ====== File ====== */
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [pageCount, setPageCount] = useState(1);
 
-  /* Submit */
-  const [submitting, setSubmitting] = useState(false)
+  /* ====== Submit State ====== */
+  const [submitting, setSubmitting] = useState(false);
+  const [disableSubmit, setDisableSubmit] = useState(false);
 
-  /* Helpers */
-  const selectedPaper = shopOptions?.paper_types?.find(
-    (p) => p.id === paperType
-  )
-  const selectedColor = shopOptions?.color_modes?.find(
-    (c) => c.id === colorMode
-  )
-  const selectedFinish = shopOptions?.finish_types?.find(
-    (f) => f.id === finishType
-  )
+  /* ====== Helpers ====== */
+  const selectedPaper = shopOptions?.paper_types?.find(p => p.id === paperType);
+  const selectedColor = shopOptions?.color_modes?.find(c => c.id === colorMode);
+  const selectedFinish = shopOptions?.finish_types?.find(f => f.id === finishType);
 
   const totalPrice = (() => {
-    if (!selectedPaper) return 0
+    if (!selectedPaper) return 0;
+    const basePrice = Number(selectedPaper.base_price || 0);
+    const colorPrice = Number(selectedColor?.extra_price || 0);
+    const finishPrice = Number(selectedFinish?.extra_price || 0);
 
-    const paperPrice = Number(selectedPaper.base_price || 0)
-    const colorPrice = Number(selectedColor?.extra_price || 0)
-    const finishPrice = Number(selectedFinish?.extra_price || 0)
+    const subtotal = (basePrice + colorPrice + finishPrice) * pageCount * copies;
+    return isUrgent ? subtotal + URGENCY_FEE : subtotal;
+  })();
 
-    const base =
-      (paperPrice + colorPrice + finishPrice) *
-      Number(pageCount) *
-      Number(copies)
-
-    return isUrgent ? base + URGENCY_FEE : base
-  })()
-
+  /* ✅ Button is enabled only if all required fields are filled */
   const canSubmit =
-    paperType && colorMode && finishType && selectedFile && copies > 0
+    paperType &&
+    colorMode &&
+    finishType &&
+    selectedFile &&
+    copies > 0 &&
+    !submitting &&
+    !disableSubmit;
 
   const getPdfPageCount = async (file) => {
-    const buffer = await file.arrayBuffer()
-    const pdf = await PDFDocument.load(buffer)
-    return pdf.getPageCount()
-  }
+    const buffer = await file.arrayBuffer();
+    const pdf = await PDFDocument.load(buffer);
+    return pdf.getPageCount();
+  };
 
-  /* 🔥 CORE FLOW */
+  /* ====== Submit Handler ====== */
   const handleSubmitAndPay = async () => {
-    try {
-      setSubmitting(true)
+    if (!canSubmit) return;
 
-      // 1️⃣ Create order
+    setSubmitting(true);
+    setDisableSubmit(true); // Disable button immediately
+    setTimeout(() => setDisableSubmit(false), 10000); // Re-enable after 10 sec
+
+    try {
       const orderRes = await createStudentOrder({
         shop_id: shop.id,
         description: "Print order",
         orientation,
         is_urgent: isUrgent,
-      })
+      });
 
-      const order = orderRes.data
+      const order = orderRes.data;
+      const uploadRes = await uploadFile(selectedFile);
+      const fileKey = uploadRes.data.fileKey;
 
-      // 2️⃣ Upload file
-      const uploadRes = await uploadFile(selectedFile)
-      const fileKey = uploadRes.data.fileKey
-
-      // 3️⃣ Attach document
       await attachDocumentToOrder(order.id, {
         fileKey,
         fileName: selectedFile.name,
@@ -91,76 +88,65 @@ const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
         paper_type_id: paperType,
         color_mode_id: colorMode,
         finish_type_id: finishType,
-      })
+      });
 
-      // 4️⃣ Payment
-      await startPayment(
-        {
-          ...order,
-          total_price: totalPrice,
-        },
-        onSuccess
-      )
+      await startPayment({ ...order, total_price: totalPrice }, onSuccess);
     } catch (err) {
-      console.error("Order submission failed", err)
-      alert("Failed to place order. Please try again.")
+      console.error(err);
+      alert("Failed to place order. Try again.");
     } finally {
-      setSubmitting(false)
+      setSubmitting(false);
     }
-  }
+  };
 
   return (
     <div className="modal-overlay">
-      <div className="modal-card">
-        <h2 className="modal-title">
-          Create Order — {shop.shop_name}
-        </h2>
+      <div className="modal-card large">
+        <h2>Create Order — {shop.shop_name}</h2>
 
-        {/* Paper Type */}
+        {/* ===== Paper Type ===== */}
+        <label className="modal-label">Select Paper Type</label>
         <select
-          className="modal-input1"
+          className="modal-input"
           value={paperType}
           onChange={(e) => setPaperType(e.target.value)}
         >
-          <option value="">Paper Type</option>
+          <option value="">-- Choose Paper Type --</option>
           {shopOptions.paper_types.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.name}
-            </option>
+            <option key={p.id} value={p.id}>{p.name}</option>
           ))}
         </select>
 
-        {/* Color Mode */}
+        {/* ===== Color Mode ===== */}
+        <label className="modal-label">Select Color Mode</label>
         <select
-          className="modal-input1"
+          className="modal-input"
           value={colorMode}
           onChange={(e) => setColorMode(e.target.value)}
         >
-          <option value="">Color Mode</option>
+          <option value="">-- Choose Color Mode --</option>
           {shopOptions.color_modes.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
+            <option key={c.id} value={c.id}>{c.name}</option>
           ))}
         </select>
 
-        {/* Finish Type */}
+        {/* ===== Finish Type ===== */}
+        <label className="modal-label">Select Finish Type</label>
         <select
-          className="modal-input1"
+          className="modal-input"
           value={finishType}
           onChange={(e) => setFinishType(e.target.value)}
         >
-          <option value="">Finish Type</option>
+          <option value="">-- Choose Finish Type --</option>
           {shopOptions.finish_types.map((f) => (
-            <option key={f.id} value={f.id}>
-              {f.name}
-            </option>
+            <option key={f.id} value={f.id}>{f.name}</option>
           ))}
         </select>
 
-        {/* Orientation */}
+        {/* ===== Orientation ===== */}
+        <label className="modal-label">Orientation</label>
         <select
-          className="modal-input1"
+          className="modal-input"
           value={orientation}
           onChange={(e) => setOrientation(e.target.value)}
         >
@@ -168,45 +154,45 @@ const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
           <option value="landscape">Landscape</option>
         </select>
 
-        {/* Page Count */}
+        {/* ===== Copies ===== */}
+        <label className="modal-label">Number of Copies</label>
         <input
-          className="modal-input1"
-          type="number"
-          value={pageCount}
-          readOnly
-        />
-
-        {/* Copies */}
-        <input
-          className="modal-input1"
+          className="modal-input"
           type="number"
           min={1}
           value={copies}
           onChange={(e) => setCopies(Number(e.target.value))}
-          placeholder="Copies"
         />
 
-        {/* Upload */}
-        <label className="upload-box1">
-          Upload PDF
+        {/* ===== Upload File ===== */}
+        <label className="modal-label">Upload PDF Document</label>
+        <label className="upload-box">
+          {selectedFile ? selectedFile.name : "Choose a PDF file"}
           <input
             type="file"
             accept=".pdf"
             onChange={async (e) => {
-              const file = e.target.files[0]
-              if (!file) return
-              setSelectedFile(file)
+              const file = e.target.files[0];
+              if (!file) return;
+              setSelectedFile(file);
               try {
-                const pages = await getPdfPageCount(file)
-                setPageCount(pages)
+                const pages = await getPdfPageCount(file);
+                setPageCount(pages);
               } catch {
-                alert("Unable to read PDF")
+                alert("Unable to read PDF file");
               }
             }}
           />
         </label>
 
-        {/* Urgent */}
+        {/* ===== Number of Pages ===== */}
+        {selectedFile && (
+          <div className="page-count-box">
+            <p><strong>Pages in Document:</strong> {pageCount}</p>
+          </div>
+        )}
+
+        {/* ===== Urgent Toggle ===== */}
         <label className="urgent-toggle">
           <input
             type="checkbox"
@@ -214,33 +200,46 @@ const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
             onChange={(e) => setIsUrgent(e.target.checked)}
           />
           <span className="toggle-slider"></span>
-          <span className="toggle-text">Urgent (+₹10)</span>
+          <span className="toggle-text">Urgent (+₹{URGENCY_FEE})</span>
         </label>
 
-        {/* Price */}
+        {/* ===== Price Breakdown ===== */}
         {selectedPaper && (
-          <div className="price-preview">
-            <p><strong>Total: ₹{totalPrice}</strong></p>
+          <div className="price-breakdown">
+            <h4>Price Breakdown</h4>
+            <ul>
+              <li>Paper ({selectedPaper.name}): ₹{selectedPaper.base_price}</li>
+              {selectedColor && selectedColor.extra_price
+                ? <li>Color ({selectedColor.name}): +₹{selectedColor.extra_price}</li>
+                : null
+              }
+              {selectedFinish && selectedFinish.extra_price
+                ? <li>Finish ({selectedFinish.name}): +₹{selectedFinish.extra_price}</li>
+                : null
+              }
+              <li>Pages: {pageCount} × Copies: {copies}</li>
+              {isUrgent && <li>Urgent Fee: +₹{URGENCY_FEE}</li>}
+            </ul>
+            <p className="total-price">Total: ₹{totalPrice}</p>
           </div>
         )}
 
-        {/* Actions */}
+        {/* ===== Actions ===== */}
         <div className="modal-actions">
           <button
-            className="submit-btn1"
-            disabled={!canSubmit || submitting}
+            className={`primary-btn ${!canSubmit ? "disabled-btn" : ""}`}
+            disabled={!canSubmit}
             onClick={handleSubmitAndPay}
           >
             {submitting ? "Processing..." : "Submit & Pay"}
           </button>
-
           <button className="cancel-btn1" onClick={onClose}>
             Cancel
           </button>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default CreateOrderModal
+export default CreateOrderModal;

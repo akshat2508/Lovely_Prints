@@ -1,0 +1,200 @@
+/* ================= ORDER CARD (DETAILS) ================= */
+
+.order-card-D {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 18px 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.order-card-D:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+}
+
+/* ================= HEADER ================= */
+
+.order-header-D {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.order-header-left-D h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0;
+  color: #111827;
+  letter-spacing: -0.2px;
+}
+
+.order-shop-D {
+  margin-top: 2px;
+  font-size: 0.85rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* ================= META RIGHT ================= */
+
+.order-meta-D {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  min-width: 90px;
+}
+
+.order-price-D {
+  font-size: 1.15rem;
+  font-weight: 800;
+  --background-clip: text;
+  margin-top: 10px;
+}
+
+/* ================= STATUS BADGES ================= */
+
+.status-badge-D {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 5px 10px;
+  border-radius: 999px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.status-pending {
+  background: rgba(245,158,11,0.15);
+  color: #f59e0b;
+}
+
+.status-confirmed,
+.status-completed {
+  background: rgba(16,185,129,0.15);
+  color: #10b981;
+}
+
+.status-printing {
+  background: rgba(59,130,246,0.15);
+  color: #3b82f6;
+}
+
+.status-ready {
+  background: rgba(6,182,212,0.15);
+  color: #0891b2;
+}
+
+/* ================= QUICK SUMMARY ================= */
+
+.order-summary-D {
+  margin-top: 12px;
+  font-size: 0.88rem;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+/* ================= EXPAND SECTION ================= */
+
+.order-expand-D {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #f9fafb;
+  border: 1px dashed #e5e7eb;
+  animation: expandFade 0.25s ease;
+}
+
+@keyframes expandFade {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.order-expand-D p {
+  margin: 0 0 8px 0;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+/* ================= URGENT ================= */
+
+.urgent-badge-D {
+  margin-left: 8px;
+  padding: 3px 8px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  border-radius: 999px;
+  background: rgba(239,68,68,0.15);
+  color: #ef4444;
+}
+
+/* ================= ACTIONS ================= */
+
+.order-actions-D {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* Buttons */
+.order-btn-primary-D {
+  background: linear-gradient(135deg, #F58220, #ff6b35);
+  color: #ffffff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.order-btn-primary-D:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(245,130,32,0.35);
+}
+
+.order-btn-secondary-D {
+  background: #ffffff;
+  border: 1.5px solid #e5e7eb;
+  color: #374151;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.order-btn-secondary-D:hover {
+  border-color: #F58220;
+  color: #F58220;
+  background: rgba(245,130,32,0.05);
+}
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 640px) {
+  .order-header-D {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .order-meta-D {
+    align-items: flex-start;
+  }
+
+  .order-actions-D {
+    flex-direction: column;
+  }
+}

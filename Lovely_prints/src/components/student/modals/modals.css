@@ -15,10 +15,10 @@
 /* ================= BASE MODAL ================= */
 .modal-card {
   background: #ffffff;
-  border-radius: 18px;
+  border-radius: 16px;
   width: 100%;
-  max-width: 520px;
-  padding: 26px;
+  max-width: 480px;
+  padding: 22px;
   box-shadow:
     0 20px 60px rgba(0, 0, 0, 0.25),
     0 0 0 1px rgba(0, 0, 0, 0.05);
@@ -27,7 +27,7 @@
 
 /* ================= LARGE MODAL ================= */
 .modal-card.large {
-  max-width: 680px;
+  max-width: 620px;
   padding: 32px;
 }
 
@@ -100,40 +100,47 @@
 }
 
 /* ================= MODAL ACTIONS ================= */
+/* ================= MODAL ACTIONS (FINAL, FIXED) ================= */
 .modal-actions {
-  margin-top: 26px;
-  display: flex;
-  justify-content: flex-end;
+  margin-top: 28px;
+  padding-top: 18px;
+  border-top: 1px solid #e5e7eb;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 12px;
+}
+
+.modal-actions button {
+  height: 44px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Primary */
 .modal-actions .primary-btn {
-  background: linear-gradient(135deg, #F58220 0%, #ff6b35 100%);
+  background: linear-gradient(135deg, #F58220, #ff6b35);
   color: #ffffff;
   border: none;
-  padding: 10px 18px;
-  border-radius: 10px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(245,130,32,0.35);
 }
 
 .modal-actions .primary-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(245, 130, 32, 0.35);
+  box-shadow: 0 8px 22px rgba(245,130,32,0.45);
 }
 
 /* Secondary */
 .modal-actions .cancel-btn1 {
   background: #ffffff;
   border: 1.5px solid #e5e7eb;
-  padding: 10px 18px;
-  border-radius: 10px;
   color: #374151;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s ease;
 }
 
 .modal-actions .cancel-btn1:hover {
@@ -141,24 +148,33 @@
   border-color: #d1d5db;
 }
 
-/* ================= RESPONSIVE ================= */
+/* Mobile */
 @media (max-width: 640px) {
-  .modal-card,
-  .modal-card.large {
-    padding: 22px;
-  }
-
   .modal-actions {
-    flex-direction: column;
-  }
-
-  .modal-actions button {
-    width: 100%;
+    grid-template-columns: 1fr;
   }
 }
+
 /* ================= TRACK ORDER HEADER ================= */
 .track-header {
   margin-bottom: 18px;
+}
+/* ================= TRACK HEADER (ENHANCED) ================= */
+.track-header h2 {
+  font-size: 1.25rem;        /* ⬅ slightly smaller */
+  font-weight: 700;
+}
+
+.track-header .muted {
+  margin-top: 4px;
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #f3f4f6;
+  font-size: 0.8rem;
+  font-weight: 600;
 }
 
 /* ================= OTP PRO ================= */
@@ -204,21 +220,507 @@
   font-weight: 600;
   text-align: center;
 }
+/* ================= TIMELINE (STABLE + RESPONSIVE) ================= */
 
-/* ================= TIMELINE PRO ================= */
+/* ================= COMPACT MODAL ================= */
+.modal-compact {
+  max-width: 620px;
+  padding: 26px;
+}
+
+
+
+.modal-input {
+  width: 100%;
+  padding: 12px 14px;
+  margin: 12px 0;
+  border-radius: 12px;
+  border: 1px solid #d1d5db;
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.modal-input:focus {
+  border-color: #f58220;
+  box-shadow: 0 2px 8px rgba(245, 130, 32, 0.2);
+}
+
+.upload-box {
+  display: block;
+  margin: 12px 0;
+  padding: 14px;
+  border: 2px dashed #f58220;
+  border-radius: 12px;
+  text-align: center;
+  cursor: pointer;
+  font-weight: 500;
+  color: #f58220;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.upload-box input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.upload-box:hover {
+  background: #fff7ed;
+}
+
+.urgent-toggle {
+  display: flex;
+  align-items: center;
+  margin: 16px 0;
+}
+
+.toggle-slider {
+  width: 40px;
+  height: 20px;
+  background: #d1d5db;
+  border-radius: 12px;
+  margin-right: 10px;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.toggle-slider::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.urgent-toggle input:checked + .toggle-slider::after {
+  transform: translateX(20px);
+}
+
+.urgent-toggle input:checked + .toggle-slider {
+  background: #f58220;
+}
+
+.toggle-text {
+  font-weight: 500;
+  color: #374151;
+}
+
+.price-preview {
+  margin-top: 14px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #fff7ed;
+  color: #f58220;
+  font-weight: 600;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.modal-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-top: 14px;
+  display: block;
+  color: #374151;
+}
+
+.page-count-box {
+  background: #fff7ed;
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-top: 8px;
+  color: #f58220;
+  font-weight: 600;
+}
+
+.price-breakdown {
+  background: #fdf2e9;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-top: 16px;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.price-breakdown ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.price-breakdown li {
+  margin-bottom: 4px;
+}
+
+.price-breakdown .total-price {
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin-top: 8px;
+  color: #f58220;
+}
+.disabled-btn {
+  background: #e5e7eb !important; /* greyed out */
+  color: #9ca3af !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* ================= ORDER DETAILS MODAL (PREMIUM) ================= */
+
+/* Shop meta under title */
+.modal-card.large > .muted {
+  margin-bottom: 14px;
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #f3f4f6;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+/* Section wrapper illusion (uses existing h4 + p) */
+.modal-card.large h4 {
+  margin-top: 0;
+}
+
+/* Section card */
+.modal-card.large h4 + p,
+.modal-card.large h4 + p + p,
+.modal-card.large h4 + p + p + p {
+  position: relative;
+}
+
+/* Actual section container */
+.modal-card.large h4 {
+  background: linear-gradient(
+    135deg,
+    #f9fafb 0%,
+    #f3f4f6 100%
+  );
+  padding: 12px 16px;
+  border-radius: 12px 12px 0 0;
+  border: 1px solid #e5e7eb;
+  border-bottom: none;
+}
+
+.modal-card.large h4 + p,
+.modal-card.large h4 + p + p,
+.modal-card.large h4 + p + p + p {
+  background: #ffffff;
+  border-left: 1px solid #e5e7eb;
+  border-right: 1px solid #e5e7eb;
+  padding: 8px 16px;
+  font-weight: 600;
+}
+
+.modal-card.large h4 + p:last-of-type {
+  border-bottom: 1px solid #e5e7eb;
+  border-radius: 0 0 12px 12px;
+  padding-bottom: 14px;
+}
+
+/* Fix spacing between sections */
+.modal-card.large hr {
+  margin: 18px 0;
+  opacity: 0;
+}
+
+/* ================= DOCUMENT DETAILS ================= */
+.modal-card.large h4:nth-of-type(1) {
+  color: #2563eb;
+}
+
+/* ================= PRINT CONFIG ================= */
+.modal-card.large h4:nth-of-type(2) {
+  color: #7c3aed;
+}
+
+/* ================= PAYMENT ================= */
+.modal-card.large h4:nth-of-type(3) {
+  color: #16a34a;
+}
+
+/* ================= PAYMENT STATUS ================= */
+.modal-card.large p strong {
+  font-weight: 800;
+}
+
+
+
+/* ================= TOTAL PRICE ================= */
+.modal-card.large p:last-of-type {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #f58220;
+  margin-top: 8px;
+}
+
+
+/* ================= MOBILE REFINEMENTS ================= */
+@media (max-width: 640px) {
+  .modal-card.large h4 {
+    font-size: 0.85rem;
+    padding: 10px 14px;
+  }
+
+  .modal-card.large h4 + p,
+  .modal-card.large h4 + p + p {
+    padding: 8px 14px;
+  }
+}
+
+/* ================= ORDER DETAILS SECTIONS (STABLE) ================= */
+
+.modal-card.large h4 {
+  margin-top: 22px;
+}
+
+.modal-card.large h4,
+.modal-card.large h4 ~ p {
+  background: #ffffff;
+}
+
+.modal-card.large h4 {
+  padding: 12px 16px;
+  border-radius: 12px 12px 0 0;
+  border: 1px solid #e5e7eb;
+  border-bottom: none;
+}
+
+.modal-card.large h4 ~ p {
+  padding: 8px 16px;
+  border-left: 1px solid #e5e7eb;
+  border-right: 1px solid #e5e7eb;
+}
+
+.modal-card.large h4 + p:last-of-type {
+  border-bottom: 1px solid #e5e7eb;
+  border-radius: 0 0 12px 12px;
+}
+
+/* ================= PREMIUM CUSTOM TIMELINE ================= */
+
 .timeline-pro {
   margin-top: 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
 }
 
-.timeline-pro .timeline-text {
+/* One row */
+.timeline-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+/* Rail column */
+.timeline-rail {
+  position: relative;
+  width: 34px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Dot */
+.timeline-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #f3f4f6;
+  border: 2px solid #e5e7eb;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #9ca3af;
+  z-index: 2;
+  transition: all 0.35s ease;
+}
+
+/* Vertical line */
+.timeline-line {
+  width: 3px;
+  height: 30px;
+  margin-top: 6px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  transition: background 0.4s ease;
+}
+
+/* Content */
+.timeline-content {
+  padding-top: 6px;
+}
+
+.timeline-text {
   font-size: 0.95rem;
+  font-weight: 600;
+  color: #9ca3af;
 }
 
-.timeline-pro .timeline-item.completed .timeline-dot {
-  background: #10b981;
+/* ================= STATES ================= */
+
+/* Completed */
+.timeline-row.done .timeline-dot {
+  background: #ecfdf5;
+  border-color: #10b981;
+  color: #10b981;
+  box-shadow:
+    0 0 0 5px rgba(16,185,129,0.15),
+    0 6px 18px rgba(16,185,129,0.35);
 }
 
-.timeline-pro .timeline-item.active .timeline-dot {
-  background: #f58220;
-  box-shadow: 0 0 0 5px rgba(245, 130, 32, 0.18);
+.timeline-row.done .timeline-line {
+  background: linear-gradient(
+    to bottom,
+    #10b981,
+    #34d399
+  );
+}
+
+.timeline-row.done .timeline-text {
+  color: #10b981;
+}
+
+/* Active */
+.timeline-row.active .timeline-dot {
+  background: #fff7ed;
+  border-color: #f58220;
+  color: #f58220;
+  box-shadow:
+    0 0 0 6px rgba(245,130,32,0.18),
+    0 8px 24px rgba(245,130,32,0.45);
+  animation: pulseDot 1.8s infinite;
+}
+
+.timeline-row.active .timeline-line {
+  background: linear-gradient(
+    to bottom,
+    #f58220,
+    #ffd1b0
+  );
+}
+
+.timeline-row.active .timeline-text {
+  color: #111827;
+  font-weight: 700;
+}
+
+/* Pending */
+.timeline-row:not(.done):not(.active) .timeline-text {
+  color: #9ca3af;
+}
+
+/* Pulse animation */
+@keyframes pulseDot {
+  0% {
+    box-shadow: 0 0 0 4px rgba(245,130,32,0.18);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(245,130,32,0.28);
+  }
+  100% {
+    box-shadow: 0 0 0 4px rgba(245,130,32,0.18);
+  }
+}
+
+/* ================= MOBILE ================= */
+@media (max-width: 640px) {
+  .timeline-text {
+    font-size: 0.9rem;
+  }
+
+  .timeline-line {
+    height: 24px;
+  }
+}
+/* ================= TIMELINE ROW LAYOUT ================= */
+
+.timeline-row {
+  display: grid;
+  grid-template-columns: 40px 160px 1fr;
+  align-items: baseline;
+  gap: 12px;
+}
+
+/* Rail column (icon + line) */
+.timeline-rail {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Timestamp column */
+.timeline-time-col {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #000000;
+  white-space: nowrap;
+}
+
+/* Stage column (right aligned) */
+.timeline-stage-col {
+  text-align: right;
+}
+
+/* Stage label */
+.timeline-text {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #9ca3af;
+}
+
+/* ================= STATES ================= */
+
+.timeline-row.done .timeline-text {
+  color: #179160;
+}
+
+.timeline-row.done .timeline-time {
+  color: #179160;
+}
+
+.timeline-row.active .timeline-text {
+  color: #111827;
+  font-weight: 700;
+}
+
+/* ================= MOBILE ================= */
+@media (max-width: 640px) {
+  .timeline-row {
+    grid-template-columns: 32px 1fr;
+    grid-template-areas:
+      "icon stage"
+      "icon time";
+    align-items: start;
+  }
+
+  .timeline-rail {
+    grid-area: icon;
+  }
+
+  .timeline-stage-col {
+    grid-area: stage;
+    text-align: left;
+  }
+
+  .timeline-time-col {
+    grid-area: time;
+    font-size: 0.75rem;
+    color: #6b7280;
+  }
 }
