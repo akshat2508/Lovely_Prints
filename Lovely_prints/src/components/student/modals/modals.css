@@ -1,0 +1,224 @@
+/* ================= MODAL OVERLAY ================= */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1200;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+/* ================= BASE MODAL ================= */
+.modal-card {
+  background: #ffffff;
+  border-radius: 18px;
+  width: 100%;
+  max-width: 520px;
+  padding: 26px;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  animation: modalEnter 0.28s ease;
+}
+
+/* ================= LARGE MODAL ================= */
+.modal-card.large {
+  max-width: 680px;
+  padding: 32px;
+}
+
+/* ================= MODAL ANIMATION ================= */
+@keyframes modalEnter {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ================= MODAL HEADINGS ================= */
+.modal-card h2 {
+  margin: 0 0 6px 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.modal-card h4 {
+  margin-top: 20px;
+  margin-bottom: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #111827;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+/* ================= MODAL TEXT ================= */
+.modal-card p {
+  font-size: 0.9rem;
+  color: #4b5563;
+  margin: 4px 0;
+  line-height: 1.5;
+}
+
+.modal-card .muted {
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+/* ================= SEPARATORS ================= */
+.modal-card hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #e5e7eb,
+    transparent
+  );
+  margin: 18px 0;
+}
+
+/* ================= BADGES ================= */
+.urgent-badge {
+  margin-left: 10px;
+  padding: 4px 10px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  border-radius: 999px;
+  background: rgba(239, 68, 68, 0.15);
+  color: #dc2626;
+  letter-spacing: 0.5px;
+}
+
+/* ================= MODAL ACTIONS ================= */
+.modal-actions {
+  margin-top: 26px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* Primary */
+.modal-actions .primary-btn {
+  background: linear-gradient(135deg, #F58220 0%, #ff6b35 100%);
+  color: #ffffff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-actions .primary-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(245, 130, 32, 0.35);
+}
+
+/* Secondary */
+.modal-actions .cancel-btn1 {
+  background: #ffffff;
+  border: 1.5px solid #e5e7eb;
+  padding: 10px 18px;
+  border-radius: 10px;
+  color: #374151;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.modal-actions .cancel-btn1:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 640px) {
+  .modal-card,
+  .modal-card.large {
+    padding: 22px;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+  }
+
+  .modal-actions button {
+    width: 100%;
+  }
+}
+/* ================= TRACK ORDER HEADER ================= */
+.track-header {
+  margin-bottom: 18px;
+}
+
+/* ================= OTP PRO ================= */
+.otp-box-pro {
+  margin: 20px 0;
+  padding: 18px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #fff7ed 0%, #fffbf5 100%);
+  border: 1.5px dashed #f58220;
+  text-align: center;
+}
+
+.otp-box-pro .otp-label {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-bottom: 6px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.otp-box-pro .otp-code {
+  font-size: 1.9rem;
+  font-weight: 800;
+  letter-spacing: 4px;
+  color: #f58220;
+  margin: 6px 0;
+}
+
+.otp-box-pro .otp-hint {
+  font-size: 0.78rem;
+  color: #6b7280;
+}
+
+/* ================= OTP SUCCESS ================= */
+.otp-success {
+  margin: 16px 0;
+  padding: 14px;
+  border-radius: 10px;
+  background: rgba(16, 185, 129, 0.12);
+  color: #047857;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* ================= TIMELINE PRO ================= */
+.timeline-pro {
+  margin-top: 26px;
+}
+
+.timeline-pro .timeline-text {
+  font-size: 0.95rem;
+}
+
+.timeline-pro .timeline-item.completed .timeline-dot {
+  background: #10b981;
+}
+
+.timeline-pro .timeline-item.active .timeline-dot {
+  background: #f58220;
+  box-shadow: 0 0 0 5px rgba(245, 130, 32, 0.18);
+}

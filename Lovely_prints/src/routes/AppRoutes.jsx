@@ -3,7 +3,11 @@ import { Routes, Route } from "react-router-dom"
 import Home from "../pages/Home"
 import Login from "../components/auth/Login"
 import Signup from "../components/auth/Signup"
-import StudentDashboard from "../components/student/StudentDashboard"
+
+import StudentHome from "../components/student/pages/StudentHome"
+import ShopDetails from "../components/student/pages/ShopDetails"
+import StudentOrders from "../components/student/pages/StudentOrders"
+
 import ShopDashboard from "../components/shop/ShopDashboard"
 
 const AppRoutes = () => {
@@ -15,8 +19,12 @@ const AppRoutes = () => {
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
 
-      {/* Dashboards */}
-      <Route path="/student" element={<StudentDashboard />} />
+      {/* Student */}
+      <Route path="/student" element={<StudentHome />} />
+      <Route path="/student/shop/:shopId" element={<ShopDetails />} />
+      <Route path="/student/orders" element={<StudentOrders />} />
+
+      {/* Shop */}
       <Route path="/shop" element={<ShopDashboard />} />
     </Routes>
   )
