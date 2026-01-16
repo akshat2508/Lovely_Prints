@@ -17,7 +17,7 @@ const OrderDetailsModal = ({ order, onClose }) => {
             {order.shops?.shop_name} • {order.shops?.block}
           </p>
 
-          <hr />
+      
 
           {doc && (
             <>

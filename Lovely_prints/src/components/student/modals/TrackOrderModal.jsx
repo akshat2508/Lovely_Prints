@@ -1,16 +1,48 @@
-import "./modals.css"
+import "./modals.css";
+import {
+  Clock,
+  CheckCircle2,
+  Printer,
+  PackageCheck,
+  Truck,
+} from "lucide-react";
 
-const STATUS_FLOW = ["pending", "confirmed", "printing", "ready", "completed"]
+const STATUS_FLOW = ["pending", "confirmed", "printing", "ready", "completed"];
 
 const STATUS_LABELS = {
-  pending: "Pending",
+  pending: "Order Placed",
   confirmed: "Confirmed",
   printing: "Printing",
   ready: "Ready for Pickup",
   completed: "Delivered",
-}
+};
+const formatTime = (ts) => {
+  if (!ts) return null;
+  const d = new Date(ts);
+
+  return d.toLocaleString("en-IN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    day: "numeric",
+    month: "short",
+  });
+};
+
+const STATUS_ICONS = {
+  pending: Clock,
+  confirmed: CheckCircle2,
+  printing: Printer,
+  ready: PackageCheck,
+  completed: Truck,
+};
 
 const TrackOrderModal = ({ order, onClose }) => {
+  const currentIndex = STATUS_FLOW.indexOf(order.status);
+  const statusTimeMap = {};
+  order.status_history?.forEach((item) => {
+    statusTimeMap[item.status] = item.updated_at;
+  });
+
   return (
     <div className="modal-overlay">
       <div className="modal-card large">
@@ -22,7 +54,7 @@ const TrackOrderModal = ({ order, onClose }) => {
           </p>
         </div>
 
-        {/* OTP Section */}
+        {/* OTP */}
         {order.status === "ready" &&
           !order.otp_verified &&
           order.delivery_otp && (
@@ -41,29 +73,54 @@ const TrackOrderModal = ({ order, onClose }) => {
           </div>
         )}
 
-        {/* Timeline */}
-        <div className="timeline timeline-pro">
-          {STATUS_FLOW.map((step) => {
-            const stepIndex = STATUS_FLOW.indexOf(step)
-            const orderIndex = STATUS_FLOW.indexOf(order.status)
+        {/* ================= CUSTOM TIMELINE ================= */}
+        {/* ================= CUSTOM TIMELINE ================= */}
+        <div className="timeline-pro">
+          {STATUS_FLOW.map((step, index) => {
+            const Icon = STATUS_ICONS[step];
+            const isDone = index < currentIndex;
+            const isActive = index === currentIndex;
+
+            // Timestamp logic
+            let timestamp = null;
+            if (index === 0) {
+              timestamp = formatTime(order.created_at);
+            }
+            if (isActive) {
+              timestamp = formatTime(order.updated_at);
+            }
 
             return (
               <div
                 key={step}
-                className={`timeline-item ${
-                  stepIndex < orderIndex
-                    ? "completed"
-                    : stepIndex === orderIndex
-                    ? "active"
-                    : ""
+                className={`timeline-row ${
+                  isDone ? "done" : isActive ? "active" : ""
                 }`}
               >
-                <span className="timeline-dot"></span>
-                <span className="timeline-text">
-                  {STATUS_LABELS[step]}
-                </span>
+                {/* Rail */}
+                <div className="timeline-rail">
+                  <div className="timeline-dot">
+                    <Icon size={16} />
+                  </div>
+
+                  {index !== STATUS_FLOW.length - 1 && (
+                    <div className="timeline-line" />
+                  )}
+                </div>
+
+                {/* Timestamp (right of icon) */}
+                <div className="timeline-time-col">
+                  {timestamp && (
+                    <span className="timeline-time">{timestamp}</span>
+                  )}
+                </div>
+
+                {/* Stage label (extreme right) */}
+                <div className="timeline-stage-col">
+                  <span className="timeline-text">{STATUS_LABELS[step]}</span>
+                </div>
               </div>
-            )
+            );
           })}
         </div>
 
@@ -75,7 +132,7 @@ const TrackOrderModal = ({ order, onClose }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default TrackOrderModal
+export default TrackOrderModal;

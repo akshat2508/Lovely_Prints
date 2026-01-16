@@ -1,0 +1,90 @@
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: #f3f4f6;
+  border-radius: 12px;
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,0.6),
+    transparent
+  );
+  animation: shimmer 1.4s infinite;
+}
+
+@keyframes shimmer {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.skeleton-banner {
+  height: 120px;
+  background: #e5e7eb;
+}
+
+.skeleton-text {
+  height: 14px;
+  background: #e5e7eb;
+  margin: 12px;
+  border-radius: 6px;
+}
+
+.skeleton-text.short {
+  width: 60%;
+}
+
+.skeleton-text.tiny {
+  width: 40%;
+}
+
+/* Shop header banner skeleton */
+.shop-header-banner.skeleton {
+  height: 200px;
+  border-radius: 12px;
+  background: #e5e7eb;
+}
+
+/* Option group skeleton */
+.option-group.skeleton {
+  padding: 16px;
+  border-radius: 12px;
+  background: #f3f4f6;
+}
+
+/* ================= ORDERS SKELETON ================= */
+
+.order-skeleton-card {
+  padding: 16px;
+}
+
+.skeleton-btn {
+  height: 32px;
+  width: 90px;
+  border-radius: 8px;
+  background: #e5e7eb;
+  margin-top: 6px;
+}
+
+/* ================= PROFILE SKELETON ================= */
+
+.profile-skeleton-card {
+  padding: 20px;
+}
+
+.profile-skeleton-card .profile-row {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.profile-skeleton-card .profile-row:last-child {
+  border-bottom: none;
+}

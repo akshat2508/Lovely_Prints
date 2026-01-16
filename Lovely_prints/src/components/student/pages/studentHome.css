@@ -3,40 +3,104 @@
 }
 
 .student-home-title {
-  font-size: 22px;
-  margin-bottom: 16px;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 20px;
 }
 
 .shop-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
 }
-
-.shop-card {
-  border-radius: 10px;
+.shop-card-A {
+  border-radius: 14px;
   overflow: hidden;
   cursor: pointer;
   background: #fff;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  transition: transform 0.2s ease;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.shop-card:hover {
-  transform: translateY(-4px);
+.shop-card-A:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 14px 28px rgba(0,0,0,0.12);
 }
 
-.shop-banner {
+.shop-banner-A {
   width: 100%;
-  height: 140px;
-  object-fit: cover;
+  height: 180px;
+  object-fit: contain;
+  border-bottom: 1px solid #eee;
 }
 
-.shop-info {
-  padding: 12px;
+.shop-info-A {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
 }
 
-.shop-block {
-  font-size: 13px;
-  color: #666;
+.shop-name-badge-A {
+  background-color: #f58220;   /* premium orange */
+  padding: 6px 12px;
+  border-radius: 8px;
+  display: inline-block;
+  margin-bottom: 12px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.shop-name-A {
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;  /* white text for contrast */
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+
+.shop-details-box-A {
+  background: #f5f6f8;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #555;
+}
+
+.shop-details-box-A strong {
+  font-weight: 500;
+  color: #333;
+}
+
+.shop-block-A,
+.shop-time-A {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shop-search-A {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.shop-search-A input {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.shop-search-A input:focus {
+  border-color: #f58220;
+  box-shadow: 0 2px 8px rgba(245, 130, 32, 0.3);
 }

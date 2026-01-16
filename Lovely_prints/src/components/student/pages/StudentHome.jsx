@@ -1,63 +1,99 @@
-import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { getAllShops } from "../../../services/studentService"
-import "./studentHome.css"
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useStudentData } from "../context/StudentDataContext";
+import ShopSkeleton from "../skeletons/ShopSkeleton";
+import ShopFallBack from "../assets/shop1.jpg";
+import "./studentHome.css";
 
 const StudentHome = () => {
-  const navigate = useNavigate()
-  const [shops, setShops] = useState([])
-  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate();
+  const { shops, shopsLoading, fetchShops } = useStudentData();
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredShops, setFilteredShops] = useState([]);
 
   useEffect(() => {
-    const fetchShops = async () => {
-      try {
-        setLoading(true)
-        const res = await getAllShops()
-        if (res?.success) {
-          setShops(res.data || [])
-        }
-      } catch (err) {
-        console.error("Failed to fetch shops", err)
-      } finally {
-        setLoading(false)
-      }
-    }
+    const loadShops = async () => {
+      await fetchShops();
+    };
+    loadShops();
+  }, []);
 
-    fetchShops()
-  }, [])
+  useEffect(() => {
+    if (!shops) return;
+    const filtered = shops.filter(
+      (shop) =>
+        shop.shop_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        shop.block.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredShops(filtered);
+  }, [searchTerm, shops]);
+
+  if (shopsLoading) {
+    return (
+      <div className="student-home">
+        <h1 className="student-home-title">Choose a Print Shop</h1>
+        <div className="shop-grid">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <ShopSkeleton key={i} />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="student-home">
       <h1 className="student-home-title">Choose a Print Shop</h1>
 
-      {loading && <p>Loading shops...</p>}
+      {/* Search Bar */}
+      <div className="shop-search-A">
+        <input
+          type="text"
+          placeholder="Search by shop name or block..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
 
       <div className="shop-grid">
-        {shops.map((shop) => (
+        {filteredShops?.map((shop) => (
           <div
             key={shop.id}
-            className="shop-card"
+            className="shop-card-A"
             onClick={() => navigate(`/student/shop/${shop.id}`)}
           >
             <img
-              src={shop.banner_url || "/default-shop-banner.jpg"}
+              src={shop.banner_url || ShopFallBack}
               alt={shop.shop_name}
-              className="shop-banner"
+              className="shop-banner-A"
             />
 
-            <div className="shop-info">
-              <h3>{shop.shop_name}</h3>
-              <p className="shop-block">{shop.block}</p>
+            <div className="shop-info-A">
+              <div className="shop-name-badge-A">
+                <h3 className="shop-name-A">{shop.shop_name}</h3>
+              </div>
+
+              <div className="shop-details-box-A">
+                <span className="shop-block-A">
+                  <strong>Block:</strong> {shop.block}
+                </span>
+              </div>
+
+              <div className="shop-details-box-A">
+                <span className="shop-time-A">
+                  <strong>Closes at:</strong> 10pm
+                </span>
+              </div>
             </div>
           </div>
         ))}
-
-        {!loading && shops.length === 0 && (
-          <p>No print shops available right now</p>
+        {filteredShops.length === 0 && (
+          <p style={{ padding: 16, color: "#777" }}>No shops found.</p>
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default StudentHome
+export default StudentHome;

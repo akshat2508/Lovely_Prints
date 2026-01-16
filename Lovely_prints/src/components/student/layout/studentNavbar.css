@@ -1,0 +1,105 @@
+.student-navbar {
+  height: 64px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-logo {
+  width: 34px;
+}
+
+.nav-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #111827;
+}
+
+.nav-center {
+  display: flex;
+  gap: 28px;
+}
+
+.nav-center a {
+  text-decoration: none;
+  font-weight: 600;
+  color: #6b7280;
+  padding-bottom: 4px;
+  position: relative;
+}
+
+.nav-center a.active {
+  color: #F58220;
+}
+
+.nav-center a.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 2px;
+  background: #F58220;
+  border-radius: 2px;
+}
+
+.nav-right .logout-btn {
+  background: #F58220;
+  border: none;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.nav-right .logout-btn:hover {
+  background: #e06b12;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .nav-center {
+    gap: 16px;
+  }
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+  /* Hide center navigation on mobile */
+  .nav-center {
+    display: none;
+  }
+
+  /* Reduce navbar height slightly */
+  .student-navbar {
+    height: 56px;
+    padding: 0 16px;
+  }
+
+  .nav-title {
+    font-size: 0.95rem;
+  }
+
+  .nav-logo {
+    width: 30px;
+  }
+
+  /* Make logout button more compact */
+  .nav-right .logout-btn {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+}

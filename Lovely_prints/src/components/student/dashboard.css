@@ -4,9 +4,9 @@
 }
 
 .dashboard {
-  min-height: 100vh;
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100dvh;
+  
+  overflow-x: hidden;
   background: linear-gradient(to bottom, #fafbfc 0%, #f5f6f8 100%);
   color: #1a1d29;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
@@ -126,8 +126,10 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem 1.75rem;
-  overflow-y: auto;
-  max-height: calc(100vh - 80px);
+
+  /* allow natural page scroll */
+  overflow: visible;
+  max-height: none;
 }
 
 /* ================= TOP ACTIONS ================= */
@@ -1255,5 +1257,71 @@ html {
   .order-actions {
     flex-direction: column;
     align-items: stretch;
+  }
+}
+
+/* ================= PROFILE PAGE ================= */
+.profile-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.profile-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #111827;
+}
+
+.profile-card {
+  padding: 20px;
+}
+
+.profile-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.profile-row:last-child {
+  border-bottom: none;
+}
+
+.profile-label {
+  font-size: 0.85rem;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.profile-value {
+  font-size: 0.95rem;
+  color: #111827;
+  font-weight: 600;
+}
+
+.profile-value.capitalize {
+  text-transform: capitalize;
+}
+
+.profile-hint {
+  margin-top: 16px;
+  font-size: 0.8rem;
+  color: #6b7280;
+  text-align: center;
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .profile-page {
+    padding: 16px;
+  }
+
+  .profile-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
   }
 }
