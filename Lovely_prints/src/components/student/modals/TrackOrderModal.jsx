@@ -1,4 +1,5 @@
 import "./modals.css";
+import { useEffect, useState } from "react";
 import {
   Clock,
   CheckCircle2,
@@ -6,6 +7,7 @@ import {
   PackageCheck,
   Truck,
 } from "lucide-react";
+import { getStudentOrders } from "../../../services/studentService";
 
 const STATUS_FLOW = ["pending", "confirmed", "printing", "ready", "completed"];
 
@@ -16,17 +18,6 @@ const STATUS_LABELS = {
   ready: "Ready for Pickup",
   completed: "Delivered",
 };
-const formatTime = (ts) => {
-  if (!ts) return null;
-  const d = new Date(ts);
-
-  return d.toLocaleString("en-IN", {
-    hour: "2-digit",
-    minute: "2-digit",
-    day: "numeric",
-    month: "short",
-  });
-};
 
 const STATUS_ICONS = {
   pending: Clock,
@@ -36,59 +27,86 @@ const STATUS_ICONS = {
   completed: Truck,
 };
 
-const TrackOrderModal = ({ order, onClose }) => {
-  const currentIndex = STATUS_FLOW.indexOf(order.status);
-  const statusTimeMap = {};
-  order.status_history?.forEach((item) => {
-    statusTimeMap[item.status] = item.updated_at;
+const formatTime = (ts) => {
+  if (!ts) return null;
+  const d = new Date(ts);
+  return d.toLocaleString("en-IN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    day: "numeric",
+    month: "short",
   });
+};
+
+const TrackOrderModal = ({ order, onClose }) => {
+  const [liveOrder, setLiveOrder] = useState(order);
+
+  // keep in sync when parent changes
+  useEffect(() => {
+    setLiveOrder(order);
+  }, [order]);
+
+  // 🔁 polling (SAFE)
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      try {
+        const res = await getStudentOrders();
+        if (res?.success) {
+          const updated = res.data.find(o => o.id === liveOrder.id);
+          if (updated && updated.updated_at !== liveOrder.updated_at) {
+            setLiveOrder(updated);
+          }
+        }
+      } catch (e) {
+        console.error("Order polling failed", e);
+      }
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [liveOrder.id, liveOrder.updated_at]);
+
+  const currentIndex = STATUS_FLOW.indexOf(liveOrder.status);
 
   return (
     <div className="modal-overlay">
       <div className="modal-card large">
         {/* Header */}
         <div className="track-header">
-          <h2>Track Order #{order.order_no}</h2>
+          <h2>Track Order #{liveOrder.order_no}</h2>
           <p className="muted">
-            {order.shops?.shop_name} • {order.shops?.block}
+            {liveOrder.shops?.shop_name} • {liveOrder.shops?.block}
           </p>
         </div>
 
         {/* OTP */}
-        {order.status === "ready" &&
-          !order.otp_verified &&
-          order.delivery_otp && (
+        {liveOrder.status === "ready" &&
+          !liveOrder.otp_verified &&
+          liveOrder.delivery_otp && (
             <div className="otp-box-pro">
               <p className="otp-label">Pickup Code</p>
-              <p className="otp-code">{order.delivery_otp}</p>
+              <p className="otp-code">{liveOrder.delivery_otp}</p>
               <p className="otp-hint">
                 Show this code at the shop counter to collect your prints
               </p>
             </div>
           )}
 
-        {order.otp_verified && (
+        {liveOrder.otp_verified && (
           <div className="otp-success">
             ✅ Order has been successfully delivered
           </div>
         )}
 
-        {/* ================= CUSTOM TIMELINE ================= */}
-        {/* ================= CUSTOM TIMELINE ================= */}
+        {/* ================= TIMELINE ================= */}
         <div className="timeline-pro">
           {STATUS_FLOW.map((step, index) => {
             const Icon = STATUS_ICONS[step];
             const isDone = index < currentIndex;
             const isActive = index === currentIndex;
 
-            // Timestamp logic
             let timestamp = null;
-            if (index === 0) {
-              timestamp = formatTime(order.created_at);
-            }
-            if (isActive) {
-              timestamp = formatTime(order.updated_at);
-            }
+            if (index === 0) timestamp = formatTime(liveOrder.created_at);
+            if (isActive) timestamp = formatTime(liveOrder.updated_at);
 
             return (
               <div
@@ -102,22 +120,23 @@ const TrackOrderModal = ({ order, onClose }) => {
                   <div className="timeline-dot">
                     <Icon size={16} />
                   </div>
-
                   {index !== STATUS_FLOW.length - 1 && (
                     <div className="timeline-line" />
                   )}
                 </div>
 
-                {/* Timestamp (right of icon) */}
+                {/* Timestamp */}
                 <div className="timeline-time-col">
                   {timestamp && (
                     <span className="timeline-time">{timestamp}</span>
                   )}
                 </div>
 
-                {/* Stage label (extreme right) */}
+                {/* Stage */}
                 <div className="timeline-stage-col">
-                  <span className="timeline-text">{STATUS_LABELS[step]}</span>
+                  <span className="timeline-text">
+                    {STATUS_LABELS[step]}
+                  </span>
                 </div>
               </div>
             );

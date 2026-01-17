@@ -25,19 +25,31 @@ export default function ShopDashboard() {
     console.error("Logout failed", err);
   }
 };
+const fetchOrders = async () => {
+  try {
+    const res = await getShopOrders();
+    setOrders(res.data);
+  } catch (err) {
+    console.error("Failed to load orders");
+  }
+};
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const res = await getShopOrders();
-        setOrders(res.data);
-      } catch (err) {
-        console.error("Failed to load orders");
-      }
-    };
+ useEffect(() => {
+  fetchOrders();
+}, []);
 
-    fetchOrders();
-  }, []);
+// 🔁 Auto-refresh shop orders (safe polling)
+useEffect(() => {
+  const interval = setInterval(() => {
+    // only poll when on Orders tab
+    if (activeTab === "orders") {
+      fetchOrders();
+    }
+  }, 5000); // every 5 seconds (safe for shop)
+
+  return () => clearInterval(interval);
+}, [activeTab]);
+
 
   const isSameDay = (date1, date2) =>
     date1.getFullYear() === date2.getFullYear() &&

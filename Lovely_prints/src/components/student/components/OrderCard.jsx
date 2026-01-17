@@ -55,7 +55,7 @@ const OrderCard = ({ order }) => {
                 <span className="urgent-badge-D">URGENT</span>
               )}
             </p>
-
+              <p className="id-D">ID: {order.id}</p>
             <button
               className="order-btn-secondary-D"
               onClick={() => setShowDetails(true)}

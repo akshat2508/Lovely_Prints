@@ -5,8 +5,8 @@ import {
   createColorMode,
   createFinishType
 } from "../../services/shopService";
-import "./shop.css";
-
+import "./pricingSettings.css";
+import ProfileSkeleton from "../student/skeletons/ProfileSkeleton"
 export default function PricingSettings() {
   const [shopId, setShopId] = useState(null);
 
@@ -17,10 +17,9 @@ export default function PricingSettings() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  /* New option inputs */
-  const [newPaper, setNewPaper] = useState({ name: "", base_price: "" });
-  const [newColor, setNewColor] = useState({ name: "", extra_price: "" });
-  const [newFinish, setNewFinish] = useState({ name: "", extra_price: "" });
+  const [newPaper, setNewPaper] = useState({ name: "", price: "" });
+  const [newColor, setNewColor] = useState({ name: "", price: "" });
+  const [newFinish, setNewFinish] = useState({ name: "", price: "" });
 
   /* ================= INIT ================= */
 
@@ -32,15 +31,11 @@ export default function PricingSettings() {
         setShopId(id);
 
         const res = await api.get(`/shops/${id}/options`);
-
-setPaperTypes(res.data.data.paper_types);
-setColorModes(res.data.data.color_modes);
-setFinishTypes(res.data.data.finish_types);
-
-
+        setPaperTypes(res.data.data.paper_types);
+        setColorModes(res.data.data.color_modes);
+        setFinishTypes(res.data.data.finish_types);
       } catch (err) {
-        console.error(err);
-        alert("Failed to load pricing config ❌");
+        alert("Failed to load pricing settings ❌");
       } finally {
         setLoading(false);
       }
@@ -59,158 +54,176 @@ setFinishTypes(res.data.data.finish_types);
     );
   };
 
-  /* ================= SAVE PATCH ================= */
+  /* ================= SAVE ================= */
 
   const saveChanges = async () => {
     try {
       setSaving(true);
 
-      const requests = [];
+      await Promise.all([
+        ...paperTypes.map(p =>
+          api.patch(`/shops/paper-types/${p.id}`, { is_active: p.is_active })
+        ),
+        ...colorModes.map(c =>
+          api.patch(`/shops/color-modes/${c.id}`, { is_active: c.is_active })
+        ),
+        ...finishTypes.map(f =>
+          api.patch(`/shops/finish-types/${f.id}`, { is_active: f.is_active })
+        )
+      ]);
 
-      paperTypes.forEach(p =>
-        requests.push(api.patch(`/shops/paper-types/${p.id}`, { is_active: p.is_active }))
-      );
-
-      colorModes.forEach(c =>
-        requests.push(api.patch(`/shops/color-modes/${c.id}`, { is_active: c.is_active }))
-      );
-
-      finishTypes.forEach(f =>
-        requests.push(api.patch(`/shops/finish-types/${f.id}`, { is_active: f.is_active }))
-      );
-
-      await Promise.all(requests);
-      alert("Availability updated ✅");
-    } catch (err) {
-      console.error(err);
+      alert("Pricing updated successfully ✅");
+    } catch {
       alert("Failed to save changes ❌");
     } finally {
       setSaving(false);
     }
   };
 
-  /* ================= CREATE ================= */
-
-  const addPaperType = async () => {
-    const res = await createPaperType(shopId, {
-      name: newPaper.name,
-      base_price: Number(newPaper.base_price)
-    });
-    setPaperTypes(prev => [...prev, res.data]);
-    setNewPaper({ name: "", base_price: "" });
-  };
-
-  const addColorMode = async () => {
-    const res = await createColorMode(shopId, {
-      name: newColor.name,
-      extra_price: Number(newColor.extra_price)
-    });
-    setColorModes(prev => [...prev, res.data]);
-    setNewColor({ name: "", extra_price: "" });
-  };
-
-  const addFinishType = async () => {
-    const res = await createFinishType(shopId, {
-      name: newFinish.name,
-      extra_price: Number(newFinish.extra_price)
-    });
-    setFinishTypes(prev => [...prev, res.data]);
-    setNewFinish({ name: "", extra_price: "" });
-  };
-
-  if (loading) return <p className="muted">Loading pricing settings...</p>;
+  if (loading) {
+    return <ProfileSkeleton/>;
+  }
 
   return (
-    <div className="pricing-settings">
-      <h2 className="pricing-title">Pricing Configuration</h2>
+    <div className="pricing-page-P">
+      <div className="pricing-header-P">
+        <h2>Pricing & Availability</h2>
+        <p>Manage what customers can choose and how much it costs</p>
+      </div>
 
-      {/* ================= PAPER ================= */}
-      <Section
-        title="Paper Types"
-        items={paperTypes}
-        onToggle={toggleActive}
-        setter={setPaperTypes}
-        addForm={
-          <AddRow
-            name={newPaper.name}
-            price={newPaper.base_price}
-            onName={v => setNewPaper(p => ({ ...p, name: v }))}
-            onPrice={v => setNewPaper(p => ({ ...p, base_price: v }))}
-            onAdd={addPaperType}
-          />
-        }
-      />
+      <div className="pricing-grid-P">
+        <PricingCard
+          title="Paper Types"
+          subtitle="Base price per page"
+          items={paperTypes}
+          onToggle={toggleActive}
+          setter={setPaperTypes}
+          addForm={
+            <AddRow
+              name={newPaper.name}
+              price={newPaper.price}
+              onName={v => setNewPaper(p => ({ ...p, name: v }))}
+              onPrice={v => setNewPaper(p => ({ ...p, price: v }))}
+              onAdd={async () => {
+                const res = await createPaperType(shopId, {
+                  name: newPaper.name,
+                  base_price: Number(newPaper.price)
+                });
+                setPaperTypes(p => [...p, res.data]);
+                setNewPaper({ name: "", price: "" });
+              }}
+            />
+          }
+        />
 
-      {/* ================= COLOR ================= */}
-      <Section
-        title="Color Modes"
-        items={colorModes}
-        onToggle={toggleActive}
-        setter={setColorModes}
-        addForm={
-          <AddRow
-            name={newColor.name}
-            price={newColor.extra_price}
-            onName={v => setNewColor(c => ({ ...c, name: v }))}
-            onPrice={v => setNewColor(c => ({ ...c, extra_price: v }))}
-            onAdd={addColorMode}
-          />
-        }
-      />
+        <PricingCard
+          title="Color Modes"
+          subtitle="Additional charge per page"
+          items={colorModes}
+          onToggle={toggleActive}
+          setter={setColorModes}
+          addForm={
+            <AddRow
+              name={newColor.name}
+              price={newColor.price}
+              onName={v => setNewColor(c => ({ ...c, name: v }))}
+              onPrice={v => setNewColor(c => ({ ...c, price: v }))}
+              onAdd={async () => {
+                const res = await createColorMode(shopId, {
+                  name: newColor.name,
+                  extra_price: Number(newColor.price)
+                });
+                setColorModes(c => [...c, res.data]);
+                setNewColor({ name: "", price: "" });
+              }}
+            />
+          }
+        />
 
-      {/* ================= FINISH ================= */}
-      <Section
-        title="Finish Types"
-        items={finishTypes}
-        onToggle={toggleActive}
-        setter={setFinishTypes}
-        addForm={
-          <AddRow
-            name={newFinish.name}
-            price={newFinish.extra_price}
-            onName={v => setNewFinish(f => ({ ...f, name: v }))}
-            onPrice={v => setNewFinish(f => ({ ...f, extra_price: v }))}
-            onAdd={addFinishType}
-          />
-        }
-      />
+        <PricingCard
+          title="Finish Types"
+          subtitle="Binding / finishing charges"
+          items={finishTypes}
+          onToggle={toggleActive}
+          setter={setFinishTypes}
+          addForm={
+            <AddRow
+              name={newFinish.name}
+              price={newFinish.price}
+              onName={v => setNewFinish(f => ({ ...f, name: v }))}
+              onPrice={v => setNewFinish(f => ({ ...f, price: v }))}
+              onAdd={async () => {
+                const res = await createFinishType(shopId, {
+                  name: newFinish.name,
+                  extra_price: Number(newFinish.price)
+                });
+                setFinishTypes(f => [...f, res.data]);
+                setNewFinish({ name: "", price: "" });
+              }}
+            />
+          }
+        />
+      </div>
 
-      <button className="save-button" disabled={saving} onClick={saveChanges}>
-        {saving ? "Saving..." : "Save Availability"}
-      </button>
+      <div className="pricing-footer-P">
+        <button className="save-btn-P" onClick={saveChanges} disabled={saving}>
+          {saving ? "Saving…" : "Save Changes"}
+        </button>
+      </div>
     </div>
   );
 }
 
-/* ================= SMALL COMPONENTS ================= */
+/* ================= SUB COMPONENTS ================= */
 
-const Section = ({ title, items, onToggle, setter, addForm }) => (
-  <div className="config-section">
-    <h3>{title}</h3>
+const PricingCard = ({ title, subtitle, items, onToggle, setter, addForm }) => (
+  <section className="pricing-card-P">
+    <header className="pricing-card-header-P">
+      <h3>{title}</h3>
+      <p>{subtitle}</p>
+    </header>
 
-    {items.map(item => (
-      <div key={item.id} className="config-row">
-        <label>
-          <input
-            type="checkbox"
-            checked={item.is_active}
-            onChange={() => onToggle(items, setter, item.id)}
-          />
-          {item.name}
-        </label>
+    <div className="pricing-table-P">
+      {items.map(item => (
+        <div key={item.id} className="pricing-row-P">
+          <label className="toggle-P">
+            <input
+              type="checkbox"
+              checked={item.is_active}
+              onChange={() => onToggle(items, setter, item.id)}
+            />
+            <span></span>
+          </label>
 
-        <span>₹ {item.base_price ?? item.extra_price ?? 0}</span>
-      </div>
-    ))}
+          <span className="pricing-name-P">{item.name}</span>
 
-    {addForm}
-  </div>
+          <span className="pricing-price-P">
+            ₹ {item.base_price ?? item.extra_price ?? 0}
+          </span>
+        </div>
+      ))}
+    </div>
+
+    <div className="pricing-add-P">
+      <h4>Add new</h4>
+      {addForm}
+    </div>
+  </section>
 );
 
 const AddRow = ({ name, price, onName, onPrice, onAdd }) => (
-  <div className="config-row add-row">
-    <input placeholder="Name" value={name} onChange={e => onName(e.target.value)} />
-    <input placeholder="Price" type="number" value={price} onChange={e => onPrice(e.target.value)} />
+  <div className="add-row-P">
+    <input
+      placeholder="Option name"
+      value={name}
+      onChange={e => onName(e.target.value)}
+    />
+    <input
+      placeholder="Price (₹)"
+      type="number"
+      value={price}
+      onChange={e => onPrice(e.target.value)}
+    />
     <button onClick={onAdd}>Add</button>
   </div>
 );

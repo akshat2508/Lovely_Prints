@@ -12,7 +12,7 @@ const OrderDetailsModal = ({ order, onClose }) => {
       <div className="modal-overlay">
         <div className="modal-card large">
           <h2>Order #{order.order_no}</h2>
-
+          <h5 className="id">ID: {order.id}</h5>
           <p className="muted">
             {order.shops?.shop_name} • {order.shops?.block}
           </p>
