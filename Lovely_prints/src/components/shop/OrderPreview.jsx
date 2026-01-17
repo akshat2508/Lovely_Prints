@@ -39,6 +39,12 @@ export default function OrderPreview({ order, onClose }) {
             {order.status}
           </span>
           </div>
+          <div className="preview-row">
+            <span className="preview-label">Order ID</span>
+            <span>
+              {`${order.id}`}
+            </span>
+          </div>
             
             <div className="preview-row">
             <span className="preview-label">Urgency</span>
@@ -50,7 +56,7 @@ export default function OrderPreview({ order, onClose }) {
           <div className="preview-row">
             <span className="preview-label">Payment</span>
             <span>
-              {order.isPaid ? "Paid ✅" : "Not Paid ❌"}
+              {order.isPaid ? `₹${order.totalPrice} (Paid)` : "Not Paid ❌"}
             </span>
           </div>
 
@@ -62,7 +68,7 @@ export default function OrderPreview({ order, onClose }) {
           </div> */}
 
           <div className="preview-row">
-            <span className="preview-label">Created At</span>
+            <span className="preview-label">Placed At</span>
             <span>
               {new Date(order.createdAt).toLocaleString()}
             </span>

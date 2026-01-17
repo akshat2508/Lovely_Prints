@@ -174,6 +174,7 @@ async getOrdersByStudentId(studentId, token) {
       )
     `)
     .eq('student_id', studentId)
+    .eq('is_paid' , true)
     .order('created_at', { ascending: false });
 }
 
@@ -512,6 +513,7 @@ return await supabaseAdmin
     is_paid,
     created_at,
     student_id,
+    total_price,
 
     student:users!fk_order_student (
       name
@@ -531,6 +533,7 @@ return await supabaseAdmin
     )
   `)
   .eq('shop_id', shop.id)
+  .eq('is_paid',true)
   .order('created_at', { ascending: false });
 
     

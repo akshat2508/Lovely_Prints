@@ -16,7 +16,7 @@ const adaptOrder = (order) => {
     isUrgent: order.is_urgent,
     urgencyFee: order.urgency_fee,
     isPaid: order.is_paid ?? false,
-
+    totalPrice : order.total_price,
     // student
     studentName: order.student?.name || "Unknown",
     studentId: order.student_id || "-",

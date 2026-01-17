@@ -110,7 +110,7 @@ const handleVerifyOtp = async () => {
       <div className="order-body">
         <div className="student-info">
           <h3>{order.studentName}</h3>
-          <p>{order.studentId}</p>
+          <p>{order.id}</p>
         </div>
         <div className="order-meta order-header">
       <span>📅 {createdDate.toLocaleDateString('en-IN', {
