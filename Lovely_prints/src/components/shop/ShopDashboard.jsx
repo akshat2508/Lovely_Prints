@@ -1,12 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect , useRef} from "react";
 import OrderList from "./OrderList";
 import "./shop.css";
 import PricingSettings from "./PricingSettings";
 import OrderPreview from "./OrderPreview";
-import { getShopOrders, updateOrderStatus } from "../../services/shopService";
+import {
+  getShopOrders,
+  updateOrderStatus,
+  setShopActiveStatus, // ✅ NEW
+} from "../../services/shopService";
 import { useNavigate } from "react-router-dom";
 import { logoutUser } from "../../services/authService";
-
 
 export default function ShopDashboard() {
   const [orders, setOrders] = useState([]);
@@ -15,41 +18,134 @@ export default function ShopDashboard() {
   const [activeTab, setActiveTab] = useState("orders");
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [urgentFilter, setUrgentFilter] = useState("all");
-  // "all" | "urgent" | "normal"
+const prevOrderIdsRef = useRef(new Set());
+const [showNewOrderToast, setShowNewOrderToast] = useState(false);
+const [voiceEnabled, setVoiceEnabled] = useState(false);
+
   const navigate = useNavigate();
+
+
+useEffect(() => {
+  const unlockVoice = () => {
+    setVoiceEnabled(true);
+    window.removeEventListener("click", unlockVoice);
+    window.removeEventListener("keydown", unlockVoice);
+  };
+
+  window.addEventListener("click", unlockVoice);
+  window.addEventListener("keydown", unlockVoice);
+
+  return () => {
+    window.removeEventListener("click", unlockVoice);
+    window.removeEventListener("keydown", unlockVoice);
+  };
+}, []);
+
+  /* ================= SHOP ACTIVE STATUS ================= */
+
+  // ✅ Mark shop ACTIVE when dashboard loads
+  useEffect(() => {
+    const markShopActive = async () => {
+      try {
+        await setShopActiveStatus(true);
+      } catch (err) {
+        console.error("Failed to mark shop active");
+      }
+    };
+
+    markShopActive();
+  }, []);
+
+  // ✅ Mark shop INACTIVE on logout
   const handleLogout = async () => {
-  try {
-    await logoutUser();
-    navigate("/login");
-  } catch (err) {
-    console.error("Logout failed", err);
+    try {
+      await setShopActiveStatus(false);
+      await logoutUser();
+      navigate("/login");
+    } catch (err) {
+      console.error("Logout failed", err);
+    }
+  };
+
+ const speakNewOrder = () => {
+  if (!voiceEnabled) return;
+  if (!window.speechSynthesis) return;
+
+  const text = "New order received";
+
+  const speak = () => {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 1;
+    utterance.pitch = 1;
+    utterance.volume = 1;
+
+    const voices = window.speechSynthesis.getVoices();
+    if (voices.length) {
+      utterance.voice = voices.find(v => v.lang.includes("en")) || voices[0];
+    }
+
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+  };
+
+  if (speechSynthesis.getVoices().length) {
+    speak();
+  } else {
+    speechSynthesis.onvoiceschanged = speak;
   }
 };
+
+
+
+const triggerNewOrderAlert = () => {
+  setShowNewOrderToast(true);
+  speakNewOrder();
+
+  setTimeout(() => {
+    setShowNewOrderToast(false);
+  }, 4000);
+};
+
+  /* ================= ORDERS ================= */
+
 const fetchOrders = async () => {
   try {
     const res = await getShopOrders();
-    setOrders(res.data);
+    const newOrders = res.data || [];
+
+    const newOrderIds = new Set(newOrders.map(o => o.id));
+    const prevOrderIds = prevOrderIdsRef.current;
+
+    // 🚨 detect NEW order
+    if (prevOrderIds.size > 0 && newOrderIds.size > prevOrderIds.size) {
+      triggerNewOrderAlert();
+    }
+
+    // update ref AFTER detection
+    prevOrderIdsRef.current = newOrderIds;
+
+    setOrders(newOrders);
   } catch (err) {
     console.error("Failed to load orders");
   }
 };
 
- useEffect(() => {
-  fetchOrders();
-}, []);
+  useEffect(() => {
+    fetchOrders();
+  }, []);
 
-// 🔁 Auto-refresh shop orders (safe polling)
-useEffect(() => {
-  const interval = setInterval(() => {
-    // only poll when on Orders tab
-    if (activeTab === "orders") {
-      fetchOrders();
-    }
-  }, 5000); // every 5 seconds (safe for shop)
+  // 🔁 Auto-refresh shop orders (polling)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (activeTab === "orders") {
+        fetchOrders();
+      }
+    }, 5000);
 
-  return () => clearInterval(interval);
-}, [activeTab]);
+    return () => clearInterval(interval);
+  }, [activeTab]);
 
+  /* ================= FILTERING ================= */
 
   const isSameDay = (date1, date2) =>
     date1.getFullYear() === date2.getFullYear() &&
@@ -91,36 +187,45 @@ useEffect(() => {
       setOrders(prevOrders);
     }
   };
-  const refreshOrders = async () => {
-  try {
-    const res = await getShopOrders();
-    setOrders(res.data);
-  } catch (err) {
-    console.error("Failed to refresh orders");
-  }
-};
 
+  const refreshOrders = async () => {
+    try {
+      const res = await getShopOrders();
+      setOrders(res.data);
+    } catch (err) {
+      console.error("Failed to refresh orders");
+    }
+  };
+
+  /* ================= UI ================= */
 
   return (
+    
     <div className="shop-dashboard">
       {/* Header */}
       <header className="dashboard-header">
-  <h1>Shop Dashboard</h1>
+        <h1>Shop Dashboard</h1>
 
-  <div className="shop-info">
-    <span className="shop-number">Shop #7</span>
-    <span className="shop-status open">Open</span>
+        <div className="shop-info">
+          <span className="shop-number">Shop</span>
 
-    <button className="logout-btn" onClick={handleLogout}>
-      Logout
-    </button>
+          {/* ✅ Always Open while dashboard is active */}
+          <span className="shop-status open">Open</span>
+
+          <button className="logout-btn" onClick={handleLogout}>
+            Logout
+          </button>
+        </div>
+      </header>
+      {showNewOrderToast && (
+  <div className="new-order-toast">
+    🖨️ New order received
   </div>
-</header>
+)}
 
 
       {/* Tabs + Filters */}
       <div className="tabs-with-filters">
-        {/* Tabs */}
         <div className="shop-tabs">
           <button
             className={`tab-btn ${activeTab === "orders" ? "active" : ""}`}
@@ -137,7 +242,6 @@ useEffect(() => {
           </button>
         </div>
 
-        {/* Filters */}
         {activeTab === "orders" && (
           <div className="order-filter-bar">
             <select
@@ -160,7 +264,7 @@ useEffect(() => {
               <option value="paid">Paid</option>
               <option value="unpaid">Unpaid</option>
             </select>
-            {/* Urgency Filter */}
+
             <select
               className="filter-select"
               value={urgentFilter}
@@ -178,11 +282,11 @@ useEffect(() => {
       {activeTab === "orders" && (
         <>
           <OrderList
-  orders={filteredOrders}
-  onStatusChange={handleStatusChange}
-  onRefresh={refreshOrders}
-  onSelectOrder={setSelectedOrder}
-/>
+            orders={filteredOrders}
+            onStatusChange={handleStatusChange}
+            onRefresh={refreshOrders}
+            onSelectOrder={setSelectedOrder}
+          />
 
           {selectedOrder && (
             <OrderPreview

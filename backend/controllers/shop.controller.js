@@ -224,3 +224,29 @@ export const getMyShop = async (req, res, next) => {
     next(err);
   }
 };
+
+//Updating shop status to is_active or not 
+export const updateMyShopStatus = async (req, res, next) => {
+  try {
+    const { is_active } = req.body;
+
+    if (typeof is_active !== "boolean") {
+      return errorResponse(res, "Invalid is_active value", 400);
+    }
+
+    const userId = req.user.id; // from auth middleware
+
+    const { data, error } = await supabaseService.updateShopByOwner(
+      userId,
+      { is_active }
+    );
+
+    if (error) {
+      return errorResponse(res, error.message, 400);
+    }
+
+    return successResponse(res, data, "Shop status updated");
+  } catch (err) {
+    next(err);
+  }
+};

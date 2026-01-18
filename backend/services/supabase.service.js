@@ -103,16 +103,21 @@ async getUserById(userId) {
   return await supabaseAnon
     .from('shops')
     .select('*')
-    .eq('is_active', true);
+    // .eq('is_active', true);
 }
 
 
- async createOrder(orderData, token) {
+async createOrder(orderData, token) {
   const supabaseUser = getUserSupabase(token);
+
+  const { data: userData } = await supabaseUser.auth.getUser();
 
   return await supabaseUser
     .from('orders')
-    .insert(orderData)
+    .insert({
+      ...orderData,
+      student_id: userData.user.id, // ✅ FIX
+    })
     .select()
     .single();
 }
@@ -613,6 +618,17 @@ async markOrderDelivered(orderId) {
     .select()
     .single();
 }
+
+//Updating status of shop to isactive or not 
+async updateShopByOwner(ownerId, updates) {
+  return await supabaseAdmin
+    .from("shops")
+    .update(updates)
+    .eq("owner_id", ownerId)
+    .select()
+    .single();
+}
+
 
 }
 

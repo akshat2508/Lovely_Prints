@@ -109,3 +109,10 @@ export const verifyOrderOtp = async (orderId, otp) => {
   const res = await api.post(`/orders/${orderId}/verify-otp`, { otp });
   return res.data;
 };
+
+export const setShopActiveStatus = async (isActive) => {
+  const res = await api.patch("/shops/me/status", {
+    is_active: isActive,
+  });
+  return res.data;
+};
