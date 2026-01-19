@@ -1038,3 +1038,24 @@ body {
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+.order-search-input {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  font-size: 14px;
+  min-width: 240px;
+  outline: none;
+}
+
+.order-search-input:focus {
+  border-color: #f58220;
+  box-shadow: 0 0 0 2px rgba(245, 130, 32, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .order-search-input {
+    width: 100%;
+  }
+}
