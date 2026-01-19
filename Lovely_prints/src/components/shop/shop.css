@@ -200,7 +200,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 6px;
 }
 
 .document-name {
@@ -951,9 +951,9 @@ body {
 }
 .logout-btn {
   margin-left: 12px;
-  background: #F58220;       /* your orange theme */
+  background: #d9363e;       /* your orange theme */
   color: #ffffff;
-  border: 1px solid #121212;
+  border: 1px solid #ffffff;
   padding: 6px 14px;
   border-radius: 6px;
   font-size: 14px;
@@ -962,11 +962,27 @@ body {
 }
 
 .logout-btn:hover {
-  background: #d9363e;
+  background: #650a0f;
 }
 
 .logout-btn:active {
   transform: scale(0.96);
+}
+
+.analytics-btn
+{
+    margin-left: 12px;
+  background: #09a435;       /* your orange theme */
+  color: #ffffff;
+  border: 1px solid #ffffff;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+.analytics-btn:hover{
+  background-color: #2e7d32;
 }
 .new-order-toast {
   position: fixed;
@@ -992,4 +1008,33 @@ body {
     transform: translateY(0);
     opacity: 1;
   }
+}
+.shop-status {
+  border: none;
+  cursor: pointer;
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.shop-status.open {
+  background: #16a34a;
+  color: white;
+}
+
+.shop-status.closed {
+  background: #9ca3af;
+  color: #374151;
+}
+
+.shop-status:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+}
+
+.shop-status:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }

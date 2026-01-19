@@ -6,6 +6,7 @@ import {
   getShopById,
   createShop,
   updateShop,
+  updateShopStatusManually,
   getShopOrders,
   getShopPrintOptions,
   getMyShopOrders,
@@ -69,6 +70,7 @@ router.patch(
   requireRole('shop_owner'),
   updateMyShopStatus
 );
+router.patch("/:shopId/status", authMiddleware, updateShopStatusManually);
 
 // router.put(
 //   '/orders/:orderId/status',

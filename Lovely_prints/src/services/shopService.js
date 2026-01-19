@@ -116,3 +116,20 @@ export const setShopActiveStatus = async (isActive) => {
   });
   return res.data;
 };
+// GET logged-in owner's shop
+export const getMyShop = async () => {
+  const res = await api.get("/shops/me");
+  return {
+    success: true,
+    data: res.data.data, // { id, name, is_active }
+  };
+};
+
+
+// MANUAL shop toggle (explicit)
+export const setShopStatusManual = async (shopId, isActive) => {
+  const res = await api.patch(`/shops/${shopId}/status`, {
+    is_active: isActive,
+  });
+  return res.data;
+};

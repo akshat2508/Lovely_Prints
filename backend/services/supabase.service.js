@@ -556,7 +556,7 @@ async getPaymentByRazorpayOrder(razorpayOrderId) {
 async getShopByOwner(ownerId) {
   return await supabaseAnon
     .from('shops')
-    .select('id')
+    .select('id , shop_name , is_active')
     .eq('owner_id', ownerId)
     .single();
 }
@@ -628,6 +628,16 @@ async updateShopByOwner(ownerId, updates) {
     .select()
     .single();
 }
+
+async updateShopById(shopId, updates) {
+  return await supabaseAdmin
+    .from("shops")
+    .update(updates)
+    .eq("id", shopId)
+    .select()
+    .single();
+}
+
 //to fetch student email , name and shop anme (email context helper)
 async getOrderEmailContext(orderId) {
   return await supabaseAdmin
@@ -658,6 +668,23 @@ async sendPasswordResetEmail(email) {
   });
 }
 
+async getShopByIdAndOwner(shopId, ownerId) {
+  return await supabaseAdmin
+    .from("shops")
+    .select("id")
+    .eq("id", shopId)
+    .eq("owner_id", ownerId)
+    .single();
+}
+
+async updateShopById(shopId, updates) {
+  return await supabaseAdmin
+    .from("shops")
+    .update(updates)
+    .eq("id", shopId)
+    .select()
+    .single();
+}
 
 }
 
