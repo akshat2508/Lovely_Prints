@@ -1,4 +1,4 @@
-import React, { useState, useEffect , useRef} from "react";
+import React, { useState, useEffect, useRef } from "react";
 import OrderList from "./OrderList";
 import "./shop.css";
 import PricingSettings from "./PricingSettings";
@@ -10,6 +10,7 @@ import {
 } from "../../services/shopService";
 import { useNavigate } from "react-router-dom";
 import { logoutUser } from "../../services/authService";
+import ShopAnalytics from "./analytics/ShopAnalytics";
 
 export default function ShopDashboard() {
   const [orders, setOrders] = useState([]);
@@ -18,28 +19,28 @@ export default function ShopDashboard() {
   const [activeTab, setActiveTab] = useState("orders");
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [urgentFilter, setUrgentFilter] = useState("all");
-const prevOrderIdsRef = useRef(new Set());
-const [showNewOrderToast, setShowNewOrderToast] = useState(false);
-const [voiceEnabled, setVoiceEnabled] = useState(false);
+  const prevOrderIdsRef = useRef(new Set());
+  const [showNewOrderToast, setShowNewOrderToast] = useState(false);
+  const [voiceEnabled, setVoiceEnabled] = useState(false);
+  const [shop, setShop] = useState(null);
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const unlockVoice = () => {
+      setVoiceEnabled(true);
+      window.removeEventListener("click", unlockVoice);
+      window.removeEventListener("keydown", unlockVoice);
+    };
 
-useEffect(() => {
-  const unlockVoice = () => {
-    setVoiceEnabled(true);
-    window.removeEventListener("click", unlockVoice);
-    window.removeEventListener("keydown", unlockVoice);
-  };
+    window.addEventListener("click", unlockVoice);
+    window.addEventListener("keydown", unlockVoice);
 
-  window.addEventListener("click", unlockVoice);
-  window.addEventListener("keydown", unlockVoice);
-
-  return () => {
-    window.removeEventListener("click", unlockVoice);
-    window.removeEventListener("keydown", unlockVoice);
-  };
-}, []);
+    return () => {
+      window.removeEventListener("click", unlockVoice);
+      window.removeEventListener("keydown", unlockVoice);
+    };
+  }, []);
 
   /* ================= SHOP ACTIVE STATUS ================= */
 
@@ -67,68 +68,67 @@ useEffect(() => {
     }
   };
 
- const speakNewOrder = () => {
-  if (!voiceEnabled) return;
-  if (!window.speechSynthesis) return;
+  const speakNewOrder = () => {
+    if (!voiceEnabled) return;
+    if (!window.speechSynthesis) return;
 
-  const text = "New order received";
+    const text = "New order received";
 
-  const speak = () => {
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 1;
-    utterance.pitch = 1;
-    utterance.volume = 1;
+    const speak = () => {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1;
+      utterance.pitch = 1;
+      utterance.volume = 1;
 
-    const voices = window.speechSynthesis.getVoices();
-    if (voices.length) {
-      utterance.voice = voices.find(v => v.lang.includes("en")) || voices[0];
+      const voices = window.speechSynthesis.getVoices();
+      if (voices.length) {
+        utterance.voice =
+          voices.find((v) => v.lang.includes("en")) || voices[0];
+      }
+
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utterance);
+    };
+
+    if (speechSynthesis.getVoices().length) {
+      speak();
+    } else {
+      speechSynthesis.onvoiceschanged = speak;
     }
-
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(utterance);
   };
 
-  if (speechSynthesis.getVoices().length) {
-    speak();
-  } else {
-    speechSynthesis.onvoiceschanged = speak;
-  }
-};
+  const triggerNewOrderAlert = () => {
+    setShowNewOrderToast(true);
+    speakNewOrder();
 
-
-
-const triggerNewOrderAlert = () => {
-  setShowNewOrderToast(true);
-  speakNewOrder();
-
-  setTimeout(() => {
-    setShowNewOrderToast(false);
-  }, 4000);
-};
+    setTimeout(() => {
+      setShowNewOrderToast(false);
+    }, 4000);
+  };
 
   /* ================= ORDERS ================= */
 
-const fetchOrders = async () => {
-  try {
-    const res = await getShopOrders();
-    const newOrders = res.data || [];
+  const fetchOrders = async () => {
+    try {
+      const res = await getShopOrders();
+      const newOrders = res.data || [];
 
-    const newOrderIds = new Set(newOrders.map(o => o.id));
-    const prevOrderIds = prevOrderIdsRef.current;
+      const newOrderIds = new Set(newOrders.map((o) => o.id));
+      const prevOrderIds = prevOrderIdsRef.current;
 
-    // 🚨 detect NEW order
-    if (prevOrderIds.size > 0 && newOrderIds.size > prevOrderIds.size) {
-      triggerNewOrderAlert();
+      // 🚨 detect NEW order
+      if (prevOrderIds.size > 0 && newOrderIds.size > prevOrderIds.size) {
+        triggerNewOrderAlert();
+      }
+
+      // update ref AFTER detection
+      prevOrderIdsRef.current = newOrderIds;
+
+      setOrders(newOrders);
+    } catch (err) {
+      console.error("Failed to load orders");
     }
-
-    // update ref AFTER detection
-    prevOrderIdsRef.current = newOrderIds;
-
-    setOrders(newOrders);
-  } catch (err) {
-    console.error("Failed to load orders");
-  }
-};
+  };
 
   useEffect(() => {
     fetchOrders();
@@ -176,8 +176,8 @@ const fetchOrders = async () => {
 
     setOrders((prev) =>
       prev.map((order) =>
-        order.id === orderId ? { ...order, status: newStatus } : order
-      )
+        order.id === orderId ? { ...order, status: newStatus } : order,
+      ),
     );
 
     try {
@@ -200,14 +200,13 @@ const fetchOrders = async () => {
   /* ================= UI ================= */
 
   return (
-    
     <div className="shop-dashboard">
       {/* Header */}
       <header className="dashboard-header">
-        <h1>Shop Dashboard</h1>
+<h1>{shop?.name || "My Shop"}</h1>
 
         <div className="shop-info">
-          <span className="shop-number">Shop</span>
+          <span className="shop-number">{}</span>
 
           {/* ✅ Always Open while dashboard is active */}
           <span className="shop-status open">Open</span>
@@ -215,14 +214,17 @@ const fetchOrders = async () => {
           <button className="logout-btn" onClick={handleLogout}>
             Logout
           </button>
+          <button
+            className={`logout-btn ${activeTab === "analytics" ? "active" : ""}`}
+            onClick={() => setActiveTab("analytics")}
+          >
+            Analytics
+          </button>
         </div>
       </header>
       {showNewOrderToast && (
-  <div className="new-order-toast">
-    🖨️ New order received
-  </div>
-)}
-
+        <div className="new-order-toast">🖨️ New order received</div>
+      )}
 
       {/* Tabs + Filters */}
       <div className="tabs-with-filters">
@@ -298,6 +300,7 @@ const fetchOrders = async () => {
       )}
 
       {activeTab === "settings" && <PricingSettings />}
+      {activeTab === "analytics" && <ShopAnalytics orders={orders} />}
     </div>
   );
 }

@@ -15,7 +15,16 @@ const OrderCard = ({ order }) => {
   const [showDetails, setShowDetails] = useState(false)
 
   const doc = order.documents?.[0]
-
+const formatDate = (dateString) => {
+  return new Date(dateString).toLocaleString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true
+  });
+};
   return (
     <>
       <div className="order-card-D">
@@ -55,7 +64,9 @@ const OrderCard = ({ order }) => {
                 <span className="urgent-badge-D">URGENT</span>
               )}
             </p>
-              <p className="id-D">ID: {order.id}</p>
+              <p className="order-btn-secondary-D">ID: {order.id}</p>
+               <p className="order-btn-secondary-D">Placed At : {formatDate(order.created_at)}</p>
+
             <button
               className="order-btn-secondary-D"
               onClick={() => setShowDetails(true)}

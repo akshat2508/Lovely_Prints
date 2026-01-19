@@ -43,7 +43,7 @@ export default function Signup() {
 
         <h2 className="auth-title">Create Account</h2>
         <p className="auth-subtitle">
-          Register using your student details
+          Register using your valid details
         </p>
 
         <div className="auth-form">

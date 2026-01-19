@@ -496,7 +496,7 @@ async getOrdersForOwner(token) {
   // 2️⃣ Get shop owned by user
   const { data: shop, error: shopError } = await supabaseAnon
     .from('shops')
-    .select('id')
+    .select('id ,shop_name, is_active')
     .eq('owner_id', userId)
     .single();
 
@@ -627,6 +627,35 @@ async updateShopByOwner(ownerId, updates) {
     .eq("owner_id", ownerId)
     .select()
     .single();
+}
+//to fetch student email , name and shop anme (email context helper)
+async getOrderEmailContext(orderId) {
+  return await supabaseAdmin
+    .from("orders")
+    .select(`
+      order_no,
+      student:users!fk_order_student (
+        email,
+        name
+      ),
+      shop:shops!fk_order_shop (
+        shop_name
+      )
+    `)
+    .eq("id", orderId)
+    .single();
+}
+// 🔐 Send password reset email (FORGOT PASSWORD)
+async sendPasswordResetEmail(email) {
+  if (!email) {
+    return {
+      error: { message: "Email is required" },
+    };
+  }
+
+  return await supabaseAnon.auth.resetPasswordForEmail(email, {
+    redirectTo: `${process.env.FRONTEND_URL}/update-password`,
+  });
 }
 
 

@@ -80,6 +80,11 @@ export default function Login() {
             {loading ? "Logging in..." : "Login"}
           </button>
         </div>
+        <p style={{ marginTop: "0.6rem", textAlign: "right" }}>
+  <Link to="/forgot-password" className="auth-link">
+    Forgot password?
+  </Link>
+</p>
 
         <p className="auth-footer">
           Don’t have an account?{" "}

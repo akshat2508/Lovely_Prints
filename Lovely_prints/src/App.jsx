@@ -1,13 +1,17 @@
-import AppRoutes from "./routes/AppRoutes"
-import Navbar from "./components/common/Navbar"
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import AppRoutes from "./routes/AppRoutes";
 
-function App() {
-  return (
-    <>
-      {/* <Navbar /> */}
-      <AppRoutes />
-    </>
-  )
+export default function App() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const hash = window.location.hash;
+
+    if (hash.includes("type=recovery")) {
+      navigate("/update-password", { replace: true });
+    }
+  }, []);
+
+  return <AppRoutes />;
 }
-
-export default App

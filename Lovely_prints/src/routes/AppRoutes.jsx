@@ -11,6 +11,8 @@ import StudentOrders from "../components/student/pages/StudentOrders";
 import ProtectedRoute from "./ProtectedRoute";
 import ShopDashboard from "../components/shop/ShopDashboard";
 import StudentProfile from "../components/student/pages/StudentProfile";
+import ForgotPassword from "../components/auth/ForgotPassword";
+import ResetPassword from "../components/auth/ResetPassword";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -18,6 +20,8 @@ const AppRoutes = () => {
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/update-password" element={<ResetPassword />} />
 
       {/* Student (Protected) */}
       <Route element={<ProtectedRoute role="student" />}>

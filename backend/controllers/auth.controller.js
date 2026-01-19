@@ -64,3 +64,28 @@ export const getCurrentUser = async (req, res, next) => {
     next(error);
   }
 };
+
+export const forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return errorResponse(res, "Email is required", 400);
+    }
+
+    const { error } =
+      await supabaseService.sendPasswordResetEmail(email);
+
+    if (error) {
+      return errorResponse(res, error.message, 400);
+    }
+
+    return successResponse(
+      res,
+      null,
+      "Password reset email sent"
+    );
+  } catch (err) {
+    next(err);
+  }
+};
