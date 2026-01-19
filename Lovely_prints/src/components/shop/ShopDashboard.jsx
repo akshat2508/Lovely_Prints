@@ -30,6 +30,7 @@ export default function ShopDashboard() {
   const prevOrderIdsRef = useRef(new Set());
   const [showNewOrderToast, setShowNewOrderToast] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const navigate = useNavigate();
 
@@ -160,21 +161,37 @@ export default function ShopDashboard() {
     (new Date() - d) / (1000 * 60 * 60 * 24) <= days;
 
   const filteredOrders = orders.filter((order) => {
-    const createdAt = new Date(order.createdAt);
+  const createdAt = new Date(order.createdAt);
 
-    if (filterMode === "today" && !isSameDay(createdAt, new Date()))
+  /* ---------- DATE FILTERS ---------- */
+  if (filterMode === "today" && !isSameDay(createdAt, new Date()))
+    return false;
+  if (filterMode === "7days" && !isWithinDays(createdAt, 7)) return false;
+  if (filterMode === "30days" && !isWithinDays(createdAt, 30)) return false;
+
+  /* ---------- PAYMENT FILTERS ---------- */
+  if (paymentFilter === "paid" && !order.isPaid) return false;
+  if (paymentFilter === "unpaid" && order.isPaid) return false;
+
+  /* ---------- URGENT FILTERS ---------- */
+  if (urgentFilter === "urgent" && !order.isUrgent) return false;
+  if (urgentFilter === "normal" && order.isUrgent) return false;
+
+  /* ---------- SEARCH FILTER ---------- */
+  if (searchQuery.trim()) {
+    const q = searchQuery.toLowerCase();
+
+    const orderId = String(order.id || "").toLowerCase();
+    const orderNo = String(order.orderNo || "").toLowerCase();
+
+    if (!orderId.includes(q) && !orderNo.includes(q)) {
       return false;
-    if (filterMode === "7days" && !isWithinDays(createdAt, 7)) return false;
-    if (filterMode === "30days" && !isWithinDays(createdAt, 30)) return false;
+    }
+  }
 
-    if (paymentFilter === "paid" && !order.isPaid) return false;
-    if (paymentFilter === "unpaid" && order.isPaid) return false;
+  return true;
+});
 
-    if (urgentFilter === "urgent" && !order.isUrgent) return false;
-    if (urgentFilter === "normal" && order.isUrgent) return false;
-
-    return true;
-  });
 
   const handleStatusChange = async (orderId, newStatus) => {
     const prev = orders;
@@ -249,39 +266,49 @@ export default function ShopDashboard() {
         </div>
 
         {activeTab === "orders" && (
-          <div className="order-filter-bar">
-            <select
-              className="filter-select"
-              value={filterMode}
-              onChange={(e) => setFilterMode(e.target.value)}
-            >
-              <option value="today">Today</option>
-              <option value="7days">Last 7 Days</option>
-              <option value="30days">Last 30 Days</option>
-              <option value="all">All Orders</option>
-            </select>
+  <div className="order-filter-bar">
+    {/* 🔍 Search */}
+    <input
+      type="text"
+      className="order-search-input"
+      placeholder="Search by Order ID or Order No"
+      value={searchQuery}
+      onChange={(e) => setSearchQuery(e.target.value)}
+    />
 
-            <select
-              className="filter-select"
-              value={paymentFilter}
-              onChange={(e) => setPaymentFilter(e.target.value)}
-            >
-              <option value="all">All Payments</option>
-              <option value="paid">Paid</option>
-              <option value="unpaid">Unpaid</option>
-            </select>
+    <select
+      className="filter-select"
+      value={filterMode}
+      onChange={(e) => setFilterMode(e.target.value)}
+    >
+      <option value="today">Today</option>
+      <option value="7days">Last 7 Days</option>
+      <option value="30days">Last 30 Days</option>
+      <option value="all">All Orders</option>
+    </select>
 
-            <select
-              className="filter-select"
-              value={urgentFilter}
-              onChange={(e) => setUrgentFilter(e.target.value)}
-            >
-              <option value="all">All Orders</option>
-              <option value="urgent">Urgent Only</option>
-              <option value="normal">Normal Only</option>
-            </select>
-          </div>
-        )}
+    <select
+      className="filter-select"
+      value={paymentFilter}
+      onChange={(e) => setPaymentFilter(e.target.value)}
+    >
+      <option value="all">All Payments</option>
+      <option value="paid">Paid</option>
+      <option value="unpaid">Unpaid</option>
+    </select>
+
+    <select
+      className="filter-select"
+      value={urgentFilter}
+      onChange={(e) => setUrgentFilter(e.target.value)}
+    >
+      <option value="all">All Orders</option>
+      <option value="urgent">Urgent Only</option>
+      <option value="normal">Normal Only</option>
+    </select>
+  </div>
+)}
+
       </div>
 
       {/* Content */}
