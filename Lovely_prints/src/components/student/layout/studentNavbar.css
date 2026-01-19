@@ -1,16 +1,24 @@
+/* ================= NAVBAR ================= */
 .student-navbar {
   height: 64px;
-  background: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
+  background: linear-gradient(180deg, #ffffff, #fafafa);
+  border-bottom: 1px solid rgba(229, 231, 235, 0.9);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 24px;
+  padding: 0 28px;
   position: sticky;
   top: 0;
   z-index: 100;
+
+  box-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.03),
+    0 8px 20px rgba(0, 0, 0, 0.04);
+  backdrop-filter: saturate(1.2);
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont;
 }
 
+/* ================= LEFT ================= */
 .nav-left {
   display: flex;
   align-items: center;
@@ -18,30 +26,43 @@
 }
 
 .nav-logo {
-  width: 34px;
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.15));
 }
 
 .nav-title {
   font-weight: 700;
   font-size: 1.05rem;
   color: #111827;
+  letter-spacing: 0.3px;
 }
 
+/* ================= CENTER ================= */
 .nav-center {
   display: flex;
-  gap: 28px;
+  gap: 32px;
 }
 
 .nav-center a {
   text-decoration: none;
   font-weight: 600;
+  font-size: 0.95rem;
   color: #6b7280;
-  padding-bottom: 4px;
+  padding-bottom: 6px;
   position: relative;
+  transition: color 0.2s ease;
 }
 
+/* Hover */
+.nav-center a:hover {
+  color: #111827;
+}
+
+/* Active */
 .nav-center a.active {
-  color: #F58220;
+  color: #ff9500;
 }
 
 .nav-center a.active::after {
@@ -49,41 +70,40 @@
   position: absolute;
   left: 0;
   right: 0;
-  bottom: -6px;
-  height: 2px;
-  background: #F58220;
-  border-radius: 2px;
+  bottom: -8px;
+  height: 3px;
+  background: linear-gradient(135deg, #ff9500, #ff7a00);
+  border-radius: 999px;
+  box-shadow: 0 4px 12px rgba(255,149,0,0.45);
 }
 
+/* ================= RIGHT ================= */
 .nav-right .logout-btn {
-  background: #F58220;
+  background: linear-gradient(135deg, #ff9500, #ff7a00);
   border: none;
-  color: white;
-  padding: 8px 14px;
-  border-radius: 8px;
+  color: #fff;
+  padding: 9px 16px;
+  border-radius: 12px;
   font-weight: 600;
+  font-size: 0.9rem;
   cursor: pointer;
+  transition: all 0.25s ease;
+
+  box-shadow: 0 6px 18px rgba(255,149,0,0.45);
 }
 
 .nav-right .logout-btn:hover {
-  background: #e06b12;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .nav-center {
-    gap: 16px;
-  }
+  transform: translateY(-1px);
+  box-shadow: 0 10px 26px rgba(255,149,0,0.55);
 }
 
 /* ================= RESPONSIVE ================= */
 @media (max-width: 768px) {
-  /* Hide center navigation on mobile */
+  /* Hide center navigation */
   .nav-center {
     display: none;
   }
 
-  /* Reduce navbar height slightly */
   .student-navbar {
     height: 56px;
     padding: 0 16px;
@@ -95,11 +115,12 @@
 
   .nav-logo {
     width: 30px;
+    height: 30px;
   }
 
-  /* Make logout button more compact */
   .nav-right .logout-btn {
-    padding: 6px 12px;
+    padding: 7px 12px;
     font-size: 0.8rem;
+    border-radius: 10px;
   }
 }

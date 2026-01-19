@@ -12,20 +12,19 @@ const StudentHome = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredShops, setFilteredShops] = useState([]);
 
-  useEffect(() => {
-    const loadShops = async () => {
-      await fetchShops();
-    };
-    loadShops();
-  }, []);
+  // useEffect(() => {
+  //   fetchShops();
+  // }, []);
 
   useEffect(() => {
     if (!shops) return;
+
     const filtered = shops.filter(
       (shop) =>
         shop.shop_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         shop.block.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
     setFilteredShops(filtered);
   }, [searchTerm, shops]);
 
@@ -46,7 +45,7 @@ const StudentHome = () => {
     <div className="student-home">
       <h1 className="student-home-title">Choose a Print Shop</h1>
 
-      {/* Search Bar */}
+      {/* Search */}
       <div className="shop-search-A">
         <input
           type="text"
@@ -57,12 +56,23 @@ const StudentHome = () => {
       </div>
 
       <div className="shop-grid">
-        {filteredShops?.map((shop) => (
+        {filteredShops.map((shop) => (
           <div
             key={shop.id}
-            className="shop-card-A"
-            onClick={() => navigate(`/student/shop/${shop.id}`)}
+            className={`shop-card-A ${!shop.is_active ? "shop-closed" : ""}`}
+            onClick={() =>
+              shop.is_active && navigate(`/student/shop/${shop.id}`)
+            }
           >
+            {/* Open / Closed Tag */}
+            <div
+              className={`shop-status-tag ${
+                shop.is_active ? "open" : "closed"
+              }`}
+            >
+              {shop.is_active ? "Open" : "Closed"}
+            </div>
+
             <img
               src={shop.banner_url || ShopFallBack}
               alt={shop.shop_name}
@@ -88,6 +98,7 @@ const StudentHome = () => {
             </div>
           </div>
         ))}
+
         {filteredShops.length === 0 && (
           <p style={{ padding: 16, color: "#777" }}>No shops found.</p>
         )}

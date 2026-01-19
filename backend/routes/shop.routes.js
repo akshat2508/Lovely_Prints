@@ -6,12 +6,14 @@ import {
   getShopById,
   createShop,
   updateShop,
+  updateShopStatusManually,
   getShopOrders,
   getShopPrintOptions,
   getMyShopOrders,
   getMyShop
 } from '../controllers/shop.controller.js';
 import { updateOrderStatus } from '../controllers/shop.controller.js';
+import { updateMyShopStatus } from '../controllers/shop.controller.js';
 
 const router = express.Router();
 
@@ -62,6 +64,13 @@ router.get(
   requireRole('shop_owner'),
   getShopOrders
 );
+router.patch(
+  '/me/status',
+  authMiddleware,
+  requireRole('shop_owner'),
+  updateMyShopStatus
+);
+router.patch("/:shopId/status", authMiddleware, updateShopStatusManually);
 
 // router.put(
 //   '/orders/:orderId/status',

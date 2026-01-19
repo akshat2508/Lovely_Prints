@@ -103,16 +103,21 @@ async getUserById(userId) {
   return await supabaseAnon
     .from('shops')
     .select('*')
-    .eq('is_active', true);
+    // .eq('is_active', true);
 }
 
 
- async createOrder(orderData, token) {
+async createOrder(orderData, token) {
   const supabaseUser = getUserSupabase(token);
+
+  const { data: userData } = await supabaseUser.auth.getUser();
 
   return await supabaseUser
     .from('orders')
-    .insert(orderData)
+    .insert({
+      ...orderData,
+      student_id: userData.user.id, // ✅ FIX
+    })
     .select()
     .single();
 }
@@ -491,7 +496,7 @@ async getOrdersForOwner(token) {
   // 2️⃣ Get shop owned by user
   const { data: shop, error: shopError } = await supabaseAnon
     .from('shops')
-    .select('id')
+    .select('id ,shop_name, is_active')
     .eq('owner_id', userId)
     .single();
 
@@ -551,7 +556,7 @@ async getPaymentByRazorpayOrder(razorpayOrderId) {
 async getShopByOwner(ownerId) {
   return await supabaseAnon
     .from('shops')
-    .select('id')
+    .select('id , shop_name , is_active')
     .eq('owner_id', ownerId)
     .single();
 }
@@ -610,6 +615,73 @@ async markOrderDelivered(orderId) {
       status: "completed",
     })
     .eq("id", orderId)
+    .select()
+    .single();
+}
+
+//Updating status of shop to isactive or not 
+async updateShopByOwner(ownerId, updates) {
+  return await supabaseAdmin
+    .from("shops")
+    .update(updates)
+    .eq("owner_id", ownerId)
+    .select()
+    .single();
+}
+
+async updateShopById(shopId, updates) {
+  return await supabaseAdmin
+    .from("shops")
+    .update(updates)
+    .eq("id", shopId)
+    .select()
+    .single();
+}
+
+//to fetch student email , name and shop anme (email context helper)
+async getOrderEmailContext(orderId) {
+  return await supabaseAdmin
+    .from("orders")
+    .select(`
+      order_no,
+      student:users!fk_order_student (
+        email,
+        name
+      ),
+      shop:shops!fk_order_shop (
+        shop_name
+      )
+    `)
+    .eq("id", orderId)
+    .single();
+}
+// 🔐 Send password reset email (FORGOT PASSWORD)
+async sendPasswordResetEmail(email) {
+  if (!email) {
+    return {
+      error: { message: "Email is required" },
+    };
+  }
+
+  return await supabaseAnon.auth.resetPasswordForEmail(email, {
+    redirectTo: `${process.env.FRONTEND_URL}/update-password`,
+  });
+}
+
+async getShopByIdAndOwner(shopId, ownerId) {
+  return await supabaseAdmin
+    .from("shops")
+    .select("id")
+    .eq("id", shopId)
+    .eq("owner_id", ownerId)
+    .single();
+}
+
+async updateShopById(shopId, updates) {
+  return await supabaseAdmin
+    .from("shops")
+    .update(updates)
+    .eq("id", shopId)
     .select()
     .single();
 }

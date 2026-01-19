@@ -1,63 +1,163 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import OrderList from "./OrderList";
 import "./shop.css";
 import PricingSettings from "./PricingSettings";
 import OrderPreview from "./OrderPreview";
-import { getShopOrders, updateOrderStatus } from "../../services/shopService";
+import {
+  getShopOrders,
+  updateOrderStatus,
+  getMyShop,
+  setShopStatusManual,
+} from "../../services/shopService";
 import { useNavigate } from "react-router-dom";
 import { logoutUser } from "../../services/authService";
-
+import ShopAnalytics from "./analytics/ShopAnalytics";
 
 export default function ShopDashboard() {
   const [orders, setOrders] = useState([]);
+
+  /* filters */
   const [filterMode, setFilterMode] = useState("today");
   const [paymentFilter, setPaymentFilter] = useState("all");
+  const [urgentFilter, setUrgentFilter] = useState("all");
+
   const [activeTab, setActiveTab] = useState("orders");
   const [selectedOrder, setSelectedOrder] = useState(null);
-  const [urgentFilter, setUrgentFilter] = useState("all");
-  // "all" | "urgent" | "normal"
+
+  const [shop, setShop] = useState(null);
+  const [shopStatusLoading, setShopStatusLoading] = useState(false);
+
+  const prevOrderIdsRef = useRef(new Set());
+  const [showNewOrderToast, setShowNewOrderToast] = useState(false);
+  const [voiceEnabled, setVoiceEnabled] = useState(false);
+
   const navigate = useNavigate();
-  const handleLogout = async () => {
-  try {
-    await logoutUser();
-    navigate("/login");
-  } catch (err) {
-    console.error("Logout failed", err);
-  }
-};
-const fetchOrders = async () => {
-  try {
-    const res = await getShopOrders();
-    setOrders(res.data);
-  } catch (err) {
-    console.error("Failed to load orders");
-  }
-};
 
- useEffect(() => {
-  fetchOrders();
-}, []);
+  /* ================= VOICE UNLOCK ================= */
 
-// 🔁 Auto-refresh shop orders (safe polling)
-useEffect(() => {
-  const interval = setInterval(() => {
-    // only poll when on Orders tab
-    if (activeTab === "orders") {
-      fetchOrders();
+  useEffect(() => {
+    const unlockVoice = () => {
+      setVoiceEnabled(true);
+      window.removeEventListener("click", unlockVoice);
+      window.removeEventListener("keydown", unlockVoice);
+    };
+
+    window.addEventListener("click", unlockVoice);
+    window.addEventListener("keydown", unlockVoice);
+
+    return () => {
+      window.removeEventListener("click", unlockVoice);
+      window.removeEventListener("keydown", unlockVoice);
+    };
+  }, []);
+
+  /* ================= FETCH SHOP ================= */
+
+  useEffect(() => {
+    const fetchShop = async () => {
+      try {
+        const res = await getMyShop();
+        setShop(res.data);
+      } catch {
+        console.error("Failed to load shop info");
+      }
+    };
+
+    fetchShop();
+  }, []);
+
+  /* ================= MANUAL SHOP TOGGLE ================= */
+
+  const handleManualToggle = async () => {
+    if (!shop || shopStatusLoading) return;
+
+    const nextStatus = !shop.is_active;
+
+    setShop((prev) => ({ ...prev, is_active: nextStatus }));
+    setShopStatusLoading(true);
+
+    try {
+      await setShopStatusManual(shop.id, nextStatus);
+    } catch {
+      setShop((prev) => ({ ...prev, is_active: !nextStatus }));
+      alert("Failed to update shop status");
+    } finally {
+      setShopStatusLoading(false);
     }
-  }, 5000); // every 5 seconds (safe for shop)
+  };
 
-  return () => clearInterval(interval);
-}, [activeTab]);
+  /* ================= LOGOUT ================= */
 
+  const handleLogout = async () => {
+    try {
+      if (shop?.id && shop?.is_active) {
+        await setShopStatusManual(shop.id, false);
+      }
 
-  const isSameDay = (date1, date2) =>
-    date1.getFullYear() === date2.getFullYear() &&
-    date1.getMonth() === date2.getMonth() &&
-    date1.getDate() === date2.getDate();
+      await logoutUser();
+      navigate("/login");
+    } catch (err) {
+      console.error("Logout failed", err);
+    }
+  };
 
-  const isWithinDays = (date, days) =>
-    (new Date() - date) / (1000 * 60 * 60 * 24) <= days;
+  /* ================= VOICE ALERT ================= */
+
+  const speakNewOrder = () => {
+    if (!voiceEnabled || !window.speechSynthesis) return;
+    const utterance = new SpeechSynthesisUtterance("New order received");
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const triggerNewOrderAlert = () => {
+    setShowNewOrderToast(true);
+    speakNewOrder();
+    setTimeout(() => setShowNewOrderToast(false), 4000);
+  };
+
+  /* ================= ORDERS ================= */
+
+  const fetchOrders = async () => {
+    try {
+      const res = await getShopOrders();
+      const newOrders = res.data || [];
+
+      const newIds = new Set(newOrders.map((o) => o.id));
+      const prevIds = prevOrderIdsRef.current;
+
+      if (prevIds.size > 0 && newIds.size > prevIds.size) {
+        triggerNewOrderAlert();
+      }
+
+      prevOrderIdsRef.current = newIds;
+      setOrders(newOrders);
+    } catch {
+      console.error("Failed to load orders");
+    }
+  };
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (activeTab === "orders") fetchOrders();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [activeTab]);
+
+  /* ================= FILTERING ================= */
+
+  const isSameDay = (d1, d2) =>
+    d1.getFullYear() === d2.getFullYear() &&
+    d1.getMonth() === d2.getMonth() &&
+    d1.getDate() === d2.getDate();
+
+  const isWithinDays = (d, days) =>
+    (new Date() - d) / (1000 * 60 * 60 * 24) <= days;
 
   const filteredOrders = orders.filter((order) => {
     const createdAt = new Date(order.createdAt);
@@ -69,6 +169,7 @@ useEffect(() => {
 
     if (paymentFilter === "paid" && !order.isPaid) return false;
     if (paymentFilter === "unpaid" && order.isPaid) return false;
+
     if (urgentFilter === "urgent" && !order.isUrgent) return false;
     if (urgentFilter === "normal" && order.isUrgent) return false;
 
@@ -76,51 +177,61 @@ useEffect(() => {
   });
 
   const handleStatusChange = async (orderId, newStatus) => {
-    const prevOrders = orders;
+    const prev = orders;
 
-    setOrders((prev) =>
-      prev.map((order) =>
-        order.id === orderId ? { ...order, status: newStatus } : order
-      )
+    setOrders((list) =>
+      list.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o))
     );
 
     try {
       await updateOrderStatus(orderId, newStatus);
-    } catch (err) {
-      alert("Failed to update order status");
-      setOrders(prevOrders);
+    } catch {
+      alert("Failed to update order");
+      setOrders(prev);
     }
   };
-  const refreshOrders = async () => {
-  try {
-    const res = await getShopOrders();
-    setOrders(res.data);
-  } catch (err) {
-    console.error("Failed to refresh orders");
-  }
-};
 
+  /* ================= UI ================= */
 
   return (
     <div className="shop-dashboard">
-      {/* Header */}
       <header className="dashboard-header">
-  <h1>Shop Dashboard</h1>
+        <h1>{shop?.shop_name || "My Shop"}</h1>
 
-  <div className="shop-info">
-    <span className="shop-number">Shop #7</span>
-    <span className="shop-status open">Open</span>
+        <div className="shop-info">
+          <button
+            className={`shop-status ${shop?.is_active ? "open" : "closed"}`}
+            onClick={handleManualToggle}
+            disabled={shopStatusLoading}
+          >
+            {shopStatusLoading
+              ? "Updating..."
+              : shop?.is_active
+              ? "Open"
+              : "Closed"}
+          </button>
 
-    <button className="logout-btn" onClick={handleLogout}>
-      Logout
-    </button>
-  </div>
-</header>
+          <button className="logout-btn" onClick={handleLogout}>
+            Logout
+          </button>
 
+          <button
+            className={`analytics-btn ${
+              activeTab === "analytics" ? "active" : ""
+            }`}
+            onClick={() => setActiveTab("analytics")}
+          >
+            Analytics
+          </button>
+        </div>
+      </header>
+
+      {showNewOrderToast && (
+        <div className="new-order-toast">🖨️ New order received</div>
+      )}
 
       {/* Tabs + Filters */}
       <div className="tabs-with-filters">
-        {/* Tabs */}
         <div className="shop-tabs">
           <button
             className={`tab-btn ${activeTab === "orders" ? "active" : ""}`}
@@ -137,7 +248,6 @@ useEffect(() => {
           </button>
         </div>
 
-        {/* Filters */}
         {activeTab === "orders" && (
           <div className="order-filter-bar">
             <select
@@ -160,7 +270,7 @@ useEffect(() => {
               <option value="paid">Paid</option>
               <option value="unpaid">Unpaid</option>
             </select>
-            {/* Urgency Filter */}
+
             <select
               className="filter-select"
               value={urgentFilter}
@@ -178,11 +288,10 @@ useEffect(() => {
       {activeTab === "orders" && (
         <>
           <OrderList
-  orders={filteredOrders}
-  onStatusChange={handleStatusChange}
-  onRefresh={refreshOrders}
-  onSelectOrder={setSelectedOrder}
-/>
+            orders={filteredOrders}
+            onStatusChange={handleStatusChange}
+            onSelectOrder={setSelectedOrder}
+          />
 
           {selectedOrder && (
             <OrderPreview
@@ -194,6 +303,7 @@ useEffect(() => {
       )}
 
       {activeTab === "settings" && <PricingSettings />}
+      {activeTab === "analytics" && <ShopAnalytics orders={orders} />}
     </div>
   );
 }

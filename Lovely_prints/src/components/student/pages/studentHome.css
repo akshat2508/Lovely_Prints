@@ -1,106 +1,169 @@
+/* ===== PAGE ===== */
 .student-home {
-  padding: 24px;
+  padding: 28px;
+  background: #f9fafb;
+  min-height: 100vh;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont;
 }
 
+/* ===== TITLE ===== */
 .student-home-title {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 600;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
+  color: #111827;
 }
 
+/* ===== GRID ===== */
 .shop-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 20px;
+  gap: 22px;
 }
+
+/* ===== CARD ===== */
 .shop-card-A {
-  border-radius: 14px;
+  position: relative;
+  border-radius: 16px;
   overflow: hidden;
   cursor: pointer;
-  background: #fff;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: #ffffff;
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
 }
 
 .shop-card-A:hover {
   transform: translateY(-6px);
-  box-shadow: 0 14px 28px rgba(0,0,0,0.12);
+  box-shadow:
+    0 18px 42px rgba(0, 0, 0, 0.14),
+    0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
+/* ===== CLOSED STATE ===== */
+.shop-card-A.shop-closed {
+  opacity: 0.55;
+  filter: grayscale(100%);
+  cursor: not-allowed;
+}
+
+.shop-card-A.shop-closed:hover {
+  transform: none;
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* ===== BANNER ===== */
 .shop-banner-A {
   width: 100%;
   height: 180px;
   object-fit: contain;
-  border-bottom: 1px solid #eee;
+  background: #fafafa;
+  border-bottom: 1px solid #e5e7eb;
 }
 
+/* ===== INFO ===== */
 .shop-info-A {
-  padding: 16px;
+  padding: 18px;
   display: flex;
   flex-direction: column;
 }
 
+/* ===== SHOP NAME BADGE ===== */
 .shop-name-badge-A {
-  background-color: #f58220;   /* premium orange */
-  padding: 6px 12px;
-  border-radius: 8px;
-  display: inline-block;
-  margin-bottom: 12px;
+  background: linear-gradient(
+    135deg,
+    #ff9500,
+    #ff7a00
+  );
+  padding: 8px 14px;
+  border-radius: 10px;
+  margin-bottom: 14px;
   text-align: center;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 6px 14px rgba(255, 149, 0, 0.35);
 }
 
 .shop-name-A {
-  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  font-family: "Poppins", "Segoe UI", sans-serif;
   font-size: 20px;
   font-weight: 700;
-  color: #fff;  /* white text for contrast */
+  color: #ffffff;
   margin: 0;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
 }
 
-
+/* ===== DETAILS ===== */
 .shop-details-box-A {
-  background: #f5f6f8;
-  padding: 10px 14px;
-  border-radius: 8px;
+  background: #f3f4f6;
+  padding: 11px 14px;
+  border-radius: 10px;
   margin-bottom: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.03);
   display: flex;
   justify-content: space-between;
   font-size: 14px;
-  color: #555;
+  color: #6b7280;
 }
 
 .shop-details-box-A strong {
-  font-weight: 500;
-  color: #333;
+  font-weight: 600;
+  color: #111827;
 }
 
 .shop-block-A,
 .shop-time-A {
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
+/* ===== SEARCH ===== */
 .shop-search-A {
-  margin-bottom: 20px;
+  margin-bottom: 22px;
   text-align: center;
 }
 
 .shop-search-A input {
   width: 100%;
-  max-width: 400px;
-  padding: 10px 14px;
-  border-radius: 10px;
-  border: 1px solid #ccc;
+  max-width: 420px;
+  padding: 11px 16px;
+  border-radius: 12px;
+  border: 1px solid #d1d5db;
   font-size: 14px;
   outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.25s ease;
+  background: #ffffff;
+}
+
+.shop-search-A input::placeholder {
+  color: #9ca3af;
 }
 
 .shop-search-A input:focus {
-  border-color: #f58220;
-  box-shadow: 0 2px 8px rgba(245, 130, 32, 0.3);
+  border-color: #ff9500;
+  box-shadow: 0 0 0 3px rgba(255, 149, 0, 0.25);
+}
+
+/* ===== STATUS TAG ===== */
+.shop-status-tag {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 5px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 999px;
+  color: #ffffff;
+  z-index: 2;
+  letter-spacing: 0.3px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.shop-status-tag.open {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+}
+
+.shop-status-tag.closed {
+  background: linear-gradient(135deg, #9ca3af, #6b7280);
 }

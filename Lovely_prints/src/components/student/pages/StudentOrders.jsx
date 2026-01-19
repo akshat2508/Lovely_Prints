@@ -3,7 +3,7 @@ import { getStudentOrders } from "../../../services/studentService";
 import TrackOrderModal from "../modals/TrackOrderModal";
 import OrderCard from "../components/OrderCard";
 import OrdersSkeleton from "../skeletons/OrdersSkeleton";
-
+import EmptyOrders from "../skeletons/EmptyOrders";
 import "../dashboard.css";
 import "./studentOrders.css"
 
@@ -53,6 +53,8 @@ const StudentOrders = () => {
       {loading && <OrdersSkeleton count={6} />}
 
      <main className="orders-wrapper-C">
+        {!loading && orders.length === 0 && <EmptyOrders />}
+
   {orders.map((order) => (
     <OrderCard key={order.id} order={order} />
   ))}
