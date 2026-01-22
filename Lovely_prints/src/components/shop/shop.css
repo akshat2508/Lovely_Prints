@@ -33,7 +33,7 @@ body {
 
 .shop-dashboard {
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 50px auto;
   padding: 20px;
 }
 
@@ -197,10 +197,11 @@ body {
 }
 
 .document-info {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+
   gap: 6px;
+  margin: 4px;
+  padding: 4px;
+  overflow: scroll;
 }
 
 .document-name {
@@ -917,12 +918,40 @@ body {
   color: white;
 }
 .tabs-with-filters {
+  margin: 16px 0;
+}
+
+.order-filter-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 16px;
+  flex-wrap: wrap;
 }
+
+/* Left section */
+.order-filter-left {
+  flex: 1;
+  min-width: 260px;
+}
+
+.order-search-input {
+  width: 100%;
+  padding: 8px 12px;
+}
+
+/* Right section */
+.order-filter-right {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.filter-select {
+  padding: 8px 10px;
+  min-width: 140px;
+}
+
 
 .shop-tabs {
   display: flex;
@@ -1044,7 +1073,7 @@ body {
   border-radius: 8px;
   border: 1px solid #e5e7eb;
   font-size: 14px;
-  min-width: 240px;
+  max-width: 340px;
   outline: none;
 }
 

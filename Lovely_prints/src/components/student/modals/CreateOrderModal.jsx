@@ -9,6 +9,7 @@ import {
 
 import { startPayment } from "../Payments";
 import "../dashboard.css";
+import PrintStackLoader from "../skeletons/PrintStackLoader";
 
 const URGENCY_FEE = 10;
 
@@ -28,6 +29,9 @@ const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
   /* ====== Submit State ====== */
   const [submitting, setSubmitting] = useState(false);
   const [disableSubmit, setDisableSubmit] = useState(false);
+      const [showLoader, setShowLoader] = useState(false);
+      const [loaderText, setLoaderText] = useState("Preparing your documents…");
+
 
   /* ====== Helpers ====== */
   const selectedPaper = shopOptions?.paper_types?.find(p => p.id === paperType);
@@ -61,46 +65,68 @@ const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
   };
 
   /* ====== Submit Handler ====== */
-  const handleSubmitAndPay = async () => {
-    if (!canSubmit) return;
+ const handleSubmitAndPay = async () => {
+  if (!canSubmit) return;
 
-    setSubmitting(true);
-    setDisableSubmit(true); // Disable button immediately
-    setTimeout(() => setDisableSubmit(false), 10000); // Re-enable after 10 sec
+  setSubmitting(true);
+  setDisableSubmit(true);
+  setShowLoader(true);
+  setLoaderText("Preparing your documents…");
 
-    try {
-      const orderRes = await createStudentOrder({
-        shop_id: shop.id,
-        description: "Print order",
-        orientation,
-        is_urgent: isUrgent,
-      });
+  try {
+    const orderRes = await createStudentOrder({
+      shop_id: shop.id,
+      description: "Print order",
+      orientation,
+      is_urgent: isUrgent,
+    });
 
-      const order = orderRes.data;
-      const uploadRes = await uploadFile(selectedFile);
-      const fileKey = uploadRes.data.fileKey;
+    const order = orderRes.data;
 
-      await attachDocumentToOrder(order.id, {
-        fileKey,
-        fileName: selectedFile.name,
-        page_count: pageCount,
-        copies,
-        paper_type_id: paperType,
-        color_mode_id: colorMode,
-        finish_type_id: finishType,
-      });
+    const uploadRes = await uploadFile(selectedFile);
+    const fileKey = uploadRes.data.fileKey;
 
-      await startPayment({ ...order, total_price: totalPrice }, onSuccess);
-    } catch (err) {
-      console.error(err);
-      alert("Failed to place order. Try again.");
-    } finally {
-      setSubmitting(false);
-    }
-  };
+    await attachDocumentToOrder(order.id, {
+      fileKey,
+      fileName: selectedFile.name,
+      page_count: pageCount,
+      copies,
+      paper_type_id: paperType,
+      color_mode_id: colorMode,
+      finish_type_id: finishType,
+    });
+
+    setLoaderText("Redirecting to payment gateway…");
+
+    startPayment(
+      { ...order, total_price: totalPrice },
+      // ✅ success
+      () => {
+        setShowLoader(false);
+        onSuccess();
+      },
+      // ❌ failure / cancel
+      (reason) => {
+        setShowLoader(false);
+        setDisableSubmit(false);
+        setSubmitting(false);
+        alert(reason || "Payment not completed");
+      }
+    );
+  } catch (err) {
+    console.error(err);
+    setShowLoader(false);
+    setSubmitting(false);
+    setDisableSubmit(false);
+    alert("Failed to place order. Try again.");
+  }
+};
+
 
   return (
+    
     <div className="modal-overlay">
+      {showLoader &&  <PrintStackLoader/>}
       <div className="modal-card large">
         <h2>Create Order — {shop.shop_name}</h2>
 
@@ -237,7 +263,21 @@ const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
             Cancel
           </button>
         </div>
+      </div>{showLoader && (
+  <div className="print-loader-overlay">
+    <div className="print-loader-card">
+      <div className="paper-stack">
+        <div className="paper p1"></div>
+        <div className="paper p2"></div>
+        <div className="paper p3"></div>
+        <div className="paper p4"></div>
       </div>
+
+      <p className="loader-text">{loaderText}</p>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };

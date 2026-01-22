@@ -1,6 +1,6 @@
-import { useState } from "react"
-import OrderDetailsModal from "../modals/OrderDetailsModal"
-import "./orderCard-D.css"
+import { useState } from "react";
+import OrderDetailsModal from "../modals/OrderDetailsModal";
+import "./orderCard-D.css";
 
 const STATUS_COLORS = {
   pending: "status-pending",
@@ -8,23 +8,23 @@ const STATUS_COLORS = {
   printing: "status-printing",
   ready: "status-ready",
   completed: "status-completed",
-}
+};
 
 const OrderCard = ({ order }) => {
-  const [expanded, setExpanded] = useState(false)
-  const [showDetails, setShowDetails] = useState(false)
+  const [expanded, setExpanded] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
 
-  const doc = order.documents?.[0]
-const formatDate = (dateString) => {
-  return new Date(dateString).toLocaleString("en-IN", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true
-  });
-};
+  const doc = order.documents?.[0];
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
   return (
     <>
       <div className="order-card-D">
@@ -38,9 +38,7 @@ const formatDate = (dateString) => {
           </div>
 
           <div className="order-meta-D">
-            <span
-              className={`status-badge-D ${STATUS_COLORS[order.status]}`}
-            >
+            <span className={`status-badge-D ${STATUS_COLORS[order.status]}`}>
               {order.status.toUpperCase()}
             </span>
             <span className="order-price-D">₹{order.total_price}</span>
@@ -64,8 +62,21 @@ const formatDate = (dateString) => {
                 <span className="urgent-badge-D">URGENT</span>
               )}
             </p>
-              <p className="order-btn-secondary-D">ID: {order.id}</p>
-               <p className="order-btn-secondary-D">Placed At : {formatDate(order.created_at)}</p>
+
+            <p className="order-btn-secondary-D">ID: {order.id}</p>
+            <p className="order-btn-secondary-D">
+              Placed At : {formatDate(order.created_at)}
+            </p>
+
+            {/* ✅ OTP PREVIEW (NEW) */}
+            {order.status === "ready" &&
+              order.delivery_otp &&
+              !order.otp_verified && (
+                <div className="otp-preview-D">
+                  <span className="otp-preview-label">Pickup Code</span>
+                  <span className="otp-preview-code">{order.delivery_otp}</span>
+                </div>
+              )}
 
             <button
               className="order-btn-secondary-D"
@@ -104,7 +115,7 @@ const formatDate = (dateString) => {
         />
       )}
     </>
-  )
-}
+  );
+};
 
-export default OrderCard
+export default OrderCard;

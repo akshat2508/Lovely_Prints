@@ -95,6 +95,7 @@
   font-size: 0.88rem;
   color: #6b7280;
   line-height: 1.4;
+  overflow: scroll;
 }
 
 /* ================= EXPAND SECTION ================= */
@@ -197,4 +198,49 @@
   .order-actions-D {
     flex-direction: column;
   }
+}
+
+/* ================= OTP PREVIEW (ORDER CARD) ================= */
+
+.otp-preview-D {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    rgba(16,185,129,0.12),
+    rgba(16,185,129,0.08)
+  );
+  border: 1px solid rgba(16,185,129,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  animation: otpFadeIn 0.25s ease;
+}
+
+@keyframes otpFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.otp-preview-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #065f46;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.otp-preview-code {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #10b981;
+  letter-spacing: 2px;
 }

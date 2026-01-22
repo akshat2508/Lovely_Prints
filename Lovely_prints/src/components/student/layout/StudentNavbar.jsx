@@ -1,8 +1,12 @@
-import { NavLink } from "react-router-dom"
-import "./studentNavbar.css"
-import logo from "../../../assets/logo.png"
+import { NavLink } from "react-router-dom";
+import "./studentNavbar.css";
+import logo from "../../../assets/logo.png";
 
-const StudentNavbar = ({ onLogout }) => {
+const StudentNavbar = ({
+  onLogout,
+  hasReadyOrders,
+  onOrdersClick,
+}) => {
   return (
     <nav className="student-navbar">
       <div className="nav-left">
@@ -14,9 +18,18 @@ const StudentNavbar = ({ onLogout }) => {
         <NavLink to="/student" end>
           Home
         </NavLink>
-        <NavLink to="/student/orders">
+
+        <NavLink
+          to="/student/orders"
+          onClick={onOrdersClick}
+          className="nav-orders-link"
+        >
           Orders
+          {hasReadyOrders && (
+            <span className="nav-ready-badge">READY</span>
+          )}
         </NavLink>
+
         <NavLink to="/student/profile">
           Profile
         </NavLink>
@@ -28,7 +41,7 @@ const StudentNavbar = ({ onLogout }) => {
         </button>
       </div>
     </nav>
-  )
-}
+  );
+};
 
-export default StudentNavbar
+export default StudentNavbar;

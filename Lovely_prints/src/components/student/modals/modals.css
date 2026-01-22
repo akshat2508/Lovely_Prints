@@ -121,6 +121,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  min-width: 50%;
 }
 
 /* Primary */
@@ -729,4 +730,85 @@
   font-size: small;
   padding-bottom: 8px;
   margin: 10px;
+}
+
+
+
+/* Open modal css */
+
+.policy-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.policy-modal {
+  background: #ffffff;
+  width: 420px;
+  max-width: 92%;
+  padding: 26px;
+  border-radius: 14px;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25);
+  animation: scaleIn 0.25s ease;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.policy-modal h2 {
+  font-size: 1.3rem;
+  margin-bottom: 16px;
+  color: #111827;
+}
+
+.policy-content {
+  font-size: 0.9rem;
+  color: #374151;
+  margin-bottom: 16px;
+}
+
+.policy-content ul {
+  padding-left: 18px;
+}
+
+.policy-content li {
+  margin-bottom: 8px;
+}
+
+.policy-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.policy-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #f58220, #ff7a00);
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.overflow
+{
+  overflow: scroll;
 }

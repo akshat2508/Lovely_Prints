@@ -25,6 +25,46 @@ export default function OrderPreview({ order, onClose }) {
           <button className="preview-close" onClick={onClose}>×</button>
         </div>
 
+        
+
+        {/* Student Info */}
+        <div className="preview-section student">
+          <h4>Customer Information</h4>
+
+          <div className="preview-row">
+            <span className="preview-label">Name</span>
+            <span>{order.studentName || '—'}</span>
+          </div>
+
+          <div className="preview-row">
+            <span className="preview-label">Customer ID</span>
+            <span>{order.studentId || '—'}</span>
+          </div>
+        </div>
+
+        {/* Document */}
+        <div className="preview-section document">
+          <h4>Document</h4>
+
+          <div className="preview-row">
+            <span className="preview-label">File</span>
+            <span>{order.documentName}</span>
+          </div>
+        </div>
+
+        {/* Print Specifications */}
+        <div className="preview-section specs">
+          <h4>Print Specifications</h4>
+
+          <div className="preview-specs">
+            <span className="spec-pill">Paper: {order.paperType}</span>
+            <span className="spec-pill">Color: {order.colorMode}</span>
+            <span className="spec-pill">Finish: {order.finishType}</span>
+            <span className="spec-pill">Copies: {order.copies}</span>
+            <span className="spec-pill">Orientation: {order.orientation}</span>
+
+          </div>
+        </div>
         {/* Order Meta */}
         <div className="preview-section meta">
           <div className="preview-row">
@@ -74,45 +114,6 @@ export default function OrderPreview({ order, onClose }) {
             </span>
           </div>
 
-        </div>
-
-        {/* Student Info */}
-        <div className="preview-section student">
-          <h4>Customer Information</h4>
-
-          <div className="preview-row">
-            <span className="preview-label">Name</span>
-            <span>{order.studentName || '—'}</span>
-          </div>
-
-          <div className="preview-row">
-            <span className="preview-label">Customer ID</span>
-            <span>{order.studentId || '—'}</span>
-          </div>
-        </div>
-
-        {/* Document */}
-        <div className="preview-section document">
-          <h4>Document</h4>
-
-          <div className="preview-row">
-            <span className="preview-label">File</span>
-            <span>{order.documentName}</span>
-          </div>
-        </div>
-
-        {/* Print Specifications */}
-        <div className="preview-section specs">
-          <h4>Print Specifications</h4>
-
-          <div className="preview-specs">
-            <span className="spec-pill">Paper: {order.paperType}</span>
-            <span className="spec-pill">Color: {order.colorMode}</span>
-            <span className="spec-pill">Finish: {order.finishType}</span>
-            <span className="spec-pill">Copies: {order.copies}</span>
-            <span className="spec-pill">Orientation: {order.orientation}</span>
-
-          </div>
         </div>
 
         {/* ETA (placeholder for now) */}

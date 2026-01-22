@@ -32,13 +32,17 @@ export const createPaymentOrder = async (req, res) => {
       orderId
     );
 
-    await supabaseService.createPayment({
-      order_id: orderId,
-      student_id: studentId,
-      amount: order.total_price,
-      razorpay_order_id: razorpayOrder.id,
-      status: 'created',
-    });
+await supabaseService.createPayment(
+  {
+    order_id: orderId,
+    student_id: studentId,
+    amount: order.total_price,
+    razorpay_order_id: razorpayOrder.id,
+    status: 'created',
+  },
+  req.headers.authorization.split(' ')[1]
+);
+
 
     return successResponse(res, razorpayOrder, 'Payment order created');
   } catch (err) {
@@ -55,6 +59,8 @@ export const verifyPayment = async (req, res) => {
       razorpay_signature,
       orderId,
     } = req.body;
+
+    console.log("🔥 VERIFY PAYMENT HIT", req.body);
 
     /* 1️⃣ Idempotency check */
     const { data: existingPayment } =
@@ -79,14 +85,26 @@ export const verifyPayment = async (req, res) => {
     }
 
     /* 3️⃣ Mark payment success */
-    await supabaseService.markPaymentSuccess(
-      razorpay_order_id,
-      razorpay_payment_id,
-      razorpay_signature
-    );
+    const { error: payErr } =
+      await supabaseService.markPaymentSuccess(
+        orderId,
+        razorpay_payment_id,
+        razorpay_signature
+      );
+
+    if (payErr) {
+      console.error("❌ PAYMENT UPDATE FAILED:", payErr);
+      return errorResponse(res, 'Payment DB update failed', 500);
+    }
 
     /* 4️⃣ Mark order paid */
-    await supabaseService.markOrderPaid(orderId);
+    const { error: orderErr } =
+      await supabaseService.markOrderPaid(orderId);
+
+    if (orderErr) {
+      console.error("❌ ORDER UPDATE FAILED:", orderErr);
+      return errorResponse(res, 'Order update failed', 500);
+    }
 
     return successResponse(res, null, 'Payment successful');
   } catch (err) {
