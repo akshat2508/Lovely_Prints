@@ -407,22 +407,30 @@ async createFinishType(data, token) {
 }
 
 //Functions for payments
-async createPayment(data) {
-  return await supabaseAnon
+async createPayment(data, token) {
+  const supabaseUser = getUserSupabase(token);
+
+  return await supabaseUser
     .from('payments')
-    .insert(data);
+    .insert(data)
+    .select()
+    .single();
 }
 
+
 async markPaymentSuccess(orderId, paymentId, signature) {
-  return await supabaseAnon
+  return await supabaseAdmin
     .from('payments')
     .update({
       razorpay_payment_id: paymentId,
       razorpay_signature: signature,
       status: 'success',
+      updated_at: new Date()
     })
-    .eq('razorpay_order_id', orderId);
+    .eq('order_id', orderId);
 }
+
+
 
 
 // supabase.service.js
@@ -446,12 +454,8 @@ async markOrderPaid(orderId) {
 }
 //webhook helper functions
 
-async markPaymentWebhookSuccess(
-  razorpayOrderId,
-  razorpayPaymentId,
-  payload
-) {
-  return await supabaseAnon
+async markPaymentWebhookSuccess(razorpayOrderId, razorpayPaymentId, payload) {
+  return await supabaseAdmin
     .from('payments')
     .update({
       status: 'success',
@@ -462,8 +466,9 @@ async markPaymentWebhookSuccess(
     .eq('razorpay_order_id', razorpayOrderId);
 }
 
+
 async markOrderPaidByRazorpayOrder(razorpayOrderId) {
-  const { data: payment } = await supabaseAnon
+  const { data: payment } = await supabaseAdmin
     .from('payments')
     .select('order_id')
     .eq('razorpay_order_id', razorpayOrderId)
@@ -471,7 +476,7 @@ async markOrderPaidByRazorpayOrder(razorpayOrderId) {
 
   if (!payment) return;
 
-  return await supabaseAnon
+  return await supabaseAdmin
     .from('orders')
     .update({
       is_paid: true,
@@ -480,6 +485,7 @@ async markOrderPaidByRazorpayOrder(razorpayOrderId) {
     })
     .eq('id', payment.order_id);
 }
+
 
 
 async getOrdersForOwner(token) {
