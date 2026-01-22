@@ -105,3 +105,30 @@
     padding: 72px 16px;
   }
 }
+/* ================= FILTER BAR ================= */
+
+.orders-filter-row-C {
+  margin-top: 14px;
+}
+
+.orders-filter-select-C {
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  border-radius: 10px;
+  border: 1.5px solid #e5e7eb;
+  background: #ffffff;
+  color: #374151;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.orders-filter-select-C:hover {
+  border-color: #f58220;
+}
+
+.orders-filter-select-C:focus {
+  outline: none;
+  border-color: #f58220;
+  box-shadow: 0 0 0 2px rgba(245, 130, 32, 0.15);
+}

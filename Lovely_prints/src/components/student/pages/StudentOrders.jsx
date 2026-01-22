@@ -22,6 +22,7 @@ const StudentOrders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [dateFilter, setDateFilter] = useState("all");
 
   const fetchOrders = async () => {
     try {
@@ -38,6 +39,14 @@ const StudentOrders = () => {
   useEffect(() => {
     fetchOrders();
   }, []);
+  const isSameDay = (d1, d2) =>
+  d1.getFullYear() === d2.getFullYear() &&
+  d1.getMonth() === d2.getMonth() &&
+  d1.getDate() === d2.getDate();
+
+const isWithinDays = (date, days) =>
+  (new Date() - date) / (1000 * 60 * 60 * 24) <= days;
+
 
   return (
     <div className="dashboard">
@@ -47,6 +56,19 @@ const StudentOrders = () => {
     <p className="header-subtitle-C">
       Track, manage, and review your print orders
     </p>
+    <div className="orders-filter-row-C">
+  <select
+    className="orders-filter-select-C"
+    value={dateFilter}
+    onChange={(e) => setDateFilter(e.target.value)}
+  >
+    <option value="all">All Orders</option>
+    <option value="today">Today</option>
+    <option value="7days">Last 7 Days</option>
+    <option value="30days">Last 30 Days</option>
+  </select>
+</div>
+
   </div>
 </div>
 
@@ -55,9 +77,30 @@ const StudentOrders = () => {
      <main className="orders-wrapper-C">
         {!loading && orders.length === 0 && <EmptyOrders />}
 
-  {orders.map((order) => (
+ {orders
+  .filter((order) => {
+    if (dateFilter === "all") return true;
+
+    const createdAt = new Date(order.created_at);
+
+    if (dateFilter === "today") {
+      return isSameDay(createdAt, new Date());
+    }
+
+    if (dateFilter === "7days") {
+      return isWithinDays(createdAt, 7);
+    }
+
+    if (dateFilter === "30days") {
+      return isWithinDays(createdAt, 30);
+    }
+
+    return true;
+  })
+  .map((order) => (
     <OrderCard key={order.id} order={order} />
   ))}
+
 </main>
 
 

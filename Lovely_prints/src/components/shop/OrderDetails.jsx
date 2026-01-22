@@ -71,21 +71,32 @@ const handleVerifyOtp = async () => {
 
   try {
     setVerifyingOtp(true);
-    await verifyOrderOtp(order.id, otp);
+
+    const res = await verifyOrderOtp(order.id, otp);
+
+    // ✅ Explicit success check
+    if (!res?.success) {
+      throw new Error(res?.message || "Invalid OTP");
+    }
+    else{
+      alert("Otp verified successfully")
+    }
+
     setShowOtpModal(false);
     setOtp("");
 
-    // refresh order list
-    // await onStatusChange(order.id, "completed");
     await onRefresh();
   } catch (err) {
     alert(
-      err?.response?.data?.message || "Invalid OTP"
+      err?.response?.data?.message ||
+      err?.message ||
+      "Invalid OTP"
     );
   } finally {
     setVerifyingOtp(false);
   }
 };
+
 
 
   return (
@@ -127,6 +138,7 @@ const handleVerifyOtp = async () => {
 
        <div className="document-info">
   <p>{order.documentName}</p>
+</div>
   <button
     className="download-button"
     disabled={!order.isPaid || order.status === "completed" || downloading}
@@ -140,7 +152,6 @@ const handleVerifyOtp = async () => {
       ? "Preparing..."
       : "Download"}
   </button>
-</div>
 
         <div className="print-details">
           <span>Paper: {order.paperType}</span>

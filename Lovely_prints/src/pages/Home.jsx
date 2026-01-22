@@ -1,7 +1,7 @@
 import "./Home.css";
 import HeroVisual from "./HeroVisual";
 import { useEffect, useState } from "react";
-
+import { Link } from "react-router-dom";
 export default function Home() {
   const [showHeroVisual, setShowHeroVisual] = useState(false);
   const [showTeamPopup, setShowTeamPopup] = useState(false);
@@ -95,8 +95,11 @@ export default function Home() {
             </div>
 
             <div className="cta-group">
-              <button className="btn primary">Upload now</button>
-              <button className="btn secondary">I run a shop</button>
+              <button className="btn primary">
+                <Link to="/login" >
+                Get Started
+              </Link>
+              </button>
             </div>
           </div>
 

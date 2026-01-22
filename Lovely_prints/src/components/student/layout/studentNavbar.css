@@ -111,6 +111,7 @@
 
   .nav-title {
     font-size: 0.95rem;
+    display: none;
   }
 
   .nav-logo {
@@ -122,5 +123,31 @@
     padding: 7px 12px;
     font-size: 0.8rem;
     border-radius: 10px;
+  }
+}
+
+/* 🔔 READY badge on Orders */
+.nav-ready-badge {
+  margin-left: 8px;
+  padding: 3px 8px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  border-radius: 999px;
+  background: #16a34a; /* green */
+  color: white;
+  letter-spacing: 0.04em;
+  animation: pulseReady 1.5s infinite;
+}
+
+/* Subtle pulse animation */
+@keyframes pulseReady {
+  0% {
+    box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(22, 163, 74, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(22, 163, 74, 0);
   }
 }

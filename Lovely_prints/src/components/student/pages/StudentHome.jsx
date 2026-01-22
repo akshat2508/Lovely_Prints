@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useStudentData } from "../context/StudentDataContext";
 import ShopSkeleton from "../skeletons/ShopSkeleton";
 import ShopFallBack from "../assets/shop1.jpg";
+import OpenPoliciesModal from "../modals/OpenPoliciesModal";
+
 import "./studentHome.css";
 
 const StudentHome = () => {
@@ -11,10 +13,15 @@ const StudentHome = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredShops, setFilteredShops] = useState([]);
+  const [showPolicies, setShowPolicies] = useState(true);
 
   // useEffect(() => {
   //   fetchShops();
   // }, []);
+  const handleAcceptPolicies = () => {
+  setShowPolicies(false);
+};
+
 
   useEffect(() => {
     if (!shops) return;
@@ -43,6 +50,8 @@ const StudentHome = () => {
 
   return (
     <div className="student-home">
+      {showPolicies && <OpenPoliciesModal onAccept={handleAcceptPolicies} />}
+
       <h1 className="student-home-title">Choose a Print Shop</h1>
 
       {/* Search */}

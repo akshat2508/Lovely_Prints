@@ -16,7 +16,7 @@ const STATUS_LABELS = {
   confirmed: "Confirmed",
   printing: "Printing",
   ready: "Ready for Pickup",
-  completed: "Delivered",
+  completed: "Picked Up",
 };
 
 const STATUS_ICONS = {
@@ -93,7 +93,7 @@ const TrackOrderModal = ({ order, onClose }) => {
 
         {liveOrder.otp_verified && (
           <div className="otp-success">
-            ✅ Order has been successfully delivered
+            ✅ Order has been successfully picked Up
           </div>
         )}
 

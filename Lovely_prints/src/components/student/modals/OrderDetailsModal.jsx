@@ -22,7 +22,7 @@ const OrderDetailsModal = ({ order, onClose }) => {
           {doc && (
             <>
               <h4>Document</h4>
-              <p>{doc.file_name}</p>
+              <p className="overflow">{doc.file_name}</p>
               <p>
                 {doc.page_count} pages × {doc.copies}
               </p>

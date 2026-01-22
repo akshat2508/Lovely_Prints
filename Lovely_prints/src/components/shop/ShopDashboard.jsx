@@ -12,6 +12,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { logoutUser } from "../../services/authService";
 import ShopAnalytics from "./analytics/ShopAnalytics";
+import ShopNavbar from "./ShopNavbar";
 
 export default function ShopDashboard() {
   const [orders, setOrders] = useState([]);
@@ -31,6 +32,9 @@ export default function ShopDashboard() {
   const [showNewOrderToast, setShowNewOrderToast] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
+  const [hasNewOrders, setHasNewOrders] = useState(false);
+  const [hasUrgentOrders, setHasUrgentOrders] = useState(false);
 
   const navigate = useNavigate();
 
@@ -124,11 +128,21 @@ export default function ShopDashboard() {
       const res = await getShopOrders();
       const newOrders = res.data || [];
 
-      const newIds = new Set(newOrders.map((o) => o.id));
       const prevIds = prevOrderIdsRef.current;
+      const newIds = new Set(newOrders.map((o) => o.id));
 
-      if (prevIds.size > 0 && newIds.size > prevIds.size) {
-        triggerNewOrderAlert();
+      // 🆕 detect truly new orders
+      const freshOrders = newOrders.filter((o) => !prevIds.has(o.id));
+
+      if (prevIds.size > 0 && freshOrders.length > 0) {
+        setHasNewOrders(true);
+
+        // 🚨 urgent detection
+        if (freshOrders.some((o) => o.isUrgent)) {
+          setHasUrgentOrders(true);
+        }
+
+        triggerNewOrderAlert(); // your existing voice + toast
       }
 
       prevOrderIdsRef.current = newIds;
@@ -161,43 +175,42 @@ export default function ShopDashboard() {
     (new Date() - d) / (1000 * 60 * 60 * 24) <= days;
 
   const filteredOrders = orders.filter((order) => {
-  const createdAt = new Date(order.createdAt);
+    const createdAt = new Date(order.createdAt);
 
-  /* ---------- DATE FILTERS ---------- */
-  if (filterMode === "today" && !isSameDay(createdAt, new Date()))
-    return false;
-  if (filterMode === "7days" && !isWithinDays(createdAt, 7)) return false;
-  if (filterMode === "30days" && !isWithinDays(createdAt, 30)) return false;
-
-  /* ---------- PAYMENT FILTERS ---------- */
-  if (paymentFilter === "paid" && !order.isPaid) return false;
-  if (paymentFilter === "unpaid" && order.isPaid) return false;
-
-  /* ---------- URGENT FILTERS ---------- */
-  if (urgentFilter === "urgent" && !order.isUrgent) return false;
-  if (urgentFilter === "normal" && order.isUrgent) return false;
-
-  /* ---------- SEARCH FILTER ---------- */
-  if (searchQuery.trim()) {
-    const q = searchQuery.toLowerCase();
-
-    const orderId = String(order.id || "").toLowerCase();
-    const orderNo = String(order.orderNo || "").toLowerCase();
-
-    if (!orderId.includes(q) && !orderNo.includes(q)) {
+    /* ---------- DATE FILTERS ---------- */
+    if (filterMode === "today" && !isSameDay(createdAt, new Date()))
       return false;
+    if (filterMode === "7days" && !isWithinDays(createdAt, 7)) return false;
+    if (filterMode === "30days" && !isWithinDays(createdAt, 30)) return false;
+
+    /* ---------- PAYMENT FILTERS ---------- */
+    if (paymentFilter === "paid" && !order.isPaid) return false;
+    if (paymentFilter === "unpaid" && order.isPaid) return false;
+
+    /* ---------- URGENT FILTERS ---------- */
+    if (urgentFilter === "urgent" && !order.isUrgent) return false;
+    if (urgentFilter === "normal" && order.isUrgent) return false;
+
+    /* ---------- SEARCH FILTER ---------- */
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+
+      const orderId = String(order.id || "").toLowerCase();
+      const orderNo = String(order.orderNo || "").toLowerCase();
+
+      if (!orderId.includes(q) && !orderNo.includes(q)) {
+        return false;
+      }
     }
-  }
 
-  return true;
-});
-
+    return true;
+  });
 
   const handleStatusChange = async (orderId, newStatus) => {
     const prev = orders;
 
     setOrders((list) =>
-      list.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o))
+      list.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o)),
     );
 
     try {
@@ -212,36 +225,24 @@ export default function ShopDashboard() {
 
   return (
     <div className="shop-dashboard">
-      <header className="dashboard-header">
-        <h1>{shop?.shop_name || "My Shop"}</h1>
+      <ShopNavbar
+        shop={shop}
+        isUpdating={shopStatusLoading}
+        onToggleShop={handleManualToggle}
+        onLogout={handleLogout}
+        activeTab={activeTab}
+        setActiveTab={(tab) => {
+          setActiveTab(tab);
 
-        <div className="shop-info">
-          <button
-            className={`shop-status ${shop?.is_active ? "open" : "closed"}`}
-            onClick={handleManualToggle}
-            disabled={shopStatusLoading}
-          >
-            {shopStatusLoading
-              ? "Updating..."
-              : shop?.is_active
-              ? "Open"
-              : "Closed"}
-          </button>
-
-          <button className="logout-btn" onClick={handleLogout}>
-            Logout
-          </button>
-
-          <button
-            className={`analytics-btn ${
-              activeTab === "analytics" ? "active" : ""
-            }`}
-            onClick={() => setActiveTab("analytics")}
-          >
-            Analytics
-          </button>
-        </div>
-      </header>
+          // 🔔 clear notification ONLY when orders tab clicked
+          if (tab === "orders") {
+            setHasNewOrders(false);
+            setHasUrgentOrders(false);
+          }
+        }}
+        hasNewOrders={hasNewOrders}
+        hasUrgentOrders={hasUrgentOrders}
+      />
 
       {showNewOrderToast && (
         <div className="new-order-toast">🖨️ New order received</div>
@@ -249,66 +250,54 @@ export default function ShopDashboard() {
 
       {/* Tabs + Filters */}
       <div className="tabs-with-filters">
-        <div className="shop-tabs">
-          <button
-            className={`tab-btn ${activeTab === "orders" ? "active" : ""}`}
-            onClick={() => setActiveTab("orders")}
-          >
-            Orders
-          </button>
-
-          <button
-            className={`tab-btn ${activeTab === "settings" ? "active" : ""}`}
-            onClick={() => setActiveTab("settings")}
-          >
-            Availability & Pricing
-          </button>
-        </div>
-
         {activeTab === "orders" && (
-  <div className="order-filter-bar">
-    {/* 🔍 Search */}
-    <input
-      type="text"
-      className="order-search-input"
-      placeholder="Search by Order ID or Order No"
-      value={searchQuery}
-      onChange={(e) => setSearchQuery(e.target.value)}
-    />
+          <div className="order-filter-bar">
+            {/* Left: Search */}
+            <div className="order-filter-left">
+              <input
+                type="text"
+                className="order-search-input"
+                placeholder="Search by Order ID or Order No"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
 
-    <select
-      className="filter-select"
-      value={filterMode}
-      onChange={(e) => setFilterMode(e.target.value)}
-    >
-      <option value="today">Today</option>
-      <option value="7days">Last 7 Days</option>
-      <option value="30days">Last 30 Days</option>
-      <option value="all">All Orders</option>
-    </select>
+            {/* Right: Filters */}
+            <div className="order-filter-right">
+              <select
+                className="filter-select"
+                value={filterMode}
+                onChange={(e) => setFilterMode(e.target.value)}
+              >
+                <option value="today">Today</option>
+                <option value="7days">Last 7 Days</option>
+                <option value="30days">Last 30 Days</option>
+                <option value="all">All Orders</option>
+              </select>
 
-    <select
-      className="filter-select"
-      value={paymentFilter}
-      onChange={(e) => setPaymentFilter(e.target.value)}
-    >
-      <option value="all">All Payments</option>
-      <option value="paid">Paid</option>
-      <option value="unpaid">Unpaid</option>
-    </select>
+              <select
+                className="filter-select"
+                value={paymentFilter}
+                onChange={(e) => setPaymentFilter(e.target.value)}
+              >
+                <option value="all">All Payments</option>
+                <option value="paid">Paid</option>
+                <option value="unpaid">Unpaid</option>
+              </select>
 
-    <select
-      className="filter-select"
-      value={urgentFilter}
-      onChange={(e) => setUrgentFilter(e.target.value)}
-    >
-      <option value="all">All Orders</option>
-      <option value="urgent">Urgent Only</option>
-      <option value="normal">Normal Only</option>
-    </select>
-  </div>
-)}
-
+              <select
+                className="filter-select"
+                value={urgentFilter}
+                onChange={(e) => setUrgentFilter(e.target.value)}
+              >
+                <option value="all">All Orders</option>
+                <option value="urgent">Urgent Only</option>
+                <option value="normal">Normal Only</option>
+              </select>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Content */}
@@ -318,6 +307,7 @@ export default function ShopDashboard() {
             orders={filteredOrders}
             onStatusChange={handleStatusChange}
             onSelectOrder={setSelectedOrder}
+            onRefresh={fetchOrders}
           />
 
           {selectedOrder && (
