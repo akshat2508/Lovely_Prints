@@ -6,7 +6,7 @@ import axios from "axios";
  * Backend runs on /api/*
  */
 const api = axios.create({
-  baseURL: "https://qqzr49p8-3000.inc1.devtunnels.ms/api/",
+  baseURL: "https://lovely-prints-backend.onrender.com/api/",
   headers: {
     "Content-Type": "application/json",
   },
