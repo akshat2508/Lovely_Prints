@@ -5,8 +5,10 @@ import axios from "axios";
  * Base Axios instance
  * Backend runs on /api/*
  */
+
+
 const api = axios.create({
-  baseURL: "https://lovely-prints-backend.onrender.com/api/",
+  baseURL: import.meta.env.VITE_API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
