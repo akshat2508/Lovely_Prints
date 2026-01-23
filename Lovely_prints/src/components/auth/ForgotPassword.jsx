@@ -13,7 +13,7 @@ export default function ForgotPassword() {
     setMessage("");
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: "http://localhost:5173/update-password",
+      redirectTo: "https://www.lovelyprints.co.in/update-password",
     });
 
     if (error) {
