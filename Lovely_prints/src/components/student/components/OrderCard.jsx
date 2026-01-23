@@ -1,6 +1,7 @@
 import { useState } from "react";
 import OrderDetailsModal from "../modals/OrderDetailsModal";
 import "./orderCard-D.css";
+import TrackOrderModal from "../modals/TrackOrderModal";
 
 const STATUS_COLORS = {
   pending: "status-pending",
@@ -13,7 +14,7 @@ const STATUS_COLORS = {
 const OrderCard = ({ order }) => {
   const [expanded, setExpanded] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
-
+  const [showTrackDetails , setShowTrackDetails] = useState(false);
   const doc = order.documents?.[0];
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleString("en-IN", {
@@ -99,7 +100,7 @@ const OrderCard = ({ order }) => {
           {order.status !== "completed" && (
             <button
               className="order-btn-primary-D"
-              onClick={() => setShowDetails(true)}
+              onClick={() => setShowTrackDetails(true)}
             >
               Track Order
             </button>
@@ -112,6 +113,13 @@ const OrderCard = ({ order }) => {
         <OrderDetailsModal
           order={order}
           onClose={() => setShowDetails(false)}
+        />
+      )}
+
+      {showTrackDetails && (
+        <TrackOrderModal
+          order={order}
+          onClose={() => setShowTrackDetails(false)}
         />
       )}
     </>
