@@ -167,3 +167,35 @@
 .shop-status-tag.closed {
   background: linear-gradient(135deg, #9ca3af, #6b7280);
 }
+
+/* ===== FILTER ===== */
+.shop-filter-A {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.shop-filter-A button {
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  color: #374151;
+}
+
+.shop-filter-A button:hover {
+  border-color: #ff9500;
+  color: #ff9500;
+}
+
+.shop-filter-A button.active {
+  background: linear-gradient(135deg, #ff9500, #ff7a00);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 6px 14px rgba(255, 149, 0, 0.35);
+}

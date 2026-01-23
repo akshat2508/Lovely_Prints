@@ -10,6 +10,7 @@ import "./studentHome.css";
 const StudentHome = () => {
   const navigate = useNavigate();
   const { shops, shopsLoading, fetchShops } = useStudentData();
+  const [shopStatusFilter, setShopStatusFilter] = useState("all");
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredShops, setFilteredShops] = useState([]);
@@ -26,14 +27,23 @@ const StudentHome = () => {
   useEffect(() => {
     if (!shops) return;
 
-    const filtered = shops.filter(
-      (shop) =>
-        shop.shop_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        shop.block.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filtered = shops.filter((shop) => {
+  const matchesSearch =
+    shop.shop_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    shop.block.toLowerCase().includes(searchTerm.toLowerCase());
+
+  const matchesStatus =
+    shopStatusFilter === "all" ||
+    (shopStatusFilter === "open" && shop.is_active) ||
+    (shopStatusFilter === "closed" && !shop.is_active);
+
+  return matchesSearch && matchesStatus;
+});
+
 
     setFilteredShops(filtered);
-  }, [searchTerm, shops]);
+  }, [searchTerm, shops, shopStatusFilter]);
+
 
   if (shopsLoading) {
     return (
@@ -63,6 +73,28 @@ const StudentHome = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
+      <div className="shop-filter-A">
+  <button
+    className={shopStatusFilter === "all" ? "active" : ""}
+    onClick={() => setShopStatusFilter("all")}
+  >
+    All
+  </button>
+
+  <button
+    className={shopStatusFilter === "open" ? "active" : ""}
+    onClick={() => setShopStatusFilter("open")}
+  >
+    Open
+  </button>
+
+  <button
+    className={shopStatusFilter === "closed" ? "active" : ""}
+    onClick={() => setShopStatusFilter("closed")}
+  >
+    Closed
+  </button>
+</div>
 
       <div className="shop-grid">
         {filteredShops.map((shop) => (
