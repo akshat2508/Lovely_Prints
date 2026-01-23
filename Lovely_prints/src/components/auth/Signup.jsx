@@ -1,21 +1,23 @@
-import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import logo from "../../assets/logo.png"
-import { registerUser } from "../../services/authService"
-import "./auth.css"
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import logo from "../../assets/logo.png";
+import { registerUser } from "../../services/authService";
+import "./auth.css";
+import EmailConfirmationModal from "./modal/EmailConfirmationModal";
 
 export default function Signup() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const handleSignup = async () => {
-    setError("")
-    setLoading(true)
+    setError("");
+    setLoading(true);
 
     try {
       await registerUser({
@@ -23,28 +25,24 @@ export default function Signup() {
         email,
         password,
         role: "student", // ✅ enforced by frontend
-      })
+      });
 
       // After successful signup → go to login
-      navigate("/login")
-
+      setShowConfirmModal(true);
     } catch (err) {
-      setError(err.response?.data?.message || "Signup failed")
+      setError(err.response?.data?.message || "Signup failed");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="auth-page">
       <div className="auth-card">
-
         <img src={logo} alt="Lovely Prints" className="auth-logo" />
 
         <h2 className="auth-title">Create Account</h2>
-        <p className="auth-subtitle">
-          Register using your valid details
-        </p>
+        <p className="auth-subtitle">Register using your valid details</p>
 
         <div className="auth-form">
           <input
@@ -71,9 +69,7 @@ export default function Signup() {
           />
 
           {error && (
-            <p style={{ color: "tomato", fontSize: "0.85rem" }}>
-              {error}
-            </p>
+            <p style={{ color: "tomato", fontSize: "0.85rem" }}>{error}</p>
           )}
 
           <button
@@ -91,8 +87,13 @@ export default function Signup() {
             Login
           </Link>
         </p>
-
       </div>
+      {showConfirmModal && (
+        <EmailConfirmationModal
+          email={email}
+          onContinue={() => navigate("/login")}
+        />
+      )}
     </div>
-  )
+  );
 }

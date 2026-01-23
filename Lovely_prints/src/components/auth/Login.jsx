@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom"
 import logo from "../../assets/logo.png"
 import { loginUser } from "../../services/authService"
 import "./auth.css"
+import LoginLoader from "./LoginLoader"
 
 export default function Login() {
   const navigate = useNavigate()
@@ -11,6 +12,7 @@ export default function Login() {
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+  const [showLoginLoader, setShowLoginLoader] = useState(false);
 
   const handleLogin = async () => {
     setError("")
@@ -20,12 +22,16 @@ export default function Login() {
       const res = await loginUser({ email, password })
 
       const role = res.data.user.user_metadata.role
+ // 🔥 SHOW FULLSCREEN LOADER
+    setShowLoginLoader(true);
 
-      // ✅ Route based on role
-      if (role === "student") navigate("/student")
-      else if (role === "shop_owner") navigate("/shop")
-      else if (role === "admin") navigate("/admin")
-      else navigate("/login")
+    // ⏳ tiny delay so loader feels intentional (UX trick)
+    setTimeout(() => {
+      if (role === "student") navigate("/student");
+      else if (role === "shop_owner") navigate("/shop");
+      else if (role === "admin") navigate("/admin");
+      else navigate("/login");
+    }, 600);
 
     } catch (err) {
       setError(err.response?.data?.message || "Login failed")
@@ -36,6 +42,8 @@ export default function Login() {
 
   return (
     <div className="auth-page">
+      {showLoginLoader && <LoginLoader />}
+
       <div className="auth-card">
 
         <img src={logo} alt="Lovely Prints" className="auth-logo" />

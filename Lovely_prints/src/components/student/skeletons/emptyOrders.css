@@ -51,10 +51,7 @@
   transition: background 0.2s ease, transform 0.2s ease;
 }
 
-.primary-btn:hover {
-  background: #ff4800;
-  transform: translateY(-1px);
-}
+
 
 .empty-orders{animation: fadeUp 0.4s ease;
 }
