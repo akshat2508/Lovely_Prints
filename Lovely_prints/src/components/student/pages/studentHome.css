@@ -199,3 +199,34 @@
   border-color: transparent;
   box-shadow: 0 6px 14px rgba(255, 149, 0, 0.35);
 }
+
+/* ===== CLEAN EMPTY STATE ===== */
+.no-shops-minimal-A {
+  grid-column: 1 / -1;
+  min-height: 42vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.no-shops-icon-A {
+  color: #9ca3af;
+  margin-bottom: 14px;
+}
+
+.no-shops-minimal-A h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 6px;
+}
+
+.no-shops-minimal-A p {
+  font-size: 14px;
+  color: #6b7280;
+  max-width: 380px;
+  line-height: 1.5;
+}

@@ -140,9 +140,43 @@ const StudentHome = () => {
           </div>
         ))}
 
-        {filteredShops.length === 0 && (
-          <p style={{ padding: 16, color: "#777" }}>No shops found.</p>
-        )}
+        {filteredShops.length === 0 && !shopsLoading && (
+  <div className="no-shops-minimal-A">
+    <div className="no-shops-icon-A">
+      <svg
+        width="48"
+        height="48"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M6 9V2h12v7" />
+        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+        <path d="M6 14h12v8H6z" />
+      </svg>
+    </div>
+
+    {/* Show heading ONLY when Open filter has no shops */}
+    {shopStatusFilter === "open" && (
+      <h3>No print shops available</h3>
+    )}
+
+    <p>
+      {searchTerm
+        ? "Try adjusting your search or filters."
+        : shopStatusFilter === "open"
+        ? "All shops are currently closed."
+        : shopStatusFilter === "closed"
+        ? "All available shops are open right now."
+        : "Print shops will appear here once available."}
+    </p>
+  </div>
+)}
+
+
       </div>
     </div>
   );
