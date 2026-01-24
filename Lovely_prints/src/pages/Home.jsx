@@ -118,7 +118,7 @@ const Home = () => {
       </div>
       <div className="nav-links">
         <a href="#features">Features</a>
-        <a href="#how-it-works">How It Works</a>
+        <a href="#howItWorks">How It Works</a>
         <a href="#coverage">Coverage</a>
       </div>
       <div className="nav-cta">
@@ -200,7 +200,7 @@ const Home = () => {
   </section>
 
   {/* How It Works */}
-  <section id="how-it-works" ref={sectionRefs.howItWorks} className="how-it-works">
+  <section id="howItWorks" ref={sectionRefs.howItWorks} className="how-it-works">
     <div className={`section-header ${visibleSections.has('howItWorks') ? 'visible' : ''}`}>
       <h2 className="section-title">How Lovely Prints Works</h2>
       <p className="section-subtitle">Simple. Fast. Reliable.</p>
