@@ -1,448 +1,389 @@
-import "./Home.css";
-import HeroVisual from "./HeroVisual";
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-export default function Home() {
-  const [showHeroVisual, setShowHeroVisual] = useState(false);
-  const [showTeamPopup, setShowTeamPopup] = useState(false);
 
+import React, { useState, useEffect, useRef } from 'react';
+import { Menu, X, ChevronRight, Upload, Store, CheckCircle, MapPin, Star, ArrowRight, Clock, Shield, TrendingUp, Zap, DollarSign, Smartphone } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import "./Home.css"
+const Home = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [visibleSections, setVisibleSections] = useState(new Set());
+  const [orderCount, setOrderCount] = useState(0);
+  const [shopCount, setShopCount] = useState(0);
+  const [avgTime, setAvgTime] = useState(0);
+  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const [scrollY, setScrollY] = useState(0);
+
+  const sectionRefs = {
+    hero: useRef(null),
+    howItWorks: useRef(null),
+    features: useRef(null),
+    coverage: useRef(null),
+    testimonials: useRef(null),
+    stats: useRef(null),
+    cta: useRef(null)
+  };
+
+  // Scroll position tracking
   useEffect(() => {
-    if (window.innerWidth > 768) {
-      setShowHeroVisual(true);
-    }
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Intersection Observer
   useEffect(() => {
-    if (showTeamPopup) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [showTeamPopup]);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            setVisibleSections(prev => new Set([...prev, entry.target.id]));
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: '-50px' }
+    );
 
-    const teamData = [
-    {
-      section: "Leadership",
-      members: [
-        {
-          name: "Akshat",
-          initials: "AK",
-          role: "Project Lead",
-          domain: "Platform Architecture",
-          description: "Building systems that scale, one print at a time.",
-          tags: ["System Design", "Operations", "Scalability"],
-          linkedin: "https://linkedin.com/in/akshat-paul"
-        }
-      ]
-    },
-    {
-      section: "Engineering",
-      members: [
-        {
-          name: "Ayush",
-          initials: "AY",
-          role: "Frontend Engineer",
-          domain: "Web Experience",
-          description: "Great design is invisible, but great UX is unforgettable.",
-          tags: ["React", "UI Systems", "Performance"],
-          linkedin: "https://linkedin.com/in/ashmoneykash"
-        },
-        {
-          name: "Anish",
-          initials: "AN",
-          role: "Mobile Engineer",
-          domain: "Mobile Applications",
-          description: "Making mobile experiences that just work, everywhere.",
-          tags: ["Android", "iOS", "APIs"],
-          linkedin: "https://linkedin.com/in/anish-randhawa21"
-        }
-      ]
-    },
-    {
-      section: "Product",
-      members: [
-        {
-          name: "Kashvi",
-          initials: "KS",
-          role: "Product Engineer",
-          domain: "User Experience",
-          description: "Every click should feel effortless, every flow intuitive.",
-          tags: ["UX", "Product Strategy", "Research"],
-          linkedin: "https://linkedin.com/in/kashvi-gulati"
-        }
-      ]
+    Object.values(sectionRefs).forEach(ref => {
+      if (ref.current) observer.observe(ref.current);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  // Counter animations
+  useEffect(() => {
+    if (visibleSections.has('stats')) {
+      const duration = 2000;
+      const steps = 60;
+      const interval = duration / steps;
+
+      let step = 0;
+      const timer = setInterval(() => {
+        step++;
+        setOrderCount(Math.floor((97 / steps) * step));
+        setShopCount(Math.floor((12 / steps) * step));
+        setAvgTime(Math.floor((15 / steps) * step));
+
+        if (step >= steps) clearInterval(timer);
+      }, interval);
+
+      return () => clearInterval(timer);
     }
+  }, [visibleSections]);
+
+  // Testimonial carousel
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTestimonial(prev => (prev + 1) % testimonials.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const testimonials = [
+    { name: "Priya Sharma", year: "3rd Year CSE", text: "Saved me before my exam. Fast and reliable. No more running to print shops.", rating: 5 },
+    { name: "Rahul Kumar", year: "2nd Year ECE", text: "So much easier than WhatsApp groups. Price comparison is a game changer.", rating: 5 },
+    { name: "Ananya Singh", year: "4th Year MBA", text: "Track my order live? This is exactly what we needed on campus.", rating: 5 },
+    { name: "Arjun Patel", year: "1st Year ME", text: "Got my assignment printed in 10 minutes. Lifesaver during deadline week.", rating: 5 }
   ];
 
+  const features = [
+    { icon: Zap, title: "Fast Delivery", desc: "Get your prints in 15 mins or less" },
+    { icon: DollarSign, title: "Fair Pricing", desc: "Compare prices across all shops" },
+    { icon: MapPin, title: "Near Campus", desc: "12+ shop partners across campus" },
+    { icon: Shield, title: "Secure Payment", desc: "Safe online payment with Razorpay" },
+    { icon: TrendingUp, title: "Track Orders", desc: "Live order tracking and updates" },
+    { icon: Smartphone, title: "Easy Payment", desc: "Pay online, collect hassle-free" }
+  ];
+
+  const shops = [
+    { name: "Central Library Shop", location: "Main Campus" },
+    { name: "Engineering Block Prints", location: "Block-A" },
+    { name: "Hostel Zone Prints", location: "Zone-1" },
+    { name: "Quick Print Corner", location: "Cafeteria Area" }
+  ];
 
   return (
-    <main className="home">
-      {/* HERO */}
-      <section className="hero">
-        <div className="hero-inner">
-          <div className="hero-content">
-            <div className="hero-badge">Campus Printing Platform</div>
-
-            <div className="hero-text">
-              <h1>Print. Skip the chaos.</h1>
-              <p>
-                Upload your files, pick a shop, and collect prints—no running
-                around.
-              </p>
-            </div>
-
-            <div className="cta-group">
-              <button className="btn primary">
-                <Link to="/login" >
+    <div className="homepage">
+      
+  {/* Navbar */}
+  <nav className="navbar">
+    <div className="nav-container">
+      <div className="logo">
+        <div className="logo-icon">
+          <Upload size={18} />
+        </div>
+        Lovely Prints
+      </div>
+      <div className="nav-links">
+        <a href="#features">Features</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#coverage">Coverage</a>
+      </div>
+      <div className="nav-cta">
+        <button className="btn btn-secondary">
+              <Link to="/login" >
+                Login
+              </Link></button>
+        <button href="#signup" className="btn btn-primary">
+          <Link to="/signup" >
                 Get Started
-              </Link>
-              </button>
-            </div>
+              </Link> <ChevronRight size={18} />
+        </button>
+      </div>
+      <button className="menu-toggle" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+        {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+      </button>
+    </div>
+  </nav>
+
+  {/* Hero Section */}
+  <section id="hero" ref={sectionRefs.hero} className="hero">
+    <div className="hero-container">
+      <div className="hero-content">
+        <h1>
+          Print Your Documents<br />
+          Across Campus—<br />
+          Delivered in <span className="highlight">Minutes</span>
+        </h1>
+        <p className="hero-subtitle">
+          Upload. Select Shop. Collect.<br />
+          No hassle, no waiting.
+        </p>
+        <div className="hero-cta">
+          <a href="#signup" className="btn btn-primary">
+            Find Print Shops Near You <ArrowRight size={20} />
+          </a>
+        </div>
+        <div className="hero-badges">
+          <div className="badge">
+            <CheckCircle size={20} />
+            12+ Campus Shops
           </div>
-
-          <div className="hero-visual">
-            {showHeroVisual && <HeroVisual />}
+          <div className="badge">
+            <CheckCircle size={20} />
+            Pay Online
           </div>
-        </div>
-      </section>
-
-      {/* HOW IT WORKS */}
-      <section className="how-it-works">
-        <div className="section-header">
-          <span className="section-label">Process</span>
-          <h2 className="section-title">How it works</h2>
-        </div>
-
-        <div className="steps">
-          <article className="step-card" style={{ "--i": 0 }}>
-            <div className="step-number">01</div>
-            <h3>Upload</h3>
-            <p>Upload your documents from anywhere.</p>
-          </article>
-
-          <article className="step-card" style={{ "--i": 1 }}>
-            <div className="step-number">02</div>
-            <h3>Select Shop</h3>
-            <p>Pick a shop near you.</p>
-          </article>
-
-          <article className="step-card" style={{ "--i": 2 }}>
-            <div className="step-number">03</div>
-            <h3>Print</h3>
-            <p>Shop gets your file and prints it.</p>
-          </article>
-
-          <article className="step-card" style={{ "--i": 3 }}>
-            <div className="step-number">04</div>
-            <h3>Collect</h3>
-            <p>Collect when ready.</p>
-          </article>
-        </div>
-      </section>
-
-      {/* AUDIENCE */}
-      <section className="audience">
-        <div className="section-header">
-          <span className="section-label">For Everyone</span>
-          <h2 className="section-title">Who this helps</h2>
-        </div>
-
-        <div className="audience-grid">
-          <article className="audience-card">
-            <h3>Students</h3>
-            <ul>
-              <li>Skip the queue</li>
-              <li>Upload from anywhere</li>
-              <li>See prices, get prints faster</li>
-            </ul>
-          </article>
-
-          <article className="audience-card">
-            <h3>Print Shops</h3>
-            <ul>
-              <li>Manage all orders in one place</li>
-              <li>Fewer walk-ins, less chaos</li>
-              <li>Track every order clearly</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      {/* BENEFITS */}
-      <section className="benefits">
-        <div className="section-header">
-          <span className="section-label">Advantages</span>
-          <h2 className="section-title">Why this works</h2>
-        </div>
-
-        <div className="lifecycle-container">
-          <svg className="lifecycle-curve" viewBox="0 0 1200 120" preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="curveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" style={{ stopColor: 'rgba(245, 130, 32, 0.15)', stopOpacity: 1 }} />
-                <stop offset="50%" style={{ stopColor: 'rgba(245, 130, 32, 0.4)', stopOpacity: 1 }} />
-                <stop offset="100%" style={{ stopColor: 'rgba(245, 130, 32, 0.15)', stopOpacity: 1 }} />
-              </linearGradient>
-              <filter id="glow">
-                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                <feMerge>
-                  <feMergeNode in="coloredBlur"/>
-                  <feMergeNode in="SourceGraphic"/>
-                </feMerge>
-              </filter>
-            </defs>
-            <path 
-              className="curve-path"
-              d="M 0,60 Q 150,20 300,60 T 600,60 T 900,60 T 1200,60" 
-              fill="none" 
-              stroke="url(#curveGradient)" 
-              strokeWidth="3"
-              filter="url(#glow)"
-            />
-          </svg>
-
-          <div className="lifecycle-stages">
-            <div className="lifecycle-stage" style={{ '--delay': '0s' }}>
-              <div className="stage-node">
-                <div className="node-inner">
-                  <svg className="node-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                    <polyline points="14 2 14 8 20 8"/>
-                  </svg>
-                </div>
-                <div className="node-ring"></div>
-              </div>
-              <div className="stage-content">
-                <h3 className="stage-label">Upload</h3>
-                <p className="stage-description">Files go to the cloud instantly</p>
-              </div>
-            </div>
-
-            <div className="lifecycle-stage" style={{ '--delay': '0.15s' }}>
-              <div className="stage-node">
-                <div className="node-inner">
-                  <svg className="node-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="12" r="3"/>
-                    <path d="M12 1v6m0 6v6M5.6 5.6l4.2 4.2m4.4 4.4l4.2 4.2M1 12h6m6 0h6M5.6 18.4l4.2-4.2m4.4-4.4l4.2-4.2"/>
-                  </svg>
-                </div>
-                <div className="node-ring"></div>
-              </div>
-              <div className="stage-content">
-                <h3 className="stage-label">Route to shop</h3>
-                <p className="stage-description">System picks best available shop</p>
-              </div>
-            </div>
-
-            <div className="lifecycle-stage" style={{ '--delay': '0.3s' }}>
-              <div className="stage-node">
-                <div className="node-inner">
-                  <svg className="node-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polyline points="6 9 6 2 18 2 18 9"/>
-                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
-                    <rect x="6" y="14" width="12" height="8"/>
-                  </svg>
-                </div>
-                <div className="node-ring"></div>
-              </div>
-              <div className="stage-content">
-                <h3 className="stage-label">Print</h3>
-                <p className="stage-description">Shop receives and processes order</p>
-              </div>
-            </div>
-
-            <div className="lifecycle-stage" style={{ '--delay': '0.45s' }}>
-              <div className="stage-node">
-                <div className="node-inner">
-                  <svg className="node-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polyline points="20 6 9 17 4 12"/>
-                  </svg>
-                </div>
-                <div className="node-ring"></div>
-              </div>
-              <div className="stage-content">
-                <h3 className="stage-label">Ready</h3>
-                <p className="stage-description">You get notified immediately</p>
-              </div>
-            </div>
-
-            <div className="lifecycle-stage" style={{ '--delay': '0.6s' }}>
-              <div className="stage-node">
-                <div className="node-inner">
-                  <svg className="node-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-                    <line x1="12" y1="22.08" x2="12" y2="12"/>
-                  </svg>
-                </div>
-                <div className="node-ring"></div>
-              </div>
-              <div className="stage-content">
-                <h3 className="stage-label">Collect</h3>
-                <p className="stage-description">Pick up when convenient</p>
-              </div>
-            </div>
+          <div className="badge">
+            <CheckCircle size={20} />
+            Track Orders Live
           </div>
         </div>
-
-        <div className="lifecycle-metric">
-          <div className="metric-content">
-            <span className="metric-label">Average time from upload to collection</span>
-            <span className="metric-value">
-              <span className="metric-number">Under 30</span>
-              <span className="metric-unit">minutes</span>
-            </span>
+      </div>
+      <div className="hero-visual">
+        <div className="floating-cards">
+          <div className="document-card">
+            <div className="doc-header">
+              <div className="doc-status ready">Ready</div>
+            </div>
+            <div className="doc-title">Assignment_3.pdf</div>
+            <div className="doc-details">10 pages • B&W • A4</div>
           </div>
-          <div className="metric-visual">
-            <svg viewBox="0 0 100 100" className="metric-circle">
-              <circle cx="50" cy="50" r="45" className="metric-track"/>
-              <circle cx="50" cy="50" r="45" className="metric-progress"/>
-            </svg>
+          <div className="document-card">
+            <div className="doc-header">
+              <div className="doc-status printing">Printing</div>
+            </div>
+            <div className="doc-title">Notes_Chapter5.pdf</div>
+            <div className="doc-details">25 pages • Color • A4</div>
+          </div>
+          <div className="document-card">
+            <div className="doc-header">
+              <div className="doc-status ready">Ready</div>
+            </div>
+            <div className="doc-title">Project_Report.pdf</div>
+            <div className="doc-details">45 pages • B&W • Spiral</div>
           </div>
         </div>
-      </section>
+      </div>
+    </div>
+  </section>
 
-      {/* TEAM */}
-      <section className="team">
-        <div className="team-cta">
-          <button 
-            className="team-popup-trigger"
-            onClick={() => setShowTeamPopup(true)}
-            aria-label="View full team details"
+  {/* How It Works */}
+  <section id="howItWorks" ref={sectionRefs.howItWorks} className="how-it-works">
+    <div className={`section-header ${visibleSections.has('howItWorks') ? 'visible' : ''}`}>
+      <h2 className="section-title">How Lovely Prints Works</h2>
+      <p className="section-subtitle">Simple. Fast. Reliable.</p>
+    </div>
+    <div className="steps-container">
+      <div className={`step ${visibleSections.has('howItWorks') ? 'visible' : ''}`}>
+        <div className="step-icon" style={{ position: 'relative' }}>
+          <Upload size={40} color="white" strokeWidth={2} />
+          <div className="step-number">1</div>
+        </div>
+        <h3>Upload Document</h3>
+        <p>Drop your PDF, select print options, and get instant pricing across all campus shops.</p>
+      </div>
+      <div className={`step ${visibleSections.has('howItWorks') ? 'visible' : ''}`}>
+        <div className="step-icon" style={{ position: 'relative' }}>
+          <Store size={40} color="white" strokeWidth={2} />
+          <div className="step-number">2</div>
+        </div>
+        <h3>Choose Shop</h3>
+        <p>Pick your nearest campus shop, compare prices, and pay securely online with Razorpay.</p>
+      </div>
+      <div className={`step ${visibleSections.has('howItWorks') ? 'visible' : ''}`}>
+        <div className="step-icon" style={{ position: 'relative' }}>
+          <CheckCircle size={40} color="white" strokeWidth={2} />
+          <div className="step-number">3</div>
+        </div>
+        <h3>Collect Print</h3>
+        <p>Get notified when ready, track your order live, and collect hassle-free.</p>
+      </div>
+    </div>
+  </section>
+
+  {/* Features */}
+  <section id="features" ref={sectionRefs.features} className="features">
+    <div className={`section-header ${visibleSections.has('features') ? 'visible' : ''}`}>
+      <h2 className="section-title">Why Students Love Lovely Prints</h2>
+    </div>
+    <div className="features-grid">
+      {features.map((feature, index) => {
+        const IconComponent = feature.icon;
+        return (
+          <div
+            key={index}
+            className={`feature-card ${visibleSections.has('features') ? 'visible' : ''}`}
+            style={{ transitionDelay: `${index * 0.1}s` }}
           >
-            <div className="team-trigger-content">
-              <div className="team-trigger-avatars">
-                <div className="team-trigger-avatar">AK</div>
-                <div className="team-trigger-avatar">AY</div>
-                <div className="team-trigger-avatar">AN</div>
-                <div className="team-trigger-avatar">KS</div>
-              </div>
-              <div className="team-trigger-text">
-                <span className="team-trigger-title">Meet the team</span>
-                <span className="team-trigger-arrow">→</span>
-              </div>
+            <div className="feature-icon">
+              <IconComponent size={28} strokeWidth={2} />
             </div>
-          </button>
-        </div>
-      </section>
+            <h3>{feature.title}</h3>
+            <p>{feature.desc}</p>
+          </div>
+        );
+      })}
+    </div>
+  </section>
 
-      {/* CLOSING */}
-      <section className="closing">
-        <div className="closing-visual">
-          <div className="closing-ring closing-ring-1">
-            <div className="orbit-icon orbit-icon-1">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
-              </svg>
+  {/* Coverage */}
+  <section id="coverage" ref={sectionRefs.coverage} className="coverage">
+    <div className="coverage-container">
+      <div className={`section-header ${visibleSections.has('coverage') ? 'visible' : ''}`}>
+        <h2 className="section-title">Print Shops Across Your Campus</h2>
+        <p className="section-subtitle">Coverage you can count on</p>
+      </div>
+      <div className="shops-grid">
+        {shops.map((shop, index) => (
+          <div 
+            key={index} 
+            className={`shop-card ${visibleSections.has('coverage') ? 'visible' : ''}`}
+            style={{ transitionDelay: `${index * 0.1}s` }}
+          >
+            <div className="shop-pin">
+              <MapPin size={26} strokeWidth={2} />
             </div>
-            <div className="orbit-icon orbit-icon-2">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <polyline points="6 9 6 2 18 2 18 9"/>
-                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
-                <rect x="6" y="14" width="12" height="8"/>
-              </svg>
-            </div>
-          </div>
-          <div className="closing-ring closing-ring-2">
-            <div className="orbit-icon orbit-icon-3">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                <line x1="9" y1="9" x2="15" y2="9"/>
-                <line x1="9" y1="15" x2="15" y2="15"/>
-              </svg>
-            </div>
-            <div className="orbit-icon orbit-icon-4">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <polyline points="20 6 9 17 4 12"/>
-              </svg>
-            </div>
-            <div className="orbit-icon orbit-icon-5">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-              </svg>
+            <div className="shop-info">
+              <h4>{shop.name}</h4>
+              <p>{shop.location}</p>
             </div>
           </div>
-          <div className="closing-ring closing-ring-3">
-            <div className="orbit-icon orbit-icon-6">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
-                <polyline points="13 2 13 9 20 9"/>
-                <line x1="8" y1="13" x2="16" y2="13"/>
-                <line x1="8" y1="17" x2="16" y2="17"/>
-              </svg>
-            </div>
-            <div className="orbit-icon orbit-icon-7">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="3"/>
-                <path d="M12 1v6m0 6v6"/>
-              </svg>
-            </div>
-            <div className="orbit-icon orbit-icon-8">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <circle cx="12" cy="15" r="2"/>
-              </svg>
-            </div>
-          </div>
-          <div className="closing-glow"></div>
-        </div>
-        <div className="closing-content">
-          <h2>Start printing smarter</h2>
-          <p>Made for students and campus print shops.</p>
-        </div>
-      </section>
+        ))}
+      </div>
+    </div>
+  </section>
 
-      {/* TEAM POPUP */}
-      {showTeamPopup && (
-        <div className="team-popup-overlay" onClick={() => setShowTeamPopup(false)}>
-          <div className="team-popup-content" onClick={(e) => e.stopPropagation()}>
-            <div className="team-popup-header">
-              <h2>Our Team</h2>
-              <button 
-                className="team-popup-close"
-                onClick={() => setShowTeamPopup(false)}
-                aria-label="Close team details"
-              >
-                ✕
-              </button>
-            </div>
-            
-            <div className="team-popup-body">
-              {teamData.map((section, idx) => (
-                <div key={idx} className="team-popup-section">
-                  <h3 className="team-popup-section-title">{section.section}</h3>
-                  <div className="team-popup-cards">
-                    {section.members.map((member, mIdx) => (
-                      <div key={mIdx} className="team-popup-card">
-                        <div className="team-popup-card-header">
-                          <div className="team-popup-avatar">{member.initials}</div>
-                          <div className="team-popup-identity">
-                            <h4>{member.name}</h4>
-                            <span className="team-popup-role">{member.role}</span>
-                          </div>
-                        </div>
-                        <div className="team-popup-card-body">
-                          <div className="team-popup-domain">{member.domain}</div>
-                          <p className="team-popup-description">{member.description}</p>
-                          <div className="team-popup-tags">
-                            {member.tags.map((tag, tIdx) => (
-                              <span key={tIdx} className="team-popup-tag">{tag}</span>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+  {/* Testimonials */}
+  <section id="testimonials" ref={sectionRefs.testimonials} className="testimonials">
+    <div className={`section-header ${visibleSections.has('testimonials') ? 'visible' : ''}`}>
+      <h2 className="section-title">Loved by  Students</h2>
+      <p className="section-subtitle">See what students are saying</p>
+    </div>
+    <div className="testimonial-carousel">
+      <div className="testimonial-track" style={{ transform: `translateX(-${currentTestimonial * 100}%)` }}>
+        {testimonials.map((testimonial, index) => (
+          <div key={index} className="testimonial-card">
+            <div className="stars">
+              {[...Array(testimonial.rating)].map((_, i) => (
+                <Star key={i} size={24} fill="#FF6B35" color="#FF6B35" />
               ))}
             </div>
+            <p className="testimonial-text">"{testimonial.text}"</p>
+            <div className="testimonial-author">{testimonial.name}</div>
+            <div className="testimonial-year">{testimonial.year}</div>
           </div>
-        </div>
-      )}
-    </main>
-  );
-}
+        ))}
+      </div>
+    </div>
+    <div className="carousel-dots">
+      {testimonials.map((_, index) => (
+        <div 
+          key={index} 
+          className={`dot ${currentTestimonial === index ? 'active' : ''}`}
+          onClick={() => setCurrentTestimonial(index)}
+        />
+      ))}
+    </div>
+  </section>
+
+  {/* Stats */}
+  <section id="stats" ref={sectionRefs.stats} className="stats">
+    <div className="stats-grid">
+      <div className={`stat-item ${visibleSections.has('stats') ? 'visible' : ''}`}>
+        <span className="stat-number">{orderCount}+</span>
+        <span className="stat-label">Orders Served</span>
+      </div>
+      <div className={`stat-item ${visibleSections.has('stats') ? 'visible' : ''}`} style={{ transitionDelay: '0.2s' }}>
+        <span className="stat-number">{shopCount}</span>
+        <span className="stat-label">Shops Active</span>
+      </div>
+      <div className={`stat-item ${visibleSections.has('stats') ? 'visible' : ''}`} style={{ transitionDelay: '0.4s' }}>
+        <span className="stat-number">{avgTime}</span>
+        <span className="stat-label">Min Avg Time</span>
+      </div>
+    </div>
+  </section>
+
+  {/* Final CTA */}
+  <section id="cta" ref={sectionRefs.cta} className="final-cta">
+    <h2>Ready to Print Smarter?</h2>
+    <p>
+      Join hundreds of students who never wait in line anymore.
+    </p>
+    <button  className="btn btn-primary">
+       <Link to="/login" >
+                Get Started - It's Free
+              </Link><ArrowRight size={20} />
+    </button>
+  </section>
+
+  {/* Footer */}
+  <footer className="footer">
+    <div className="footer-container">
+      <div className="footer-brand">
+        <h3>Lovely Prints</h3>
+        <p>Making campus printing effortless</p>
+        <p><bold>support email</bold> : lovelyprintssprt@gmail.com</p>
+      </div>
+      <div className="footer-links">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#shops">For Shops</a></li>
+        </ul>
+      </div>
+      <div className="footer-links">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="#help">Help Center</a></li>
+          <li><a href="#contact">Contact Us</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </div>
+      <div className="footer-links">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#privacy">Privacy Policy</a></li>
+          <li><a href="#terms">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+    <div className="footer-bottom">
+      © 2026 Lovely Prints
+    </div>
+  </footer>
+</div>
+);
+};
+
+export default Home;
