@@ -8,12 +8,39 @@ const OpenPoliciesModal = ({ onAccept }) => {
 
         <div className="policy-content">
           <ul>
-            <li>✔ Orders once paid cannot be cancelled</li>
-            <li>✔ Carry your pickup OTP to collect prints</li>
-            <li>✔ Shops are not responsible for incorrect files</li>
-            <li>✔ Urgent orders may incur additional charges</li>
-            <li>✔ Misuse of platform may lead to account suspension</li>
-          </ul>
+  <li>✔ Orders once paid are final and cannot be cancelled or refunded</li>
+
+  <li>
+    ✔ All uploaded files are automatically scanned for inappropriate or
+    prohibited content; violations may result in immediate account suspension
+    or permanent ban
+  </li>
+
+  <li>
+    ✔ Customers must carry the pickup OTP to collect their prints
+  </li>
+
+  <li>
+    ✔ Orders must be collected on the same day they are printed; uncollected
+    orders will be discarded after the same day
+  </li>
+
+  <li>
+    ✔ Neither the print shop nor Lovely Prints will be responsible for any
+    loss, damage, or claims related to uncollected or discarded orders
+  </li>
+
+  <li>
+    ✔ Print shops are not responsible for errors caused by incorrect or
+    low-quality files uploaded by users
+  </li>
+
+  <li>
+    ✔ Misuse of the platform, including policy violations or abusive behavior,
+    may lead to account suspension or permanent termination
+  </li>
+</ul>
+
         </div>
 
         <label className="policy-checkbox">

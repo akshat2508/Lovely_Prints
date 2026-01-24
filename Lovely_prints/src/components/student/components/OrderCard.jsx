@@ -1,7 +1,7 @@
 import { useState } from "react";
 import OrderDetailsModal from "../modals/OrderDetailsModal";
-import "./orderCard-D.css";
 import TrackOrderModal from "../modals/TrackOrderModal";
+import "./orderCard-D.css";
 
 const STATUS_COLORS = {
   pending: "status-pending",
@@ -14,10 +14,37 @@ const STATUS_COLORS = {
 const OrderCard = ({ order }) => {
   const [expanded, setExpanded] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
-  const [showTrackDetails , setShowTrackDetails] = useState(false);
+  const [showTrackDetails, setShowTrackDetails] = useState(false);
+
   const doc = order.documents?.[0];
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleString("en-IN", {
+
+  /* ================= DATE HELPERS ================= */
+
+  const isSameDay = (d1, d2) =>
+    d1.getDate() === d2.getDate() &&
+    d1.getMonth() === d2.getMonth() &&
+    d1.getFullYear() === d2.getFullYear();
+
+  const today = new Date();
+
+  // 👇 the day pickup became available
+  const pickupReadyDate =
+  order.status === "ready"
+    ? new Date(order.ready_at || order.created_at)
+    : null;
+
+
+  const isCompleted = order.status === "completed";
+
+  const isExpired =
+    order.status === "ready" &&
+    pickupReadyDate &&
+    !isSameDay(pickupReadyDate, today);
+
+  const isReady = order.status === "ready" && !isExpired;
+
+  const formatDate = (dateString) =>
+    new Date(dateString).toLocaleString("en-IN", {
       day: "2-digit",
       month: "short",
       year: "numeric",
@@ -25,11 +52,18 @@ const OrderCard = ({ order }) => {
       minute: "2-digit",
       hour12: true,
     });
-  };
+
   return (
     <>
-      <div className="order-card-D">
-        {/* ===== HEADER ===== */}
+      {/* ================= ORDER CARD ================= */}
+      <div
+        className={`order-card-D
+          ${isCompleted ? "order-completed-D" : ""}
+          ${isReady ? "order-ready-D" : ""}
+          ${isExpired ? "order-expired-D" : ""}
+        `}
+      >
+        {/* ================= HEADER ================= */}
         <div className="order-header-D">
           <div className="order-header-left-D">
             <h3>Order #{order.order_no}</h3>
@@ -46,14 +80,22 @@ const OrderCard = ({ order }) => {
           </div>
         </div>
 
-        {/* ===== QUICK SUMMARY ===== */}
+        {/* ================= QUICK SUMMARY ================= */}
         {doc && (
           <p className="order-summary-D">
             {doc.file_name} • {doc.page_count} pages × {doc.copies}
           </p>
         )}
 
-        {/* ===== INLINE EXPAND ===== */}
+        {/* ================= EXPIRED WARNING (ALWAYS VISIBLE) ================= */}
+        {isExpired && (
+          <div className="order-expired-warning-D">
+            ⚠ Pickup expired. This order was not collected on the same day and
+            can no longer be picked up.
+          </div>
+        )}
+
+        {/* ================= EXPANDED DETAILS ================= */}
         {expanded && doc && (
           <div className="order-expand-D">
             <p>
@@ -69,13 +111,15 @@ const OrderCard = ({ order }) => {
               Placed At : {formatDate(order.created_at)}
             </p>
 
-            {/* ✅ OTP PREVIEW (NEW) */}
-            {order.status === "ready" &&
+            {/* ================= OTP (READY & NOT EXPIRED ONLY) ================= */}
+            {isReady &&
               order.delivery_otp &&
               !order.otp_verified && (
                 <div className="otp-preview-D">
                   <span className="otp-preview-label">Pickup Code</span>
-                  <span className="otp-preview-code">{order.delivery_otp}</span>
+                  <span className="otp-preview-code">
+                    {order.delivery_otp}
+                  </span>
                 </div>
               )}
 
@@ -88,7 +132,7 @@ const OrderCard = ({ order }) => {
           </div>
         )}
 
-        {/* ===== ACTIONS ===== */}
+        {/* ================= ACTIONS ================= */}
         <div className="order-actions-D">
           <button
             className="order-btn-secondary-D"
@@ -97,7 +141,8 @@ const OrderCard = ({ order }) => {
             {expanded ? "Hide details" : "View details"}
           </button>
 
-          {order.status !== "completed" && (
+          {/* Track allowed ONLY if not completed & not expired */}
+          {!isCompleted && !isExpired && (
             <button
               className="order-btn-primary-D"
               onClick={() => setShowTrackDetails(true)}
@@ -108,7 +153,7 @@ const OrderCard = ({ order }) => {
         </div>
       </div>
 
-      {/* ===== MODAL ===== */}
+      {/* ================= MODALS ================= */}
       {showDetails && (
         <OrderDetailsModal
           order={order}
