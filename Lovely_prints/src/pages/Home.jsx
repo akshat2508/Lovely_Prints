@@ -3,6 +3,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Menu, X, ChevronRight, Upload, Store, CheckCircle, MapPin, Star, ArrowRight, Clock, Shield, TrendingUp, Zap, DollarSign, Smartphone } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import "./Home.css"
+import logo from "../assets/logo.png";
+
 const Home = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [visibleSections, setVisibleSections] = useState(new Set());
@@ -109,7 +111,8 @@ const Home = () => {
     <div className="nav-container">
       <div className="logo">
         <div className="logo-icon">
-          <Upload size={18} />
+          {/* <Upload size={18} /> */}
+          <img src={logo} alt="Lovely Prints" />
         </div>
         Lovely Prints
       </div>
@@ -197,7 +200,7 @@ const Home = () => {
   </section>
 
   {/* How It Works */}
-  <section id="howItWorks" ref={sectionRefs.howItWorks} className="how-it-works">
+  <section id="how-it-works" ref={sectionRefs.howItWorks} className="how-it-works">
     <div className={`section-header ${visibleSections.has('howItWorks') ? 'visible' : ''}`}>
       <h2 className="section-title">How Lovely Prints Works</h2>
       <p className="section-subtitle">Simple. Fast. Reliable.</p>
