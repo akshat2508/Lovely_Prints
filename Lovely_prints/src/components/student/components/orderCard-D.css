@@ -15,6 +15,28 @@
   box-shadow: 0 12px 30px rgba(0,0,0,0.08);
 }
 
+/* ================= EXPIRED PICKUP WARNING ================= */
+
+/* ================= EXPIRED PICKUP WARNING (FINAL) ================= */
+
+.order-card-D .order-expired-warning-D {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+
+  background: #fef2f2;        /* light red */
+  border: 1.5px solid #ef4444;
+
+  color: #b91c1c;
+  font-size: 0.85rem;
+  font-weight: 600;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
 /* ================= HEADER ================= */
 
 .order-header-D {
@@ -125,6 +147,26 @@
   font-size: 0.85rem;
   color: #6b7280;
 }
+.order-completed-D {
+  opacity: 0.55;
+  filter: grayscale(100%);
+}
+.order-ready-D {
+  border: 1.5px solid rgba(16,185,129,0.6);
+  box-shadow:
+    0 0 0 3px rgba(16,185,129,0.12),
+    0 8px 24px rgba(16,185,129,0.25);
+}
+.order-expired-D {
+  border: 1.5px dashed #9ca3af;
+  background: #fafafa;
+}
+.order-expired-D > *:not(.order-expired-warning-D) {
+  opacity: 0.55;
+  filter: grayscale(100%);
+}
+
+
 
 /* ================= URGENT ================= */
 
