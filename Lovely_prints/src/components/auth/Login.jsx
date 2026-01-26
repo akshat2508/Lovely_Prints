@@ -4,6 +4,7 @@ import logo from "../../assets/logo.png"
 import { loginUser } from "../../services/authService"
 import "./auth.css"
 import LoginLoader from "./LoginLoader"
+import { Eye, EyeOff } from "lucide-react";
 
 export default function Login() {
   const navigate = useNavigate()
@@ -13,6 +14,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [showLoginLoader, setShowLoginLoader] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async () => {
     setError("")
@@ -63,15 +65,24 @@ export default function Login() {
           />
         </div>
 
-        <div style={{ marginTop: "1rem" }}>
-          <input
-            type="password"
-            placeholder="Password"
-            className="auth-input"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
+        <div style={{ marginTop: "1rem", position: "relative" }}>
+        <input
+          type={showPassword ? "text" : "password"}
+          placeholder="Password"
+          className="auth-input"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+
+        <button
+          type="button"
+          className="eye-toggle"
+          onClick={() => setShowPassword(p => !p)}
+        >
+          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+        </button>
+      </div>
+
 
         {error && (
           <p style={{ color: "tomato", marginTop: "0.8rem", fontSize: "0.85rem" }}>

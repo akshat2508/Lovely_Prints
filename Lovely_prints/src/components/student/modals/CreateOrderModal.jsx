@@ -21,6 +21,7 @@ const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
   const [orientation, setOrientation] = useState("portrait");
   const [copies, setCopies] = useState(1);
   const [isUrgent, setIsUrgent] = useState(false);
+  const [description, setDescription] = useState("");
 
   /* ====== File ====== */
   const [selectedFile, setSelectedFile] = useState(null);
@@ -29,14 +30,19 @@ const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
   /* ====== Submit State ====== */
   const [submitting, setSubmitting] = useState(false);
   const [disableSubmit, setDisableSubmit] = useState(false);
-      const [showLoader, setShowLoader] = useState(false);
-      const [loaderText, setLoaderText] = useState("Preparing your documents…");
-
+  const [showLoader, setShowLoader] = useState(false);
+  const [loaderText, setLoaderText] = useState("Preparing your documents…");
 
   /* ====== Helpers ====== */
-  const selectedPaper = shopOptions?.paper_types?.find(p => p.id === paperType);
-  const selectedColor = shopOptions?.color_modes?.find(c => c.id === colorMode);
-  const selectedFinish = shopOptions?.finish_types?.find(f => f.id === finishType);
+  const selectedPaper = shopOptions?.paper_types?.find(
+    (p) => p.id === paperType,
+  );
+  const selectedColor = shopOptions?.color_modes?.find(
+    (c) => c.id === colorMode,
+  );
+  const selectedFinish = shopOptions?.finish_types?.find(
+    (f) => f.id === finishType,
+  );
 
   const totalPrice = (() => {
     if (!selectedPaper) return 0;
@@ -44,7 +50,8 @@ const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
     const colorPrice = Number(selectedColor?.extra_price || 0);
     const finishPrice = Number(selectedFinish?.extra_price || 0);
 
-    const subtotal = (basePrice + colorPrice + finishPrice) * pageCount * copies;
+    const subtotal =
+      (basePrice + colorPrice + finishPrice) * pageCount * copies;
     return isUrgent ? subtotal + URGENCY_FEE : subtotal;
   })();
 
@@ -65,68 +72,66 @@ const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
   };
 
   /* ====== Submit Handler ====== */
- const handleSubmitAndPay = async () => {
-  if (!canSubmit) return;
+  const handleSubmitAndPay = async () => {
+    if (!canSubmit) return;
 
-  setSubmitting(true);
-  setDisableSubmit(true);
-  setShowLoader(true);
-  setLoaderText("Preparing your documents…");
+    setSubmitting(true);
+    setDisableSubmit(true);
+    setShowLoader(true);
+    setLoaderText("Preparing your documents…");
 
-  try {
-    const orderRes = await createStudentOrder({
-      shop_id: shop.id,
-      description: "Print order",
-      orientation,
-      is_urgent: isUrgent,
-    });
+    try {
+      const orderRes = await createStudentOrder({
+        shop_id: shop.id,
+        description: description?.trim() || null,
+        orientation,
+        is_urgent: isUrgent,
+      });
 
-    const order = orderRes.data;
+      const order = orderRes.data;
 
-    const uploadRes = await uploadFile(selectedFile);
-    const fileKey = uploadRes.data.fileKey;
+      const uploadRes = await uploadFile(selectedFile);
+      const fileKey = uploadRes.data.fileKey;
 
-    await attachDocumentToOrder(order.id, {
-      fileKey,
-      fileName: selectedFile.name,
-      page_count: pageCount,
-      copies,
-      paper_type_id: paperType,
-      color_mode_id: colorMode,
-      finish_type_id: finishType,
-    });
+      await attachDocumentToOrder(order.id, {
+        fileKey,
+        fileName: selectedFile.name,
+        page_count: pageCount,
+        copies,
+        paper_type_id: paperType,
+        color_mode_id: colorMode,
+        finish_type_id: finishType,
+      });
 
-    setLoaderText("Redirecting to payment gateway…");
+      setLoaderText("Redirecting to payment gateway…");
 
-    startPayment(
-      { ...order, total_price: totalPrice },
-      // ✅ success
-      () => {
-        setShowLoader(false);
-        onSuccess();
-      },
-      // ❌ failure / cancel
-      (reason) => {
-        setShowLoader(false);
-        setDisableSubmit(false);
-        setSubmitting(false);
-        alert(reason || "Payment not completed");
-      }
-    );
-  } catch (err) {
-    console.error(err);
-    setShowLoader(false);
-    setSubmitting(false);
-    setDisableSubmit(false);
-    alert("Failed to place order. Try again.");
-  }
-};
-
+      startPayment(
+        { ...order, total_price: totalPrice },
+        // ✅ success
+        () => {
+          setShowLoader(false);
+          onSuccess();
+        },
+        // ❌ failure / cancel
+        (reason) => {
+          setShowLoader(false);
+          setDisableSubmit(false);
+          setSubmitting(false);
+          alert(reason || "Payment not completed");
+        },
+      );
+    } catch (err) {
+      console.error(err);
+      setShowLoader(false);
+      setSubmitting(false);
+      setDisableSubmit(false);
+      alert("Failed to place order. Try again.");
+    }
+  };
 
   return (
-    
     <div className="modal-overlay">
-      {showLoader &&  <PrintStackLoader/>}
+      {showLoader && <PrintStackLoader />}
       <div className="modal-card large">
         <h2>Create Order — {shop.shop_name}</h2>
 
@@ -139,7 +144,9 @@ const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
         >
           <option value="">-- Choose Paper Type --</option>
           {shopOptions.paper_types.map((p) => (
-            <option key={p.id} value={p.id}>{p.name}</option>
+            <option key={p.id} value={p.id}>
+              {p.name}
+            </option>
           ))}
         </select>
 
@@ -152,7 +159,9 @@ const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
         >
           <option value="">-- Choose Color Mode --</option>
           {shopOptions.color_modes.map((c) => (
-            <option key={c.id} value={c.id}>{c.name}</option>
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
           ))}
         </select>
 
@@ -165,7 +174,9 @@ const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
         >
           <option value="">-- Choose Finish Type --</option>
           {shopOptions.finish_types.map((f) => (
-            <option key={f.id} value={f.id}>{f.name}</option>
+            <option key={f.id} value={f.id}>
+              {f.name}
+            </option>
           ))}
         </select>
 
@@ -214,7 +225,9 @@ const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
         {/* ===== Number of Pages ===== */}
         {selectedFile && (
           <div className="page-count-box">
-            <p><strong>Pages in Document:</strong> {pageCount}</p>
+            <p>
+              <strong>Pages in Document:</strong> {pageCount}
+            </p>
           </div>
         )}
 
@@ -229,24 +242,71 @@ const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
           <span className="toggle-text">Urgent (+₹{URGENCY_FEE})</span>
         </label>
 
+        {/* ===== Additional Instructions ===== */}
+        <label className="modal-label">
+          Additional Instructions (optional)
+        </label>
+
+        <textarea
+          className="modal-input notes-input"
+          placeholder="Any special instructions for the shop? (e.g. spiral binding, print cover page in color, etc.)"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          rows={3}
+        />
+
         {/* ===== Price Breakdown ===== */}
         {selectedPaper && (
           <div className="price-breakdown">
             <h4>Price Breakdown</h4>
-            <ul>
-              <li>Paper ({selectedPaper.name}): ₹{selectedPaper.base_price}</li>
-              {selectedColor && selectedColor.extra_price
-                ? <li>Color ({selectedColor.name}): +₹{selectedColor.extra_price}</li>
-                : null
-              }
-              {selectedFinish && selectedFinish.extra_price
-                ? <li>Finish ({selectedFinish.name}): +₹{selectedFinish.extra_price}</li>
-                : null
-              }
-              <li>Pages: {pageCount} × Copies: {copies}</li>
-              {isUrgent && <li>Urgent Fee: +₹{URGENCY_FEE}</li>}
-            </ul>
-            <p className="total-price">Total: ₹{totalPrice}</p>
+
+            <div className="price-row">
+              <span className="price-label">Paper ({selectedPaper.name})</span>
+              <span className="price-value">₹{selectedPaper.base_price}</span>
+            </div>
+
+            {selectedColor?.extra_price && (
+              <div className="price-row">
+                <span className="price-label">
+                  Color ({selectedColor.name})
+                </span>
+                <span className="price-value">
+                  +₹{selectedColor.extra_price}
+                </span>
+              </div>
+            )}
+
+            {selectedFinish?.extra_price && (
+              <div className="price-row">
+                <span className="price-label">
+                  Finish ({selectedFinish.name})
+                </span>
+                <span className="price-value">
+                  +₹{selectedFinish.extra_price}
+                </span>
+              </div>
+            )}
+
+            <div className="price-row muted-row">
+              <span className="price-label">Pages × Copies</span>
+              <span className="price-value">
+                {pageCount} × {copies}
+              </span>
+            </div>
+
+            {isUrgent && (
+              <div className="price-row urgent-row">
+                <span className="price-label">Urgent Fee</span>
+                <span className="price-value">+₹{URGENCY_FEE}</span>
+              </div>
+            )}
+
+            <div className="price-divider" />
+
+            <div className="price-total-row">
+              <span>Total</span>
+              <span>₹{totalPrice}</span>
+            </div>
           </div>
         )}
 
@@ -263,21 +323,21 @@ const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
             Cancel
           </button>
         </div>
-      </div>{showLoader && (
-  <div className="print-loader-overlay">
-    <div className="print-loader-card">
-      <div className="paper-stack">
-        <div className="paper p1"></div>
-        <div className="paper p2"></div>
-        <div className="paper p3"></div>
-        <div className="paper p4"></div>
       </div>
+      {showLoader && (
+        <div className="print-loader-overlay">
+          <div className="print-loader-card">
+            <div className="paper-stack">
+              <div className="paper p1"></div>
+              <div className="paper p2"></div>
+              <div className="paper p3"></div>
+              <div className="paper p4"></div>
+            </div>
 
-      <p className="loader-text">{loaderText}</p>
-    </div>
-  </div>
-)}
-
+            <p className="loader-text">{loaderText}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

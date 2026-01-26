@@ -14,6 +14,7 @@ const adaptOrder = (order) => {
     createdAt: order.created_at,
     orientation: order.orientation,
     isUrgent: order.is_urgent,
+    notes:order.notes,
     urgencyFee: order.urgency_fee,
     isPaid: order.is_paid ?? false,
     totalPrice : order.total_price,

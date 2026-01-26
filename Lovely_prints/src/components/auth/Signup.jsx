@@ -11,12 +11,20 @@ export default function Signup() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState(""); // ✅ NEW
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const handleSignup = async () => {
     setError("");
+
+    // ✅ Password match validation
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -24,10 +32,9 @@ export default function Signup() {
         name,
         email,
         password,
-        role: "student", // ✅ enforced by frontend
+        role: "student", // enforced by frontend
       });
 
-      // After successful signup → go to login
       setShowConfirmModal(true);
     } catch (err) {
       setError(err.response?.data?.message || "Signup failed");
@@ -68,6 +75,15 @@ export default function Signup() {
             onChange={(e) => setPassword(e.target.value)}
           />
 
+          {/* ✅ Confirm Password */}
+          <input
+            type="password"
+            className="auth-input"
+            placeholder="Confirm Password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+
           {error && (
             <p style={{ color: "tomato", fontSize: "0.85rem" }}>{error}</p>
           )}
@@ -88,6 +104,7 @@ export default function Signup() {
           </Link>
         </p>
       </div>
+
       {showConfirmModal && (
         <EmailConfirmationModal
           email={email}

@@ -6,7 +6,8 @@ import {
   createFinishType
 } from "../../services/shopService";
 import "./pricingSettings.css";
-import ProfileSkeleton from "../student/skeletons/ProfileSkeleton"
+import ProfileSkeleton from "../student/skeletons/ProfileSkeleton";
+
 export default function PricingSettings() {
   const [shopId, setShopId] = useState(null);
 
@@ -34,7 +35,7 @@ export default function PricingSettings() {
         setPaperTypes(res.data.data.paper_types);
         setColorModes(res.data.data.color_modes);
         setFinishTypes(res.data.data.finish_types);
-      } catch (err) {
+      } catch {
         alert("Failed to load pricing settings ❌");
       } finally {
         setLoading(false);
@@ -44,7 +45,7 @@ export default function PricingSettings() {
     init();
   }, []);
 
-  /* ================= TOGGLE ================= */
+  /* ================= LOCAL DRAFT ACTIONS ================= */
 
   const toggleActive = (list, setter, id) => {
     setter(
@@ -52,6 +53,10 @@ export default function PricingSettings() {
         item.id === id ? { ...item, is_active: !item.is_active } : item
       )
     );
+  };
+
+  const deleteLocal = (list, setter, id) => {
+    setter(list.filter(item => item.id !== id));
   };
 
   /* ================= SAVE ================= */
@@ -81,7 +86,7 @@ export default function PricingSettings() {
   };
 
   if (loading) {
-    return <ProfileSkeleton/>;
+    return <ProfileSkeleton />;
   }
 
   return (
@@ -96,8 +101,9 @@ export default function PricingSettings() {
           title="Paper Types"
           subtitle="Base price per page"
           items={paperTypes}
-          onToggle={toggleActive}
           setter={setPaperTypes}
+          onToggle={toggleActive}
+          onDeleteLocal={deleteLocal}
           addForm={
             <AddRow
               name={newPaper.name}
@@ -120,8 +126,9 @@ export default function PricingSettings() {
           title="Color Modes"
           subtitle="Additional charge per page"
           items={colorModes}
-          onToggle={toggleActive}
           setter={setColorModes}
+          onToggle={toggleActive}
+          onDeleteLocal={deleteLocal}
           addForm={
             <AddRow
               name={newColor.name}
@@ -144,8 +151,9 @@ export default function PricingSettings() {
           title="Finish Types"
           subtitle="Binding / finishing charges"
           items={finishTypes}
-          onToggle={toggleActive}
           setter={setFinishTypes}
+          onToggle={toggleActive}
+          onDeleteLocal={deleteLocal}
           addForm={
             <AddRow
               name={newFinish.name}
@@ -176,7 +184,15 @@ export default function PricingSettings() {
 
 /* ================= SUB COMPONENTS ================= */
 
-const PricingCard = ({ title, subtitle, items, onToggle, setter, addForm }) => (
+const PricingCard = ({
+  title,
+  subtitle,
+  items,
+  setter,
+  onToggle,
+  onDeleteLocal,
+  addForm
+}) => (
   <section className="pricing-card-P">
     <header className="pricing-card-header-P">
       <h3>{title}</h3>
@@ -200,6 +216,14 @@ const PricingCard = ({ title, subtitle, items, onToggle, setter, addForm }) => (
           <span className="pricing-price-P">
             ₹ {item.base_price ?? item.extra_price ?? 0}
           </span>
+
+          <button
+            className="delete-btn-P"
+            onClick={() => onDeleteLocal(items, setter, item.id)}
+            title="Remove (not saved yet)"
+          >
+            Delete Option
+          </button>
         </div>
       ))}
     </div>

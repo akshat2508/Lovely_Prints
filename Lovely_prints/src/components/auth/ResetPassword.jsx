@@ -2,12 +2,16 @@ import { useEffect, useState } from "react";
 import { supabase } from "../../services/supabase";
 import { useNavigate } from "react-router-dom";
 import "./f.css"
+import { Eye, EyeOff } from "lucide-react";
+
 export default function ResetPassword() {
   const navigate = useNavigate();
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [sessionReady, setSessionReady] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState("");
+const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     const verifyAndSetSession = async () => {
@@ -65,6 +69,11 @@ export default function ResetPassword() {
     setLoading(true);
     setError("");
 
+    if (password !== confirmPassword) {
+  setError("Passwords do not match.");
+  return;
+}
+
     const { error } = await supabase.auth.updateUser({
       password,
     });
@@ -90,14 +99,47 @@ export default function ResetPassword() {
       <p className="auth-info-F">Verifying reset link...</p>
     )}
 
-    <input
-      type="password"
-      placeholder="New password (min 6 characters)"
-      className="auth-input-F"
-      value={password}
-      onChange={(e) => setPassword(e.target.value)}
-      disabled={!sessionReady}
-    />
+   <div className="password-field-F">
+  <input
+    type={showPassword ? "text" : "password"}
+    placeholder="New password (min 6 characters)"
+    className="auth-input-F"
+    value={password}
+    onChange={(e) => setPassword(e.target.value)}
+    disabled={!sessionReady}
+  />
+
+  <button
+    type="button"
+    className="eye-toggle-F"
+    onClick={() => setShowPassword(p => !p)}
+    disabled={!sessionReady}
+  >
+    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+  </button>
+</div>
+
+
+<div className="password-field-F">
+  <input
+    type={showPassword ? "text" : "password"}
+    placeholder="Confirm new password"
+    className="auth-input-F"
+    value={confirmPassword}
+    onChange={(e) => setConfirmPassword(e.target.value)}
+    disabled={!sessionReady}
+  />
+
+  <button
+    type="button"
+    className="eye-toggle-F"
+    onClick={() => setShowPassword(p => !p)}
+    disabled={!sessionReady}
+  >
+    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+  </button>
+</div>
+
 
     {error && <p className="auth-error-F">{error}</p>}
 

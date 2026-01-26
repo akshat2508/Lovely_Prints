@@ -130,12 +130,7 @@
   transition: all 0.2s ease;
 }
 
-.option-item-B:hover {
-  background: #fff7ed;
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 149, 0, 0.4),
-    0 4px 10px rgba(255, 149, 0, 0.25);
-}
+
 
 .option-item-B span {
   overflow: hidden;
@@ -217,4 +212,25 @@
   .secondary-btn-B {
     width: 100%;
   }
+}
+
+.shop-top-bar-B {
+  padding: 16px 24px 0;
+}
+
+.back-btn-B {
+  font-size: 14px;
+  padding: 6px 14px;
+  margin-bottom: 4px;
+}
+
+.shop-header-left-B {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.create-order-btn-B {
+  margin-top: 16px;
+  align-self: flex-start;
 }
