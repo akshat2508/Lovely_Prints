@@ -24,14 +24,15 @@ export default function OrderList({ orders, onStatusChange, onSelectOrder , onRe
   return (
     <div className="order-list">
       {sortedOrders.map(order => (
-        <OrderDetails
-          key={order.id}
-          order={order}
-          onStatusChange={onStatusChange}
-          onRefresh={onRefresh}
-          onClick={() => onSelectOrder(order)}
-        />
-      ))}
+            <OrderDetails
+              key={order.id}
+              order={order}
+              onStatusChange={onStatusChange}
+              onRefresh={onRefresh}
+              onClick={() => onSelectOrder(order)}
+              className={order.isUrgent ? "urgent-order" : ""}
+            />
+          ))}
     </div>
   );
 }

@@ -2,7 +2,14 @@ import React, { useState } from "react";
 import { getDocumentDownloadUrl } from "../../services/shopService";
 import { verifyOrderOtp } from "../../services/shopService";
 
-export default function OrderDetails({ order, onStatusChange, onClick , onRefresh }) {
+export default function OrderDetails({
+  order,
+  onStatusChange,
+  onClick,
+  onRefresh,
+  className = ""
+}) 
+ {
   const [downloading, setDownloading] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [showOtpModal, setShowOtpModal] = useState(false);
@@ -100,7 +107,7 @@ const handleVerifyOtp = async () => {
 
 
   return (
-    <div className="order-card" onClick={onClick}>
+    <div className={`order-card ${className}`} onClick={onClick}>
      <div className="order-header">
   <div className="order-id">#{order.orderNo}</div>
 
