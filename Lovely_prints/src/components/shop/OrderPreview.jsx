@@ -15,10 +15,11 @@ export default function OrderPreview({ order, onClose }) {
 
   return (
     <div className="order-preview-overlay" onClick={onClose}>
-      <div
-        className="order-preview"
-        onClick={(e) => e.stopPropagation()}
-      >
+        <div
+          className={`order-preview ${order.isUrgent ? "urgent-preview" : ""}`}
+          onClick={(e) => e.stopPropagation()}
+        >
+
         {/* Header */}
         <div className="preview-header">
           <h3>Order Details</h3>
@@ -57,20 +58,40 @@ export default function OrderPreview({ order, onClose }) {
           <h4>Print Specifications</h4>
 
           <div className="preview-specs">
-            <span className="spec-pill">Paper: {order.paperType}</span>
-            <span className="spec-pill">Color: {order.colorMode}</span>
-            <span className="spec-pill">Finish: {order.finishType}</span>
-            <span className="spec-pill">Copies: {order.copies}</span>
-            <span className="spec-pill">Orientation: {order.orientation}</span>
+  <span className="spec-pill">
+    <span className="spec-label">Paper:</span>
+    <span className="spec-value">{order.paperType}</span>
+  </span>
 
-          </div>
+  <span className="spec-pill">
+    <span className="spec-label">Color:</span>
+    <span className="spec-value">{order.colorMode}</span>
+  </span>
+
+  <span className="spec-pill">
+    <span className="spec-label">Finish:</span>
+    <span className="spec-value">{order.finishType}</span>
+  </span>
+
+  <span className="spec-pill">
+    <span className="spec-label">Copies:</span>
+    <span className="spec-value">{order.copies}</span>
+  </span>
+
+  <span className="spec-pill">
+    <span className="spec-label">Orientation:</span>
+    <span className="spec-value">{order.orientation}</span>
+  </span>
+</div>
+
         </div>
         {/* Order Meta */}
         <div className="preview-section meta">
-          <div className="preview-row">
-            <span className="preview-label">Order No</span>
-            <span>#{order.orderNo}</span>
-          </div>
+          <div className="preview-row order-no-row">
+  <span className="preview-label">Order No</span>
+  <span className="order-no-highlight">#{order.orderNo}</span>
+</div>
+
 
             <div className='preview-row'>
             <span className="preview-label">Status</span>

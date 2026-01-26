@@ -1088,3 +1088,39 @@ body {
     width: 100%;
   }
 }
+.urgent-preview {
+  border: 2px solid #ef4444;
+  box-shadow:
+    0 0 0 4px rgba(239, 68, 68, 0.12),
+    0 12px 32px rgba(239, 68, 68, 0.25);
+}
+.order-no-row {
+  margin-top: 6px;
+}
+
+.order-no-highlight {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: 0.5px;
+}
+
+
+.spec-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6b7280;   /* light */
+  margin-right: 4px;
+}
+
+.spec-value {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #111827;   /* bold & dark */
+}
+.urgent-order {
+  border: 2px solid #ef4444 !important;
+  box-shadow:
+    0 0 0 3px rgba(239, 68, 68, 0.12),
+    0 10px 24px rgba(239, 68, 68, 0.25);
+}
