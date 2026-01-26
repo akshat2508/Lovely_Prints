@@ -155,3 +155,19 @@
     transform: translateY(0);
   }
 }
+
+.eye-toggle {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: #6b7280;
+}
+
+.eye-toggle:hover {
+  color: #111827;
+}

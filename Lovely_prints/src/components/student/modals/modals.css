@@ -815,3 +815,77 @@
   transform: translateY(-1px);
   box-shadow: 0 8px 20px rgba(245, 130, 32, 0.45);
 }
+
+.notes-input {
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.4;
+}
+/* ================= PRICE BREAKDOWN (PRO) ================= */
+
+.price-breakdown {
+  background: #fdf2e9;
+  border-radius: 14px;
+  padding: 16px;
+  margin-top: 18px;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-weight: 500;
+}
+
+.price-row:not(:last-child) {
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.05);
+}
+
+.price-label {
+  color: #374151;
+}
+
+.price-value {
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Muted rows */
+.muted-row .price-label,
+.muted-row .price-value {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* Urgent highlight */
+.urgent-row .price-label,
+.urgent-row .price-value {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+/* Divider before total */
+.price-divider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #f58220,
+    transparent
+  );
+  margin: 10px 0;
+  opacity: 0.5;
+}
+
+/* Total row */
+.price-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #f58220;
+}

@@ -798,6 +798,10 @@ body {
   background: var(--preview-green);
   border-left: 4px solid #10b981;
 }
+.preview-section.notes {
+  background: var(--preview-purple);
+  border-left: 4px solid #10b981;
+}
 
 /* Section titles */
 .preview-section h4 {
@@ -837,6 +841,7 @@ body {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+  justify-content: space-around;
 }
 
 .spec-pill {
@@ -1123,4 +1128,38 @@ body {
   box-shadow:
     0 0 0 3px rgba(239, 68, 68, 0.12),
     0 10px 24px rgba(239, 68, 68, 0.25);
+}
+
+/* Label styling */
+.preview-section.notes .preview-label {
+  display: block;
+  font-weight: 600;
+  font-size: 14px;
+  color: #064e3b;
+  margin-bottom: 8px;
+}
+
+/* Notes content box */
+.notes-box {
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+/* Notes text */
+.notes-text {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #111;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Empty state */
+.notes-empty {
+  margin: 0;
+  font-size: 13px;
+  color: #6b7280;
+  font-style: italic;
 }

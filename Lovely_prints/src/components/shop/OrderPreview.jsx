@@ -1,5 +1,5 @@
-import React from 'react';
-import { getDocumentDownloadUrl } from '../../services/shopService';
+import React from "react";
+import { getDocumentDownloadUrl } from "../../services/shopService";
 
 export default function OrderPreview({ order, onClose }) {
   if (!order) return null;
@@ -7,26 +7,25 @@ export default function OrderPreview({ order, onClose }) {
   const handleDownload = async () => {
     try {
       const url = await getDocumentDownloadUrl(order.documentId);
-      window.open(url, '_blank');
+      window.open(url, "_blank");
     } catch (err) {
-      alert('Failed to download document');
+      alert("Failed to download document");
     }
   };
 
   return (
     <div className="order-preview-overlay" onClick={onClose}>
-        <div
-          className={`order-preview ${order.isUrgent ? "urgent-preview" : ""}`}
-          onClick={(e) => e.stopPropagation()}
-        >
-
+      <div
+        className={`order-preview ${order.isUrgent ? "urgent-preview" : ""}`}
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="preview-header">
           <h3>Order Details</h3>
-          <button className="preview-close" onClick={onClose}>×</button>
+          <button className="preview-close" onClick={onClose}>
+            ×
+          </button>
         </div>
-
-        
 
         {/* Student Info */}
         <div className="preview-section student">
@@ -34,12 +33,12 @@ export default function OrderPreview({ order, onClose }) {
 
           <div className="preview-row">
             <span className="preview-label">Name</span>
-            <span>{order.studentName || '—'}</span>
+            <span>{order.studentName || "—"}</span>
           </div>
 
           <div className="preview-row">
             <span className="preview-label">Customer ID</span>
-            <span>{order.studentId || '—'}</span>
+            <span>{order.studentId || "—"}</span>
           </div>
         </div>
 
@@ -58,56 +57,66 @@ export default function OrderPreview({ order, onClose }) {
           <h4>Print Specifications</h4>
 
           <div className="preview-specs">
-  <span className="spec-pill">
-    <span className="spec-label">Paper:</span>
-    <span className="spec-value">{order.paperType}</span>
-  </span>
+            <span className="spec-pill">
+              <span className="spec-label">Paper:</span>
+              <span className="spec-value">{order.paperType}</span>
+            </span>
 
-  <span className="spec-pill">
-    <span className="spec-label">Color:</span>
-    <span className="spec-value">{order.colorMode}</span>
-  </span>
+            <span className="spec-pill">
+              <span className="spec-label">Color:</span>
+              <span className="spec-value">{order.colorMode}</span>
+            </span>
 
-  <span className="spec-pill">
-    <span className="spec-label">Finish:</span>
-    <span className="spec-value">{order.finishType}</span>
-  </span>
+            <span className="spec-pill">
+              <span className="spec-label">Finish:</span>
+              <span className="spec-value">{order.finishType}</span>
+            </span>
 
-  <span className="spec-pill">
-    <span className="spec-label">Copies:</span>
-    <span className="spec-value">{order.copies}</span>
-  </span>
+            <span className="spec-pill">
+              <span className="spec-label">Copies:</span>
+              <span className="spec-value">{order.copies}</span>
+            </span>
 
-  <span className="spec-pill">
-    <span className="spec-label">Orientation:</span>
-    <span className="spec-value">{order.orientation}</span>
-  </span>
-</div>
-
+            <span className="spec-pill">
+              <span className="spec-label">Orientation:</span>
+              <span className="spec-value">{order.orientation}</span>
+            </span>
+          </div>
         </div>
+
+        {/* Notes (placeholder for now) */}
+        <div className="preview-section notes">
+          <span className="preview-label">Additional Instructions</span>
+
+          <div className="notes-box">
+            {order.notes ? (
+              <p className="notes-text">{order.notes}</p>
+            ) : (
+              <p className="notes-empty">No additional instructions</p>
+            )}
+          </div>
+        </div>
+
         {/* Order Meta */}
         <div className="preview-section meta">
           <div className="preview-row order-no-row">
-  <span className="preview-label">Order No</span>
-  <span className="order-no-highlight">#{order.orderNo}</span>
-</div>
+            <span className="preview-label">Order No</span>
+            <span className="order-no-highlight">#{order.orderNo}</span>
+          </div>
 
-
-            <div className='preview-row'>
+          <div className="preview-row">
             <span className="preview-label">Status</span>
 
-          <span className={`status-badge ${order.status}`}>
-            {order.status}
-          </span>
+            <span className={`status-badge ${order.status}`}>
+              {order.status}
+            </span>
           </div>
           <div className="preview-row">
             <span className="preview-label">Order ID</span>
-            <span>
-              {`${order.id}`}
-            </span>
+            <span>{`${order.id}`}</span>
           </div>
-            
-            <div className="preview-row">
+
+          <div className="preview-row">
             <span className="preview-label">Urgency</span>
             <span>
               {order.isUrgent ? `Urgent (+₹${order.urgencyFee})` : "NO"}
@@ -130,11 +139,8 @@ export default function OrderPreview({ order, onClose }) {
 
           <div className="preview-row">
             <span className="preview-label">Placed At</span>
-            <span>
-              {new Date(order.createdAt).toLocaleString()}
-            </span>
+            <span>{new Date(order.createdAt).toLocaleString()}</span>
           </div>
-
         </div>
 
         {/* ETA (placeholder for now) */}
@@ -146,22 +152,17 @@ export default function OrderPreview({ order, onClose }) {
         </div>
 
         {/* Actions */}
-{order.isPaid && (
-  <div className="preview-actions">
-    <button
-      className="preview-download"
-      onClick={handleDownload}
-      disabled={order.status === "completed"}
-    >
-      {order.status === "completed"
-        ? "Completed"
-        : "Download Document"}
-    </button>
-  </div>
-)}
-
-
-
+        {order.isPaid && (
+          <div className="preview-actions">
+            <button
+              className="preview-download"
+              onClick={handleDownload}
+              disabled={order.status === "completed"}
+            >
+              {order.status === "completed" ? "Completed" : "Download Document"}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

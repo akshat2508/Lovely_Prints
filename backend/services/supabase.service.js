@@ -522,6 +522,7 @@ return await supabaseAdmin
     is_urgent,
     urgency_fee,
     is_paid,
+    notes,
     created_at,
     student_id,
     total_price,

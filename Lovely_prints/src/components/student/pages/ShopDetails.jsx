@@ -39,7 +39,17 @@ const ShopDetails = () => {
 
   return (
     <div className="shop-details-B">
-      {/* Header */}
+      {/* 🔙 Back Button (Top Left) */}
+      <div className="shop-top-bar-B">
+        <button
+          className="secondary-btn-B back-btn-B"
+          onClick={() => navigate("/student")}
+        >
+          ← Back to Shops
+        </button>
+      </div>
+
+      {/* 🏪 Header */}
       <div className="shop-header-B">
         <div className="shop-header-left-B">
           <h1 className="shop-name-B">{shop.shop_name}</h1>
@@ -53,8 +63,18 @@ const ShopDetails = () => {
             <span className="meta-label-B">Opens:</span>
             <span className="meta-value-B">{shop.opening_time || "9:00 AM"}</span>
             <span className="meta-label-B">Closes:</span>
-            <span className="meta-value-B">{shop.closing_time || "10:00 PM"}</span>
+            <span className="meta-value-B">
+              {shop.closing_time || "10:00 PM"}
+            </span>
           </div>
+
+          {/* ➕ Create Order Button (Inside Header) */}
+          <button
+            className="primary-btn-B create-order-btn-B"
+            onClick={() => setShowCreateModal(true)}
+          >
+            Create Print Order
+          </button>
         </div>
 
         <div className="shop-header-right-B">
@@ -66,9 +86,10 @@ const ShopDetails = () => {
         </div>
       </div>
 
-      {/* Print Options */}
+      {/* 📄 Print Options */}
       <div className="shop-options-B">
         <h2>Print Options Available</h2>
+
         <div className="options-grid-B">
           {options?.paper_types && (
             <div className="option-group-B">
@@ -77,7 +98,6 @@ const ShopDetails = () => {
                 <div key={item.id} className="option-item-B">
                   <span>{item.name}</span>
                   <span>₹{item.base_price || 0}</span>
-                  {item.extra_price && <span>+₹{item.extra_price}</span>}
                 </div>
               ))}
             </div>
@@ -89,7 +109,7 @@ const ShopDetails = () => {
               {options.color_modes.map((item) => (
                 <div key={item.id} className="option-item-B">
                   <span>{item.name}</span>
-                  {item.extra_price && <span>+₹{item.extra_price}</span>}
+                  {item.extra_price && <span>₹{item.extra_price}</span>}
                 </div>
               ))}
             </div>
@@ -101,7 +121,7 @@ const ShopDetails = () => {
               {options.finish_types.map((item) => (
                 <div key={item.id} className="option-item-B">
                   <span>{item.name}</span>
-                  {item.extra_price && <span>+₹{item.extra_price}</span>}
+                  {item.extra_price && <span>₹{item.extra_price}</span>}
                 </div>
               ))}
             </div>
@@ -109,19 +129,7 @@ const ShopDetails = () => {
         </div>
       </div>
 
-      {/* Actions */}
-      <div className="shop-actions-B">
-        <button
-          className="primary-btn-B"
-          onClick={() => setShowCreateModal(true)}
-        >
-          Create Print Order
-        </button>
-        <button className="secondary-btn-B" onClick={() => navigate("/student")}>
-          Back to Shops
-        </button>
-      </div>
-
+      {/* 🧾 Create Order Modal */}
       {showCreateModal && (
         <CreateOrderModal
           shop={shop}

@@ -1009,7 +1009,7 @@ font-weight: 600;
       }
 
       .hero-visual {
-        height: 400px;
+        height: max-content;
       }
 
       .steps-container,
@@ -1028,6 +1028,11 @@ font-weight: 600;
     }
 
     @media (max-width: 768px) {
+      .floating-cards
+      {
+        display: none;
+      }
+  
       .nav-links,
       .nav-cta {
         display: none;
