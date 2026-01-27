@@ -152,9 +152,9 @@ const Home = () => {
           No hassle, no waiting.
         </p>
         <div className="hero-cta">
-          <a href="#signup" className="btn btn-primary">
-            Find Print Shops Near You <ArrowRight size={20} />
-          </a>
+          <Link to="/signup"  className='btn btn-primary'>
+                Get Started - It's Free
+              </Link>
         </div>
         <div className="hero-badges">
           <div className="badge">
