@@ -44,6 +44,7 @@ export const loginUser = async ({ email, password }) => {
 export const logoutUser = async () => {
   await api.post("/auth/logout");
   localStorage.removeItem("access_token");
+  window.location.href="/login";
 };
 
 /**

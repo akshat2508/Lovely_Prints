@@ -79,7 +79,7 @@ export default function Login() {
           className="eye-toggle"
           onClick={() => setShowPassword(p => !p)}
         >
-          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+          {!showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
         </button>
       </div>
 

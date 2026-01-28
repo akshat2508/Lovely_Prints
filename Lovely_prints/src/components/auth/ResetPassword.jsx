@@ -115,7 +115,7 @@ const [showPassword, setShowPassword] = useState(false);
     onClick={() => setShowPassword(p => !p)}
     disabled={!sessionReady}
   >
-    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+    {!showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
   </button>
 </div>
 

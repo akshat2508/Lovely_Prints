@@ -10,6 +10,7 @@ const ShopNavbar = ({
   setActiveTab,
   hasNewOrders,
   hasUrgentOrders,
+  sessionTimeLeft
 }) => {
   return (
     <nav className="shop-navbar">
@@ -71,10 +72,22 @@ const ShopNavbar = ({
             <span className={shop?.is_active ? "active" : "muted"}>Open</span>
           </div>
 
+          {sessionTimeLeft && (
+            <div
+              className={`session-timer ${
+                sessionTimeLeft.startsWith("0:") ? "session-timer--warning" : ""
+              }`}
+              title="Session expires in"
+            >
+               {sessionTimeLeft}
+            </div>
+          )}
+
           <button className="logout-btn" onClick={onLogout}>
             Logout
           </button>
         </div>
+
       </div>
     </nav>
   );
