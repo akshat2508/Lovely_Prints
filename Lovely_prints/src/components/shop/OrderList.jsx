@@ -1,12 +1,13 @@
 import React from 'react';
 import OrderDetails from './OrderDetails';
+import EmptyShopOrders from './EmptyShopOrders';
 
 export default function OrderList({ orders, onStatusChange, onSelectOrder , onRefresh}) {
   if (orders.length === 0) {
     return (
-      <div className="order-list-empty">
-        <p>No orders yet</p>
-      </div>
+     
+        <EmptyShopOrders/>
+
     );
   }
 

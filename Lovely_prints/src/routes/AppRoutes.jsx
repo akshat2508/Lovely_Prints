@@ -35,7 +35,9 @@ const AppRoutes = () => {
       </Route>
 
       {/* Shop */}
+      <Route element={<ProtectedRoute role="shop" />}>
       <Route path="/shop" element={<ShopDashboard />} />
+      </Route>
     </Routes>
   );
 };

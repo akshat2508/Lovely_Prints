@@ -1,0 +1,123 @@
+.empty-orders {
+  height: 55vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+  padding: 40px;
+}
+
+.empty-illustration {
+  width: 80px;
+  height: 80px;
+  background: #f4f6ff;
+  color: #ff9500;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.empty-orders h2 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.empty-orders p {
+  color: #6b7280;
+  font-size: 0.95rem;
+  max-width: 420px;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.primary-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #ff9500;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+
+
+.empty-orders{animation: fadeUp 0.4s ease;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 🎮 GAME */
+.game-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.game-modal {
+  background: white;
+  padding: 24px;
+  border-radius: 16px;
+  width: 320px;
+  text-align: center;
+  position: relative;
+}
+
+.game-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.game-box {
+  margin: 20px 0;
+  height: 120px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+}
+
+.game-box.waiting {
+  background: #facc15;
+}
+
+.game-box.ready {
+  background: #22c55e;
+  color: white;
+}
+
+.game-box.clicked {
+  background: #e5e7eb;
+}

@@ -13,6 +13,8 @@ import { useNavigate } from "react-router-dom";
 import { logoutUser } from "../../services/authService";
 import ShopAnalytics from "./analytics/ShopAnalytics";
 import ShopNavbar from "./ShopNavbar";
+const SESSION_DURATION = 60 *60 *1000; // 1 hour
+const SESSION_KEY = "shop_session_start";
 
 export default function ShopDashboard() {
   const [orders, setOrders] = useState([]);
@@ -35,8 +37,24 @@ export default function ShopDashboard() {
 
   const [hasNewOrders, setHasNewOrders] = useState(false);
   const [hasUrgentOrders, setHasUrgentOrders] = useState(false);
+  const sessionTimerRef = useRef(null);
 
-  const navigate = useNavigate();
+const [remainingTime, setRemainingTime] = useState(null);
+
+const formatTime = (ms) => {
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+  const m = Math.floor(totalSeconds / 60);
+  const s = totalSeconds % 60;
+  return `${m}:${s.toString().padStart(2, "0")}`;
+};
+
+const navigate = useNavigate();
+  //SAFETY NET
+  useEffect(() => {
+  if (!localStorage.getItem("access_token")) {
+    navigate("/login");
+  }
+}, []);
 
   /* ================= VOICE UNLOCK ================= */
 
@@ -95,6 +113,7 @@ export default function ShopDashboard() {
 
   const handleLogout = async () => {
     try {
+      localStorage.removeItem(SESSION_KEY);
       if (shop?.id && shop?.is_active) {
         await setShopStatusManual(shop.id, false);
       }
@@ -221,6 +240,67 @@ export default function ShopDashboard() {
     }
   };
 
+  const forceSessionExpiry = async () => {
+  try {
+    alert("Session expired. Please login again.");
+
+    // close shop safely
+    if (shop?.id && shop?.is_active) {
+      await setShopStatusManual(shop.id, false);
+    }
+  } catch (e) {
+    console.error("Error while expiring session", e);
+  } finally {
+    localStorage.removeItem(SESSION_KEY);
+    localStorage.removeItem("access_token");
+    navigate("/login");
+  }
+};
+useEffect(() => {
+  const now = Date.now();
+
+  let sessionStart = localStorage.getItem(SESSION_KEY);
+
+  // first time dashboard loads
+  if (!sessionStart) {
+    sessionStart = now;
+    localStorage.setItem(SESSION_KEY, sessionStart);
+  }
+
+  const elapsed = now - Number(sessionStart);
+  const remaining = SESSION_DURATION - elapsed;
+
+  // session already expired
+  if (remaining <= 0) {
+    forceSessionExpiry();
+    return;
+  }
+
+  // schedule auto logout
+  sessionTimerRef.current = setTimeout(() => {
+    forceSessionExpiry();
+  }, remaining);
+
+  return () => {
+    clearTimeout(sessionTimerRef.current);
+  };
+}, []);
+useEffect(() => {
+  const interval = setInterval(() => {
+    const start = localStorage.getItem(SESSION_KEY);
+    if (!start) return;
+
+    const elapsed = Date.now() - Number(start);
+    const left = SESSION_DURATION - elapsed;
+
+    setRemainingTime(left > 0 ? left : 0);
+  }, 1000);
+
+  return () => clearInterval(interval);
+}, []);
+
+
+
   /* ================= UI ================= */
 
   return (
@@ -242,6 +322,8 @@ export default function ShopDashboard() {
         }}
         hasNewOrders={hasNewOrders}
         hasUrgentOrders={hasUrgentOrders}
+          sessionTimeLeft={remainingTime !== null ? formatTime(remainingTime) : null}
+
       />
 
       {showNewOrderToast && (

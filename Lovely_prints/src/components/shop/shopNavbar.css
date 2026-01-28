@@ -184,3 +184,26 @@ input:checked + .slider::before {
   25% { transform: translateX(-2px); }
   75% { transform: translateX(2px); }
 }
+/* ⏳ SESSION TIMER */
+.session-timer {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #374151;
+  background: rgba(0, 0, 0, 0.04);
+  padding: 6px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+/* 🚨 last minute warning */
+.session-timer--warning {
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.12);
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
