@@ -40,6 +40,32 @@ export default function ShopDashboard() {
   const sessionTimerRef = useRef(null);
 
 const [remainingTime, setRemainingTime] = useState(null);
+const notificationAudioRef = useRef(null);
+useEffect(() => {
+  const unlockAudio = () => {
+    if (notificationAudioRef.current) {
+      notificationAudioRef.current
+        .play()
+        .then(() => {
+          notificationAudioRef.current.pause();
+          notificationAudioRef.current.currentTime = 0;
+        })
+        .catch(() => {});
+    }
+
+    window.removeEventListener("click", unlockAudio);
+    window.removeEventListener("keydown", unlockAudio);
+  };
+
+  window.addEventListener("click", unlockAudio);
+  window.addEventListener("keydown", unlockAudio);
+
+  return () => {
+    window.removeEventListener("click", unlockAudio);
+    window.removeEventListener("keydown", unlockAudio);
+  };
+}, []);
+
 
 const formatTime = (ms) => {
   const totalSeconds = Math.max(0, Math.floor(ms / 1000));
@@ -134,11 +160,19 @@ const navigate = useNavigate();
     window.speechSynthesis.speak(utterance);
   };
 
-  const triggerNewOrderAlert = () => {
-    setShowNewOrderToast(true);
-    speakNewOrder();
-    setTimeout(() => setShowNewOrderToast(false), 4000);
-  };
+ const triggerNewOrderAlert = () => {
+  setShowNewOrderToast(true);
+
+  // 🔔 play sound
+  if (voiceEnabled && notificationAudioRef.current) {
+    notificationAudioRef.current.currentTime = 0;
+    notificationAudioRef.current.play().catch(() => {});
+  }
+
+  speakNewOrder();
+
+  setTimeout(() => setShowNewOrderToast(false), 4000);
+};
 
   /* ================= ORDERS ================= */
 
@@ -403,6 +437,8 @@ useEffect(() => {
 
       {activeTab === "settings" && <PricingSettings />}
       {activeTab === "analytics" && <ShopAnalytics orders={orders} />}
+      <audio ref={notificationAudioRef} src="/notification.mp3" preload="auto" />
+
     </div>
   );
 }
