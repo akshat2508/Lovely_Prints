@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {
   getDocumentDownloadUrl,
-  verifyOrderOtp
+  verifyOrderOtp,
 } from "../../services/shopService";
 
 export default function OrderDetails({
@@ -9,7 +9,7 @@ export default function OrderDetails({
   onStatusChange,
   onClick,
   onRefresh,
-  className = ""
+  className = "",
 }) {
   const [downloading, setDownloading] = useState(false);
   const [updating, setUpdating] = useState(false);
@@ -26,7 +26,7 @@ export default function OrderDetails({
       pending: "confirmed",
       confirmed: "printing",
       printing: "ready",
-      ready: "completed"
+      ready: "completed",
     };
     return flow[status];
   };
@@ -36,7 +36,7 @@ export default function OrderDetails({
       pending: "Confirm",
       confirmed: "Start Printing",
       printing: "Mark Ready",
-      ready: "Complete"
+      ready: "Complete",
     };
     return labels[status];
   };
@@ -58,10 +58,7 @@ export default function OrderDetails({
       window.open(url, "_blank");
 
       // 2️⃣ Auto-move status → READY
-      if (
-        order.status === "confirmed" ||
-        order.status === "printing"
-      ) {
+      if (order.status === "confirmed" || order.status === "printing") {
         setUpdating(true);
         await onStatusChange(order.id, "ready");
         await onRefresh();
@@ -118,11 +115,7 @@ export default function OrderDetails({
 
       await onRefresh();
     } catch (err) {
-      alert(
-        err?.response?.data?.message ||
-        err?.message ||
-        "Invalid OTP"
-      );
+      alert(err?.response?.data?.message || err?.message || "Invalid OTP");
     } finally {
       setVerifyingOtp(false);
     }
@@ -136,13 +129,9 @@ export default function OrderDetails({
       <div className="order-header">
         <div className="order-id">#{order.orderNo}</div>
 
-        <span className={`status-badge ${order.status}`}>
-          {order.status}
-        </span>
+        <span className={`status-badge ${order.status}`}>{order.status}</span>
 
-        {order.isUrgent && (
-          <span className="badge urgent">Urgent</span>
-        )}
+        {order.isUrgent && <span className="badge urgent">Urgent</span>}
 
         <span className={`badge ${order.isPaid ? "paid" : "unpaid"}`}>
           {order.isPaid ? "Paid" : "Not Paid"}
@@ -162,14 +151,14 @@ export default function OrderDetails({
             {createdDate.toLocaleDateString("en-IN", {
               year: "numeric",
               month: "short",
-              day: "numeric"
+              day: "numeric",
             })}
           </span>
           <span>
             ⏰{" "}
             {createdDate.toLocaleTimeString("en-IN", {
               hour: "2-digit",
-              minute: "2-digit"
+              minute: "2-digit",
             })}
           </span>
         </div>
@@ -182,62 +171,50 @@ export default function OrderDetails({
         <button
           className="download-button"
           disabled={
-            !order.isPaid ||
-            order.status === "completed" ||
-            downloading
+            !order.isPaid || order.status === "completed" || downloading
           }
           onClick={handleDownload}
         >
           {!order.isPaid
             ? "Not Paid"
             : order.status === "completed"
-            ? "Completed"
-            : downloading
-            ? "Preparing..."
-            : "Download"}
+              ? "Completed"
+              : downloading
+                ? "Preparing..."
+                : "Download"}
         </button>
 
         {/* PRINT DETAILS */}
         <div className="print-details">
           <span>Paper: {order.paperType}</span>
-          <span>Color: {order.colorMode}</span>
+          <span>{order.colorMode}</span>
           <span>Finish: {order.finishType}</span>
           <span>Copies: {order.copies}</span>
           <span>
-            {order.orientation === "landscape"
-              ? "Landscape"
-              : "Portrait"}
+            {order.orientation === "landscape" ? "Landscape" : "Portrait"}
           </span>
         </div>
 
         {/* ACTION BUTTON (HIDDEN WHEN READY) */}
-        {nextStatus &&
-  order.isPaid &&
-  order.status !== "printing" &&
-  order.status !== "completed" && (
-    <button
-      className="action-button"
-      disabled={updating}
-      onClick={handleStatusUpdate}
-    >
-      {updating
-        ? "Updating..."
-        : getActionLabel(order.status)}
-    </button>
-  )}
-
+        {nextStatus && order.isPaid && order.status !== "completed" && (
+          <button
+            className="action-button"
+            disabled={order.status === "printing" || updating}
+            onClick={handleStatusUpdate}
+          >
+            {order.status === "printing"
+              ? "Click on Download"
+              : updating
+                ? "Updating..."
+                : getActionLabel(order.status)}
+          </button>
+        )}
       </div>
 
       {/* OTP MODAL */}
       {showOtpModal && (
-        <div
-          className="modal-overlay"
-          onClick={() => setShowOtpModal(false)}
-        >
-          <div
-            className="modal-card"
-            onClick={(e) => e.stopPropagation()}
-          >
+        <div className="modal-overlay" onClick={() => setShowOtpModal(false)}>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
             <h3>Enter Delivery OTP</h3>
 
             <input
@@ -255,9 +232,7 @@ export default function OrderDetails({
                 disabled={verifyingOtp}
                 onClick={handleVerifyOtp}
               >
-                {verifyingOtp
-                  ? "Verifying..."
-                  : "Verify & Complete"}
+                {verifyingOtp ? "Verifying..." : "Verify & Complete"}
               </button>
 
               <button
