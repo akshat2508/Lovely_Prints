@@ -38,6 +38,7 @@ export default function ShopDashboard() {
   const [hasNewOrders, setHasNewOrders] = useState(false);
   const [hasUrgentOrders, setHasUrgentOrders] = useState(false);
   const sessionTimerRef = useRef(null);
+const [unseenOrderCount, setUnseenOrderCount] = useState(0);
 
 const [remainingTime, setRemainingTime] = useState(null);
 const notificationAudioRef = useRef(null);
@@ -102,18 +103,30 @@ const navigate = useNavigate();
 
   /* ================= FETCH SHOP ================= */
 
-  useEffect(() => {
-    const fetchShop = async () => {
-      try {
-        const res = await getMyShop();
-        setShop(res.data);
-      } catch {
-        console.error("Failed to load shop info");
-      }
-    };
+useEffect(() => {
+  const fetchShop = async () => {
+    try {
+      const res = await getMyShop();
+      const shopData = res.data;
 
-    fetchShop();
-  }, []);
+      setShop(shopData);
+
+      // ✅ AUTO-OPEN SHOP ON DASHBOARD LOAD
+      if (!shopData.is_active) {
+        try {
+          await setShopStatusManual(shopData.id, true);
+          setShop((prev) => ({ ...prev, is_active: true }));
+        } catch {
+          console.error("Failed to auto-open shop");
+        }
+      }
+    } catch {
+      console.error("Failed to load shop info");
+    }
+  };
+
+  fetchShop();
+}, []);
 
   /* ================= MANUAL SHOP TOGGLE ================= */
 
@@ -189,6 +202,7 @@ const navigate = useNavigate();
 
       if (prevIds.size > 0 && freshOrders.length > 0) {
         setHasNewOrders(true);
+        setUnseenOrderCount((count) => count + freshOrders.length); // TAB Notification  
 
         // 🚨 urgent detection
         if (freshOrders.some((o) => o.isUrgent)) {
@@ -216,6 +230,16 @@ const navigate = useNavigate();
 
     return () => clearInterval(interval);
   }, [activeTab]);
+
+  useEffect(() => {
+  const baseTitle = "Lovely Prints";
+
+  if (unseenOrderCount > 0) {
+    document.title = `(${unseenOrderCount}) New Orders | ${baseTitle}`;
+  } else {
+    document.title = baseTitle;
+  }
+  }, [unseenOrderCount]);
 
   /* ================= FILTERING ================= */
 
@@ -352,6 +376,7 @@ useEffect(() => {
           if (tab === "orders") {
             setHasNewOrders(false);
             setHasUrgentOrders(false);
+            setUnseenOrderCount(0); // 🔔 reset title badge
           }
         }}
         hasNewOrders={hasNewOrders}
