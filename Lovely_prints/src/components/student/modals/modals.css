@@ -889,3 +889,8 @@
   font-weight: 800;
   color: #f58220;
 }
+#error-text {
+  color: #d32f2f;
+  font-size: 13px;
+  margin-top: 6px;
+}
