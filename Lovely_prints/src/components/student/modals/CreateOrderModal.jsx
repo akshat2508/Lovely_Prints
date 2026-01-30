@@ -32,6 +32,7 @@ const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
   const [disableSubmit, setDisableSubmit] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
   const [loaderText, setLoaderText] = useState("Preparing your documents…");
+  const [fileError, setFileError] = useState("");
 
   /* ====== Helpers ====== */
   const selectedPaper = shopOptions?.paper_types?.find(
@@ -63,7 +64,8 @@ const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
     selectedFile &&
     copies > 0 &&
     !submitting &&
-    !disableSubmit;
+    !disableSubmit &&
+    !fileError;
 
   const getPdfPageCount = async (file) => {
     const buffer = await file.arrayBuffer();
@@ -204,23 +206,41 @@ const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
         {/* ===== Upload File ===== */}
         <label className="modal-label">Upload PDF Document</label>
         <label className="upload-box">
-          {selectedFile ? selectedFile.name : "Choose a PDF file"}
+          {selectedFile ? selectedFile.name : `Choose a PDF file (size <= 10 mb)`}
           <input
             type="file"
             accept=".pdf"
             onChange={async (e) => {
               const file = e.target.files[0];
               if (!file) return;
+
+              // ✅ 10 MB limit
+              const MAX_SIZE = 10 * 1024 * 1024;
+
+              if (file.size > MAX_SIZE) {
+                setFileError("PDF size must be 10MB or less.");
+                setSelectedFile(null);
+                setPageCount(1);
+                return;
+              }
+
+              setFileError("");
               setSelectedFile(file);
+
               try {
                 const pages = await getPdfPageCount(file);
                 setPageCount(pages);
               } catch {
-                alert("Unable to read PDF file");
+                setFileError("Unable to read PDF file.");
+                setSelectedFile(null);
               }
             }}
           />
         </label>
+        {fileError && (
+          <p id="error-text">{fileError}</p>
+        )}
+
 
         {/* ===== Number of Pages ===== */}
         {selectedFile && (
