@@ -1,12 +1,32 @@
 // controllers/auth.controller.js
 import supabaseService from '../services/supabase.service.js';
 import { successResponse, errorResponse } from '../utils/response.js';
+import { supabaseAdmin } from "../services/supabase.service.js";
 
 export const register = async (req, res, next) => {
   try {
-    const { email, password, name, role } = req.body;
+    
+    const { email, password, name, role, organisation_id } = req.body;
+    console.log("REGISTER PAYLOAD:", {
+      email,
+      password,
+      name,
+      role,
+      organisation_id,
+    });
 
-    const { data, error } = await supabaseService.signUp(email, password, { name, role });
+    // const { data, error } = await supabaseService.signUp(email, password, { name, role });
+
+
+    const { data, error } = await supabaseService.signUp(
+        email,
+        password,
+        {
+          name,
+          role,
+          organisation_id, 
+        }
+      );
 
     if (error) {
       return errorResponse(res, error.message, 400);
@@ -87,5 +107,23 @@ export const forgotPassword = async (req, res, next) => {
     );
   } catch (err) {
     next(err);
+  }
+};
+
+export const getOrganisations = async (req, res) => {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from("organisations")
+      .select("id, name")
+      .eq("is_active", true)
+      .order("name");
+
+    if (error) {
+      return errorResponse(res, error.message, 400);
+    }
+
+    return successResponse(res, data, "Organisations fetched");
+  } catch (err) {
+    return errorResponse(res, err.message, 500);
   }
 };

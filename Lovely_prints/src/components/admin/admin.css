@@ -1,0 +1,188 @@
+.admin-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+}
+
+.admin-title {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+.admin-section {
+  margin-top: 32px;
+}
+
+.admin-section h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.org-list {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.org-chip {
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: var(--paper-card);
+  border: 1px solid var(--paper-border);
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+}
+
+.org-chip:hover {
+  background: var(--paper-muted);
+}
+
+.org-chip.active {
+  background: var(--kaagaz-primary);
+  color: white;
+  border-color: var(--kaagaz-primary);
+}
+
+.shop-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--paper-card);
+  border: 1px solid var(--paper-border);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.shop-row.active {
+  background: var(--paper-muted);
+}
+
+.shop-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.shop-name {
+  font-weight: 500;
+}
+
+.shop-block {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.shop-status.open {
+  color: var(--success);
+  font-weight: 500;
+}
+
+.shop-status.closed {
+  color: var(--danger);
+  font-weight: 500;
+}
+
+.shop-action-btn {
+  background: none;
+  border: 1px solid var(--paper-border);
+  padding: 6px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin: 32px 0;
+}
+
+.stat-card {
+  background: var(--paper-card);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow-soft);
+}
+
+.stat-value {
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--kaagaz-primary);
+}
+
+.stat-label {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+
+.shop-analytics {
+  margin-top: 32px;
+}
+
+.shop-analytics h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.shop-orders {
+  margin-top: 24px;
+}
+
+.shop-orders h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table th {
+  text-align: left;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  padding-bottom: 10px;
+}
+
+.admin-table td {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--paper-border);
+  font-size: 14px;
+}
+
+.trends-container {
+  margin-top: 48px;
+}
+
+.trends-container h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.trend-card {
+  background: var(--paper-card);
+  border-radius: var(--radius);
+  padding: 30px;
+  box-shadow: var(--shadow-soft);
+  margin-bottom: 24px;
+  height: 400px;
+}
+
+.trend-card h4 {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 12px;
+}

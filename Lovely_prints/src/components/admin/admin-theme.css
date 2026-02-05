@@ -1,0 +1,31 @@
+:root {
+  /* Brand */
+  --kaagaz-primary: #7C5C6F;
+  --kaagaz-secondary: #98878D;
+  --kaagaz-accent: #BC9AA7;
+  --kaagaz-soft: #D3AEB9;
+
+  /* Paper */
+  --paper-bg: #FAF9F7;
+  --paper-card: #FFFFFF;
+  --paper-border: #E8E3E6;
+  --paper-muted: #F3F0F2;
+
+  /* Text */
+  --text-primary: #2F2A2D;
+  --text-secondary: #5E555B;
+  --text-muted: #9A8F95;
+
+  /* Status */
+  --success: #4F8A6D;
+  --danger: #9B4A4A;
+
+  --radius: 14px;
+  --shadow-soft: 0 8px 24px rgba(0,0,0,0.04);
+}
+
+body {
+  background: var(--paper-bg);
+  color: var(--text-primary);
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+}

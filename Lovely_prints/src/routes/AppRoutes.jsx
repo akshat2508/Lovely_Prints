@@ -13,6 +13,8 @@ import ShopDashboard from "../components/shop/ShopDashboard";
 import StudentProfile from "../components/student/pages/StudentProfile";
 import ForgotPassword from "../components/auth/ForgotPassword";
 import ResetPassword from "../components/auth/ResetPassword";
+import AdminDashboard from "../components/admin/AdminDashboard";
+
 const AppRoutes = () => {
   return (
     <Routes>
@@ -20,8 +22,8 @@ const AppRoutes = () => {
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/update-password" element={<ResetPassword />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/update-password" element={<ResetPassword />} />
 
       {/* Student (Protected) */}
       <Route element={<ProtectedRoute role="student" />}>
@@ -30,13 +32,16 @@ const AppRoutes = () => {
           <Route path="shop/:shopId" element={<ShopDetails />} />
           <Route path="orders" element={<StudentOrders />} />
           <Route path="profile" element={<StudentProfile />} />
-
         </Route>
       </Route>
 
       {/* Shop */}
       <Route element={<ProtectedRoute role="shop" />}>
-      <Route path="/shop" element={<ShopDashboard />} />
+        <Route path="/shop" element={<ShopDashboard />} />
+      </Route>
+      {/* Admin */}
+      <Route element={<ProtectedRoute role="admin" />}>
+        <Route path="/admin" element={<AdminDashboard />} />
       </Route>
     </Routes>
   );

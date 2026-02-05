@@ -694,5 +694,5 @@ async updateShopById(shopId, updates) {
 }
 
 }
-
+export { supabaseAdmin};
 export default new SupabaseService();

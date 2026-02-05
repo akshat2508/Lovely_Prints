@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState , useEffect} from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
-import { registerUser } from "../../services/authService";
+import { registerUser , getOrganisations } from "../../services/authService";
 import "./auth.css";
 import EmailConfirmationModal from "./modal/EmailConfirmationModal";
 
@@ -15,9 +15,29 @@ export default function Signup() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [organisations, setOrganisations] = useState([]);
+  const [organisationId, setOrganisationId] = useState("");
+
+  useEffect(() => {
+  const fetchOrganisations = async () => {
+    try {
+      const data = await getOrganisations();
+      setOrganisations(data);
+    } catch (err) {
+      console.error("Failed to load organisations", err);
+    }
+  };
+
+  fetchOrganisations();
+}, []);
 
   const handleSignup = async () => {
     setError("");
+    if (!organisationId) {
+  setError("Please select your organisation");
+  return;
+}
+
 
     // ✅ Password match validation
     if (password !== confirmPassword) {
@@ -26,6 +46,8 @@ export default function Signup() {
     }
 
     setLoading(true);
+    console.log("Selected organisationId:", organisationId);
+
 
     try {
       await registerUser({
@@ -33,6 +55,8 @@ export default function Signup() {
         email,
         password,
         role: "student", // enforced by frontend
+        organisation_id: organisationId,
+
       });
 
       setShowConfirmModal(true);
@@ -66,6 +90,19 @@ export default function Signup() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
+          <select
+  className="auth-input"
+  value={organisationId}
+  onChange={(e) => setOrganisationId(e.target.value)}
+>
+  <option value="">Select Organisation</option>
+  {organisations.map((org) => (
+    <option key={org.id} value={org.id}>
+      {org.name}
+    </option>
+  ))}
+</select>
+
 
           <input
             type="password"
