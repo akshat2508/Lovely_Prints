@@ -5,12 +5,19 @@ import api from "./api";
  * Register User
  * POST /api/auth/register
  */
-export const registerUser = async ({ email, password, name, role }) => {
+export const registerUser = async ({
+  email,
+  password,
+  name,
+  role,
+  organisation_id,
+}) => {
   const response = await api.post("auth/register", {
     email,
     password,
     name,
     role,
+    organisation_id, // 🔥 DO NOT MISS THIS
   });
 
   return response.data;
@@ -59,4 +66,13 @@ export const forgotPassword = async (email) => {
   return api.post("/auth/forgot-password", {
     email,
   });
+};
+
+/**
+ * Get Organisations (Public)
+ * GET /api/auth/organisations
+ */
+export const getOrganisations = async () => {
+  const response = await api.get("/auth/organisations");
+  return response.data.data;
 };
