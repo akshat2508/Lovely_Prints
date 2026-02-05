@@ -1075,3 +1075,14 @@ font-weight: 600;
         font-size: 3rem;
       }
     }
+.btn-disabled {
+  background: #ccc;
+  color: #666;
+  cursor: not-allowed;
+  border: none;
+}
+
+.btn-disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
