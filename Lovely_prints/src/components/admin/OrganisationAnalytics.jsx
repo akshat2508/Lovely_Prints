@@ -1,16 +1,18 @@
 import "./admin.css";
 import "./organisationAnalytics.css";
-const StatCard = ({ label, value }) => (
-  <div className="stat-card">
-    <div className="stat-value">{value}</div>
-    <div className="stat-label">{label}</div>
-  </div>
-);
-
 import "./admin-theme.css"
 
 const OrganisationAnalytics = ({ analytics }) => {
-  if (!analytics) return null;
+
+  if (!analytics) {
+  return (
+    <div className="analytics-grid">
+      {[1,2,3,4].map(i => (
+        <div key={i} className="stat-card skeleton stat-skeleton" />
+      ))}
+    </div>
+  );
+}
 
   return (
     <div className="analytics-grid">

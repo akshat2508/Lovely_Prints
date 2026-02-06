@@ -4,6 +4,14 @@ import "./admin-theme.css"
 
 const ShopAnalytics = ({ shop, analytics }) => {
   if (!shop) return null;
+if (!analytics) {
+  return (
+    <div className="shop-analytics-grid">
+      <div className="stat-card skeleton stat-skeleton" />
+      <div className="stat-card skeleton stat-skeleton" />
+    </div>
+  );
+}
 
   return (
     <div className="shop-analytics">

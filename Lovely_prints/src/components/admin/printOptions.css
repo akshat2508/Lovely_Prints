@@ -1,0 +1,136 @@
+.print-option-box {
+  margin-top: 20px;
+  background: var(--paper-card);
+  border: 1px solid var(--paper-border);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.print-option-header {
+  margin-bottom: 12px;
+}
+
+.print-option-header h4 {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.print-option-add {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.print-option-add input {
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--paper-border);
+  font-size: 14px;
+}
+
+.print-option-add button {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: none;
+  background: var(--kaagaz-primary);
+  color: white;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.print-option-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 6px;
+  border-top: 1px solid var(--paper-border);
+}
+
+.print-option-info {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.print-option-info .name {
+  font-weight: 500;
+}
+
+.print-option-info .price {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.toggle-btn {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--paper-border);
+  background: none;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.toggle-btn.active {
+  color: var(--danger);
+}
+
+.toggle-btn.inactive {
+  color: var(--success);
+}
+
+.print-options-drawer {
+  width: 520px;
+}
+
+.print-option-box {
+  margin-top: 20px;
+  border-top: 1px solid var(--paper-border);
+  padding-top: 16px;
+}
+
+.print-option-add {
+  display: flex;
+  gap: 10px;
+  margin: 12px 0;
+}
+
+.print-option-add input {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--paper-border);
+}
+
+.print-option-add button {
+  background: var(--kaagaz-primary);
+  color: white;
+  border: none;
+  border-radius: 999px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+.print-option-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 4px;
+  border-top: 1px solid var(--paper-border);
+}
+
+.print-option-row button {
+  border: 1px solid var(--paper-border);
+  background: none;
+  padding: 6px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.print-option-row button.active {
+  color: var(--danger);
+}
+
+.print-option-row button.inactive {
+  color: var(--success);
+}

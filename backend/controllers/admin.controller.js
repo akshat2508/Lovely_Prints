@@ -193,27 +193,224 @@ export const getShopOrders = async (req, res) => {
 
     const { data, error } = await supabaseAdmin
       .from("orders")
-      .select(
-        `
+      .select(`
         id,
         order_no,
         total_price,
         status,
         created_at,
+
         users (
           name
+        ),
+
+        documents (
+          id,
+          file_name,
+          page_count,
+          copies,
+          total_price,
+
+          paper_types ( name ),
+          color_modes ( name ),
+          finish_types ( name )
         )
-      `,
-      )
+      `)
       .eq("shop_id", shopId)
-      .order("created_at", { ascending: false })
-      .limit(10);
+      .eq("is_paid", true)
+      .order("created_at", { ascending: false });
 
     if (error) {
       return errorResponse(res, error.message, 400);
     }
 
     return successResponse(res, data, "Shop orders fetched");
+  } catch (err) {
+    return errorResponse(res, err.message, 500);
+  }
+};
+
+// ===============================
+// PAPER TYPES
+// ===============================
+
+export const getShopPaperTypes = async (req, res) => {
+  try {
+    const { shopId } = req.params;
+
+    const { data, error } = await supabaseAdmin
+      .from("paper_types")
+      .select("*")
+      .eq("shop_id", shopId)
+      .order("created_at");
+
+    if (error) return errorResponse(res, error.message, 400);
+    return successResponse(res, data, "Paper types fetched");
+  } catch (err) {
+    return errorResponse(res, err.message, 500);
+  }
+};
+
+export const addShopPaperType = async (req, res) => {
+  try {
+    const { shopId } = req.params;
+    const { name, base_price } = req.body;
+
+    if (!name || base_price == null) {
+      return errorResponse(res, "Name and base price required", 400);
+    }
+
+    const { data, error } = await supabaseAdmin
+      .from("paper_types")
+      .insert({ shop_id: shopId, name, base_price })
+      .select()
+      .single();
+
+    if (error) return errorResponse(res, error.message, 400);
+    return successResponse(res, data, "Paper type added");
+  } catch (err) {
+    return errorResponse(res, err.message, 500);
+  }
+};
+
+export const toggleShopPaperType = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { is_active } = req.body;
+
+    const { data, error } = await supabaseAdmin
+      .from("paper_types")
+      .update({ is_active })
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (error) return errorResponse(res, error.message, 400);
+    return successResponse(res, data, "Paper type updated");
+  } catch (err) {
+    return errorResponse(res, err.message, 500);
+  }
+};
+
+// ===============================
+// COLOR MODES
+// ===============================
+
+export const getShopColorModes = async (req, res) => {
+  try {
+    const { shopId } = req.params;
+
+    const { data, error } = await supabaseAdmin
+      .from("color_modes")
+      .select("*")
+      .eq("shop_id", shopId)
+      .order("created_at");
+
+    if (error) return errorResponse(res, error.message, 400);
+    return successResponse(res, data, "Color modes fetched");
+  } catch (err) {
+    return errorResponse(res, err.message, 500);
+  }
+};
+
+export const addShopColorMode = async (req, res) => {
+  try {
+    const { shopId } = req.params;
+    const { name, extra_price } = req.body;
+
+    if (!name || extra_price == null) {
+      return errorResponse(res, "Name and extra price required", 400);
+    }
+
+    const { data, error } = await supabaseAdmin
+      .from("color_modes")
+      .insert({ shop_id: shopId, name, extra_price })
+      .select()
+      .single();
+
+    if (error) return errorResponse(res, error.message, 400);
+    return successResponse(res, data, "Color mode added");
+  } catch (err) {
+    return errorResponse(res, err.message, 500);
+  }
+};
+
+export const toggleShopColorMode = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { is_active } = req.body;
+
+    const { data, error } = await supabaseAdmin
+      .from("color_modes")
+      .update({ is_active })
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (error) return errorResponse(res, error.message, 400);
+    return successResponse(res, data, "Color mode updated");
+  } catch (err) {
+    return errorResponse(res, err.message, 500);
+  }
+};
+
+// ===============================
+// FINISH TYPES
+// ===============================
+
+export const getShopFinishTypes = async (req, res) => {
+  try {
+    const { shopId } = req.params;
+
+    const { data, error } = await supabaseAdmin
+      .from("finish_types")
+      .select("*")
+      .eq("shop_id", shopId)
+      .order("created_at");
+
+    if (error) return errorResponse(res, error.message, 400);
+    return successResponse(res, data, "Finish types fetched");
+  } catch (err) {
+    return errorResponse(res, err.message, 500);
+  }
+};
+
+export const addShopFinishType = async (req, res) => {
+  try {
+    const { shopId } = req.params;
+    const { name, extra_price } = req.body;
+
+    if (!name || extra_price == null) {
+      return errorResponse(res, "Name and extra price required", 400);
+    }
+
+    const { data, error } = await supabaseAdmin
+      .from("finish_types")
+      .insert({ shop_id: shopId, name, extra_price })
+      .select()
+      .single();
+
+    if (error) return errorResponse(res, error.message, 400);
+    return successResponse(res, data, "Finish type added");
+  } catch (err) {
+    return errorResponse(res, err.message, 500);
+  }
+};
+
+export const toggleShopFinishType = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { is_active } = req.body;
+
+    const { data, error } = await supabaseAdmin
+      .from("finish_types")
+      .update({ is_active })
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (error) return errorResponse(res, error.message, 400);
+    return successResponse(res, data, "Finish type updated");
   } catch (err) {
     return errorResponse(res, err.message, 500);
   }
