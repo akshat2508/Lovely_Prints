@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   getOrganisations,
   getShopsByOrganisation,
@@ -12,7 +12,11 @@ import ShopAnalytics from "./ShopAnalytics";
 import OrganisationTrends from "./OrganisationTrends";
 import ShopOrders from "./ShopOrders";
 import "./admin-theme.css";
-import "./admin.css"
+import "./admin.css";
+import OrderDrawer from "./OrderDrawer";
+import ShopPrintOptionsModal from "./ShopPrintOptionsModal";
+import ShopPrintOptions from "./ShopPrintOptions";
+
 const AdminDashboard = () => {
   const [organisations, setOrganisations] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,6 +27,11 @@ const AdminDashboard = () => {
   const [shopAnalytics, setShopAnalytics] = useState(null);
   const [shopOrders, setShopOrders] = useState([]);
   const [loadingShopOrders, setLoadingShopOrders] = useState(false);
+  const orgAnalyticsCache = useRef({});
+  const shopAnalyticsCache = useRef({});
+  const shopOrdersCache = useRef({});
+  const [activeOrder, setActiveOrder] = useState(null);
+  const [printOptionsShop, setPrintOptionsShop] = useState(null);
 
   useEffect(() => {
     const load = async () => {
@@ -38,8 +47,15 @@ const AdminDashboard = () => {
 
     load();
   }, []);
+
   useEffect(() => {
     if (!selectedOrg) return;
+
+    // 🔥 RESET DEPENDENT STATE
+    setSelectedShop(null);
+    setShopAnalytics(null);
+    setShopOrders([]);
+    setActiveOrder(null); // 🔥 ADD THIS
 
     const loadShops = async () => {
       const data = await getShopsByOrganisation(selectedOrg.id);
@@ -55,7 +71,13 @@ const AdminDashboard = () => {
     const fetchAnalytics = async () => {
       setLoading(true);
       try {
+        if (orgAnalyticsCache.current[selectedOrg.id]) {
+          setAnalytics(orgAnalyticsCache.current[selectedOrg.id]);
+          return;
+        }
+
         const res = await getOrganisationAnalytics(selectedOrg.id);
+        orgAnalyticsCache.current[selectedOrg.id] = res.data;
         setAnalytics(res.data);
       } catch (err) {
         console.error(err);
@@ -66,27 +88,44 @@ const AdminDashboard = () => {
 
     fetchAnalytics();
   }, [selectedOrg]);
+
   useEffect(() => {
     if (!selectedShop) return;
 
     const fetchShopAnalytics = async () => {
-      try {
-        const res = await getShopAnalytics(selectedShop.id);
-        setShopAnalytics(res.data);
-      } catch (err) {
-        console.error(err);
+      if (shopAnalyticsCache.current[selectedShop.id]) {
+        setShopAnalytics(shopAnalyticsCache.current[selectedShop.id]);
+        return;
       }
+
+      const res = await getShopAnalytics(selectedShop.id);
+      shopAnalyticsCache.current[selectedShop.id] = res.data;
+      setShopAnalytics(res.data);
     };
 
     fetchShopAnalytics();
   }, [selectedShop]);
 
-  if (loading) return <p>Loading organisations...</p>;
-
+  if (loading) {
+    return <div className="skeleton table-skeleton" />;
+  }
   return (
     <div className="admin-container">
-      <h1 className="admin-title">Admin Dashboard</h1>
+<div className="admin-header">
+  <h1 className="admin-title">Admin Dashboard</h1>
 
+  <button
+    className="logout-btn"
+    onClick={() => {
+      localStorage.clear(); // or remove token only
+      window.location.href = "/login";
+    }}
+  >
+    Logout
+  </button>
+</div>
+
+      {/* 1️⃣ Organisations */}
       <div className="admin-section">
         <h3>Organisations</h3>
 
@@ -105,6 +144,24 @@ const AdminDashboard = () => {
         </div>
       </div>
 
+      {/* 2️⃣ Organisation Analytics */}
+      {selectedOrg && !loading && (
+        <div className="admin-section">
+          <OrganisationAnalytics analytics={analytics} />
+        </div>
+      )}
+
+      {/* 3️⃣ Organisation Trends */}
+      {analytics && (
+        <div className="admin-section">
+          <OrganisationTrends
+            ordersByDate={analytics.ordersByDate}
+            revenueByDate={analytics.revenueByDate}
+          />
+        </div>
+      )}
+
+      {/* 4️⃣ Shops */}
       {selectedOrg && (
         <div className="admin-section">
           <h3>Shops in {selectedOrg.name}</h3>
@@ -116,12 +173,19 @@ const AdminDashboard = () => {
                 selectedShop?.id === shop.id ? "active" : ""
               }`}
               onClick={async () => {
+                setActiveOrder(null); // 🔥 ADD THISf
                 setSelectedShop(shop);
                 setShopAnalytics(null);
                 setLoadingShopOrders(true);
 
                 try {
+                  if (shopOrdersCache.current[shop.id]) {
+                    setShopOrders(shopOrdersCache.current[shop.id]);
+                    return;
+                  }
+
                   const orders = await getShopOrders(shop.id);
+                  shopOrdersCache.current[shop.id] = orders;
                   setShopOrders(orders);
                 } finally {
                   setLoadingShopOrders(false);
@@ -133,7 +197,9 @@ const AdminDashboard = () => {
                 <div className="shop-block">{shop.block}</div>
               </div>
 
-              <div className={`shop-status ${shop.is_active ? "open" : "closed"}`}>
+              <div
+                className={`shop-status ${shop.is_active ? "open" : "closed"}`}
+              >
                 {shop.is_active ? "Open" : "Closed"}
               </div>
 
@@ -148,25 +214,44 @@ const AdminDashboard = () => {
               >
                 {shop.is_active ? "Close" : "Open"}
               </button>
+
+              <button
+                className="shop-action-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setPrintOptionsShop(shop);
+                }}
+              >
+                Print Options
+              </button>
             </div>
           ))}
         </div>
       )}
 
-      {!loading && <OrganisationAnalytics analytics={analytics} />}
+      {/* 5️⃣ Shop Analytics */}
+      {selectedShop && (
+        <div className="admin-section">
+          <ShopAnalytics shop={selectedShop} analytics={shopAnalytics} />
+        </div>
+      )}
+      {/* {selectedShop && <ShopPrintOptions shop={selectedShop} />} */}
 
-      <ShopAnalytics shop={selectedShop} analytics={shopAnalytics} />
-
-
-      {analytics && (
-          <OrganisationTrends
-          ordersByDate={analytics.ordersByDate}
-          revenueByDate={analytics.revenueByDate}
+      {/* 6️⃣ Shop Orders */}
+      {selectedShop && (
+        <div className="admin-section">
+          <ShopOrders
+            orders={shopOrders}
+            loading={loadingShopOrders}
+            onOrderClick={setActiveOrder}
           />
-        )}
-        {selectedShop && (
-          <ShopOrders orders={shopOrders} loading={loadingShopOrders} />
-        )}
+        </div>
+      )}
+      <OrderDrawer order={activeOrder} onClose={() => setActiveOrder(null)} />
+      <ShopPrintOptionsModal
+        shop={printOptionsShop}
+        onClose={() => setPrintOptionsShop(null)}
+      />
     </div>
   );
 };

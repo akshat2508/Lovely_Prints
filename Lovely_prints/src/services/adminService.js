@@ -35,3 +35,35 @@ export const getShopOrders = async (shopId) => {
   const res = await api.get(`/admin/shops/${shopId}/orders`);
   return res.data.data;
 };
+
+// PAPER
+export const getShopPaperTypes = async (shopId) =>
+  (await api.get(`/admin/shops/${shopId}/paper-types`)).data.data;
+
+export const addShopPaperType = async (shopId, payload) =>
+  (await api.post(`/admin/shops/${shopId}/paper-types`, payload)).data.data;
+
+export const toggleShopPaperType = async (id, is_active) =>
+  (await api.patch(`/admin/paper-types/${id}/toggle`, { is_active })).data.data;
+
+
+// COLOR
+export const getShopColorModes = async (shopId) =>
+  (await api.get(`/admin/shops/${shopId}/color-modes`)).data.data;
+
+export const addShopColorMode = async (shopId, payload) =>
+  (await api.post(`/admin/shops/${shopId}/color-modes`, payload)).data.data;
+
+export const toggleShopColorMode = async (id, is_active) =>
+  (await api.patch(`/admin/color-modes/${id}/toggle`, { is_active })).data.data;
+
+
+// FINISH
+export const getShopFinishTypes = async (shopId) =>
+  (await api.get(`/admin/shops/${shopId}/finish-types`)).data.data;
+
+export const addShopFinishType = async (shopId, payload) =>
+  (await api.post(`/admin/shops/${shopId}/finish-types`, payload)).data.data;
+
+export const toggleShopFinishType = async (id, is_active) =>
+  (await api.patch(`/admin/finish-types/${id}/toggle`, { is_active })).data.data;

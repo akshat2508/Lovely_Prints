@@ -10,7 +10,14 @@ import {
 import "./admin.css"
 import "./admin-theme.css"
 const OrganisationTrends = ({ ordersByDate, revenueByDate }) => {
-  if (!ordersByDate || !revenueByDate) return null;
+if (!ordersByDate || !revenueByDate) {
+  return (
+    <div>
+      <div className="skeleton chart-skeleton" />
+      <div className="skeleton chart-skeleton" />
+    </div>
+  );
+}
 
   return (
     <div className="trends-container">
