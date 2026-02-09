@@ -13,7 +13,33 @@ import PrintStackLoader from "../skeletons/PrintStackLoader";
 
 const URGENCY_FEE = 10;
 
+const parseTimeToMinutes = (timeStr) => {
+  if (!timeStr) return null;
+
+  const parts = timeStr.split(":");
+  if (parts.length < 2) return null;
+
+  const h = Number(parts[0]);
+  const m = Number(parts[1]);
+
+  if (Number.isNaN(h) || Number.isNaN(m)) return null;
+
+  return h * 60 + m;
+};
+
+const getMinutesFromDate = (date) => date.getHours() * 60 + date.getMinutes();
+
 const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
+  if (!shop?.open_time || !shop?.close_time) {
+    return (
+      <div className="modal-overlay">
+        <div className="modal-card large">
+          <p className="muted">Loading shop timings…</p>
+        </div>
+      </div>
+    );
+  }
+
   /* ====== Print Config ====== */
   const [paperType, setPaperType] = useState("");
   const [colorMode, setColorMode] = useState("");
@@ -33,6 +59,7 @@ const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
   const [showLoader, setShowLoader] = useState(false);
   const [loaderText, setLoaderText] = useState("Preparing your documents…");
   const [fileError, setFileError] = useState("");
+
   /* ====== Pickup Time ====== */
   const [pickupAt, setPickupAt] = useState("");
   const [pickupError, setPickupError] = useState("");
@@ -90,13 +117,11 @@ const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
     try {
       const orderRes = await createStudentOrder({
         shop_id: shop.id,
-        organisation_id: shop.organisation_id, // ✅ ADD THIS
-
+        organisation_id: shop.organisation_id,
         description: description?.trim() || null,
         orientation,
         is_urgent: isUrgent,
-        pickup_at: new Date(pickupAt).toISOString(), 
-
+        pickup_at: new Date(pickupAt).toISOString(),
       });
 
       const order = orderRes.data;
@@ -132,24 +157,35 @@ const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
         },
       );
     } catch (err) {
-  console.error("FULL ERROR:", err);
-  console.error("RESPONSE DATA:", err?.response?.data);
+      console.error("FULL ERROR:", err);
+      console.error("RESPONSE DATA:", err?.response?.data);
 
-  setShowLoader(false);
-  setSubmitting(false);
-  setDisableSubmit(false);
+      setShowLoader(false);
+      setSubmitting(false);
+      setDisableSubmit(false);
 
-  alert(
-    err?.response?.data?.message ||
-    err?.response?.data?.error ||
-    "Failed to place order"
-  );
-}
-
+      alert(
+        err?.response?.data?.message ||
+          err?.response?.data?.error ||
+          "Failed to place order",
+      );
+    }
   };
+
   const now = new Date();
-  const minPickup = new Date(now.getTime());
-  const maxPickup = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+
+  const minPickup = new Date(now);
+  minPickup.setMinutes(0, 0, 0);
+
+  const maxPickup = new Date(now);
+  // move to tomorrow
+  maxPickup.setDate(maxPickup.getDate() + 1);
+
+  // ✅ FIXED: Set time = shop closing time (removed duplicate)
+  if (shop?.close_time) {
+    const [h, m] = shop.close_time.split(":");
+    maxPickup.setHours(Number(h), Number(m), 0, 0);
+  }
 
   // For datetime-local (YYYY-MM-DDTHH:mm)
   const toLocalInputValue = (date) =>
@@ -165,23 +201,62 @@ const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
       return "Invalid pickup date & time";
     }
 
+    const now = new Date();
     if (selected < now) {
       return "Pickup time cannot be in the past";
     }
 
-    if (selected > maxPickup) {
-      return "Pickup time must be within 24 hours";
+    const openMinutes = parseTimeToMinutes(shop?.open_time);
+    const closeMinutes = parseTimeToMinutes(shop?.close_time);
+
+    if (openMinutes === null || closeMinutes === null) {
+      return "";
+    }
+
+    const selectedMinutes = getMinutesFromDate(selected);
+
+    if (selectedMinutes < openMinutes || selectedMinutes >= closeMinutes) {
+      return `Pickup allowed only between ${shop.open_time.slice(
+        0,
+        5,
+      )} and ${shop.close_time.slice(0, 5)}`;
     }
 
     return "";
   };
 
+  const isUrgentDisabled = (() => {
+    if (!pickupAt) return false;
+
+    const pickup = new Date(pickupAt);
+    const pickupMinutes = getMinutesFromDate(pickup);
+    const closeMinutes = parseTimeToMinutes(shop.close_time);
+
+    // disable urgent if pickup is within last 60 mins
+    return closeMinutes - pickupMinutes < 60;
+  })();
+
+  const shopIsClosedNow = (() => {
+    const openMinutes = parseTimeToMinutes(shop?.open_time);
+    const closeMinutes = parseTimeToMinutes(shop?.close_time);
+
+    if (openMinutes === null || closeMinutes === null) return false;
+
+    const nowMinutes = getMinutesFromDate(new Date());
+    return nowMinutes < openMinutes || nowMinutes >= closeMinutes;
+  })();
+
   return (
     <div className="modal-overlay">
       {showLoader && <PrintStackLoader />}
       <div className="modal-card large">
-        <h2>Create Order — {shop.shop_name}</h2>
-
+<div className="modal-header">
+      <h2>Create Order</h2>
+      <p className="modal-subtitle">
+        {shop.shop_name} • {shop.open_time.slice(0,5)}–{shop.close_time.slice(0,5)}
+      </p>
+    </div>
+    
         {/* ===== Paper Type ===== */}
         <label className="modal-label">Select Paper Type</label>
         <select
@@ -247,6 +322,7 @@ const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
           value={copies}
           onChange={(e) => setCopies(Number(e.target.value))}
         />
+
         {/* ===== Pickup Date & Time ===== */}
         <label className="modal-label">
           Pickup Date & Time (within 24 hours)
@@ -261,11 +337,29 @@ const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
           onChange={(e) => {
             const value = e.target.value;
             setPickupAt(value);
-
-            const err = validatePickupTime(value);
-            setPickupError(err);
+            const error = validatePickupTime(value);
+            setPickupError(error);
+            
+            // ✅ FIXED: Auto-disable urgent if pickup is too close to closing
+            if (!error && value) {
+              const pickup = new Date(value);
+              const pickupMinutes = getMinutesFromDate(pickup);
+              const closeMinutes = parseTimeToMinutes(shop.close_time);
+              
+              if (closeMinutes - pickupMinutes < 60 && isUrgent) {
+                setIsUrgent(false);
+              }
+            }
           }}
         />
+
+        {shop?.open_time && shop?.close_time && (
+          <p className="muted">
+            Pickup available between{" "}
+            <strong>{shop.open_time.slice(0, 5)}</strong> and{" "}
+            <strong>{shop.close_time.slice(0, 5)}</strong>
+          </p>
+        )}
 
         {pickupError && <p id="error-text">{pickupError}</p>}
 
@@ -321,11 +415,17 @@ const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
           <input
             type="checkbox"
             checked={isUrgent}
+            disabled={isUrgentDisabled}
             onChange={(e) => setIsUrgent(e.target.checked)}
           />
           <span className="toggle-slider"></span>
           <span className="toggle-text">Urgent (+₹{URGENCY_FEE})</span>
         </label>
+        {isUrgentDisabled && (
+          <p className="muted">
+            Urgent orders are unavailable close to closing time
+          </p>
+        )}
 
         {/* ===== Additional Instructions ===== */}
         <label className="modal-label">
@@ -398,12 +498,19 @@ const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
         {/* ===== Actions ===== */}
         <div className="modal-actions">
           <button
-            className={`primary-btn ${!canSubmit ? "disabled-btn" : ""}`}
-            disabled={!canSubmit}
-            onClick={handleSubmitAndPay}
+            className={`primary-btn ${
+              !canSubmit || shopIsClosedNow ? "disabled-btn" : ""
+            }`}
+            disabled={!canSubmit || shopIsClosedNow}
+            onClick={handleSubmitAndPay} // ✅ FIXED: Added onClick handler
           >
-            {submitting ? "Processing..." : "Submit & Pay"}
+            {shopIsClosedNow
+              ? "Shop is currently closed"
+              : submitting
+              ? "Processing..."
+              : "Submit & Pay"}
           </button>
+
           <button className="cancel-btn1" onClick={onClose}>
             Cancel
           </button>

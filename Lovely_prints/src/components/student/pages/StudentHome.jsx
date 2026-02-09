@@ -16,9 +16,9 @@ const StudentHome = () => {
   const [filteredShops, setFilteredShops] = useState([]);
   const [showPolicies, setShowPolicies] = useState(true);
 
-  // useEffect(() => {
-  //   fetchShops();
-  // }, []);
+  useEffect(() => {
+    fetchShops();
+  }, []);
   const handleAcceptPolicies = () => {
   setShowPolicies(false);
 };
