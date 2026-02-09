@@ -33,6 +33,9 @@ const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
   const [showLoader, setShowLoader] = useState(false);
   const [loaderText, setLoaderText] = useState("Preparing your documents…");
   const [fileError, setFileError] = useState("");
+  /* ====== Pickup Time ====== */
+  const [pickupAt, setPickupAt] = useState("");
+  const [pickupError, setPickupError] = useState("");
 
   /* ====== Helpers ====== */
   const selectedPaper = shopOptions?.paper_types?.find(
@@ -63,6 +66,8 @@ const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
     finishType &&
     selectedFile &&
     copies > 0 &&
+    pickupAt &&
+    !pickupError &&
     !submitting &&
     !disableSubmit &&
     !fileError;
@@ -85,9 +90,13 @@ const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
     try {
       const orderRes = await createStudentOrder({
         shop_id: shop.id,
+        organisation_id: shop.organisation_id, // ✅ ADD THIS
+
         description: description?.trim() || null,
         orientation,
         is_urgent: isUrgent,
+        pickup_at: new Date(pickupAt).toISOString(), 
+
       });
 
       const order = orderRes.data;
@@ -123,12 +132,48 @@ const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
         },
       );
     } catch (err) {
-      console.error(err);
-      setShowLoader(false);
-      setSubmitting(false);
-      setDisableSubmit(false);
-      alert("Failed to place order. Try again.");
+  console.error("FULL ERROR:", err);
+  console.error("RESPONSE DATA:", err?.response?.data);
+
+  setShowLoader(false);
+  setSubmitting(false);
+  setDisableSubmit(false);
+
+  alert(
+    err?.response?.data?.message ||
+    err?.response?.data?.error ||
+    "Failed to place order"
+  );
+}
+
+  };
+  const now = new Date();
+  const minPickup = new Date(now.getTime());
+  const maxPickup = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+
+  // For datetime-local (YYYY-MM-DDTHH:mm)
+  const toLocalInputValue = (date) =>
+    new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+      .toISOString()
+      .slice(0, 16);
+
+  const validatePickupTime = (value) => {
+    if (!value) return "Pickup date & time is required";
+
+    const selected = new Date(value);
+    if (isNaN(selected.getTime())) {
+      return "Invalid pickup date & time";
     }
+
+    if (selected < now) {
+      return "Pickup time cannot be in the past";
+    }
+
+    if (selected > maxPickup) {
+      return "Pickup time must be within 24 hours";
+    }
+
+    return "";
   };
 
   return (
@@ -202,11 +247,34 @@ const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
           value={copies}
           onChange={(e) => setCopies(Number(e.target.value))}
         />
+        {/* ===== Pickup Date & Time ===== */}
+        <label className="modal-label">
+          Pickup Date & Time (within 24 hours)
+        </label>
+
+        <input
+          type="datetime-local"
+          className="modal-input"
+          value={pickupAt}
+          min={toLocalInputValue(minPickup)}
+          max={toLocalInputValue(maxPickup)}
+          onChange={(e) => {
+            const value = e.target.value;
+            setPickupAt(value);
+
+            const err = validatePickupTime(value);
+            setPickupError(err);
+          }}
+        />
+
+        {pickupError && <p id="error-text">{pickupError}</p>}
 
         {/* ===== Upload File ===== */}
         <label className="modal-label">Upload PDF Document</label>
         <label className="upload-box">
-          {selectedFile ? selectedFile.name : `Choose a PDF file (size <= 10 mb)`}
+          {selectedFile
+            ? selectedFile.name
+            : `Choose a PDF file (size <= 10 mb)`}
           <input
             type="file"
             accept=".pdf"
@@ -237,10 +305,7 @@ const CreateOrderModal = ({ shop, shopOptions, onClose, onSuccess }) => {
             }}
           />
         </label>
-        {fileError && (
-          <p id="error-text">{fileError}</p>
-        )}
-
+        {fileError && <p id="error-text">{fileError}</p>}
 
         {/* ===== Number of Pages ===== */}
         {selectedFile && (

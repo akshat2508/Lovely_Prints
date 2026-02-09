@@ -18,6 +18,34 @@ export default function OrderDetails({
   const [verifyingOtp, setVerifyingOtp] = useState(false);
 
   const createdDate = new Date(order.createdAt);
+  const pickUpDate = new Date(order.pickup_at);
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const createdDay = new Date(createdDate);
+  createdDay.setHours(0, 0, 0, 0);
+
+  const pickupDay = new Date(pickUpDate);
+  pickupDay.setHours(0, 0, 0, 0);
+
+  let scheduleTag = null;
+
+  // 🟢 TODAY: created today + pickup today
+  if (
+    createdDay.getTime() === today.getTime() &&
+    pickupDay.getTime() === today.getTime()
+  ) {
+    scheduleTag = "today";
+  }
+
+  // 🟡 SCHEDULED: created earlier, pickup today or later
+  else if (
+    createdDay.getTime() < today.getTime() &&
+    pickupDay.getTime() >= today.getTime()
+  ) {
+    scheduleTag = "scheduled";
+  }
 
   /* ---------------- STATUS FLOW ---------------- */
 
@@ -36,7 +64,7 @@ export default function OrderDetails({
       pending: "Confirm",
       confirmed: "Start Printing",
       printing: "Mark Ready",
-      ready: "Complete",
+      ready: "Verify OTP",
     };
     return labels[status];
   };
@@ -131,6 +159,12 @@ export default function OrderDetails({
 
         <span className={`status-badge ${order.status}`}>{order.status}</span>
 
+        {scheduleTag && (
+          <span className={`badge ${scheduleTag}`}>
+            {scheduleTag === "today" ? "Today" : "Scheduled"}
+          </span>
+        )}
+
         {order.isUrgent && <span className="badge urgent">Urgent</span>}
 
         <span className={`badge ${order.isPaid ? "paid" : "unpaid"}`}>
@@ -146,7 +180,7 @@ export default function OrderDetails({
         </div>
 
         <div className="order-meta order-header">
-          <span>
+          <span className="pickup-date">
             📅{" "}
             {createdDate.toLocaleDateString("en-IN", {
               year: "numeric",
@@ -154,11 +188,15 @@ export default function OrderDetails({
               day: "numeric",
             })}
           </span>
-          <span>
+          <span className="pickup-date">
             ⏰{" "}
-            {createdDate.toLocaleTimeString("en-IN", {
+            {pickUpDate.toLocaleString("en-IN", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
               hour: "2-digit",
               minute: "2-digit",
+              hour12: true,
             })}
           </span>
         </div>

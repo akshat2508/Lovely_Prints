@@ -13,14 +13,45 @@ import { useNavigate } from "react-router-dom";
 import { logoutUser } from "../../services/authService";
 import ShopAnalytics from "./analytics/ShopAnalytics";
 import ShopNavbar from "./ShopNavbar";
-const SESSION_DURATION = 60 *60 *1000; // 1 hour
+const SESSION_DURATION = 60 * 60 * 1000; // 1 hour
 const SESSION_KEY = "shop_session_start";
+
+const TIME_SLOTS = [
+  { label: "09:00 - 10:00", start: 9, end: 10 },
+  { label: "10:00 - 11:00", start: 10, end: 11 },
+  { label: "11:00 - 12:00", start: 11, end: 12 },
+  { label: "12:00 - 13:00", start: 12, end: 13 },
+  { label: "13:00 - 14:00", start: 13, end: 14 },
+  { label: "14:00 - 15:00", start: 14, end: 15 },
+  { label: "15:00 - 16:00", start: 15, end: 16 },
+  { label: "16:00 - 17:00", start: 16, end: 17 },
+];
+const getCurrentSlotLabel = (now) => {
+  const hour = now.getHours();
+  const slot = TIME_SLOTS.find((s) => hour >= s.start && hour < s.end);
+  return slot ? slot.label : null;
+};
+
+const normalizeDate = (d) => {
+  const x = new Date(d);
+  x.setHours(0, 0, 0, 0);
+  return x;
+};
+
+const isSameDay = (a, b) =>
+  normalizeDate(a).getTime() === normalizeDate(b).getTime();
+
+const isFutureDay = (d) => normalizeDate(d) > normalizeDate(new Date());
+
+const getSlotForPickup = (date) => {
+  const hour = date.getHours();
+  return TIME_SLOTS.find((slot) => hour >= slot.start && hour < slot.end);
+};
 
 export default function ShopDashboard() {
   const [orders, setOrders] = useState([]);
 
   /* filters */
-  const [filterMode, setFilterMode] = useState("today");
   const [paymentFilter, setPaymentFilter] = useState("all");
   const [urgentFilter, setUrgentFilter] = useState("all");
 
@@ -38,50 +69,53 @@ export default function ShopDashboard() {
   const [hasNewOrders, setHasNewOrders] = useState(false);
   const [hasUrgentOrders, setHasUrgentOrders] = useState(false);
   const sessionTimerRef = useRef(null);
-const [unseenOrderCount, setUnseenOrderCount] = useState(0);
+  const [unseenOrderCount, setUnseenOrderCount] = useState(0);
 
-const [remainingTime, setRemainingTime] = useState(null);
-const notificationAudioRef = useRef(null);
-useEffect(() => {
-  const unlockAudio = () => {
-    if (notificationAudioRef.current) {
-      notificationAudioRef.current
-        .play()
-        .then(() => {
-          notificationAudioRef.current.pause();
-          notificationAudioRef.current.currentTime = 0;
-        })
-        .catch(() => {});
-    }
+  const [remainingTime, setRemainingTime] = useState(null);
+  const notificationAudioRef = useRef(null);
+  const [currentTime, setCurrentTime] = useState(new Date());
 
-    window.removeEventListener("click", unlockAudio);
-    window.removeEventListener("keydown", unlockAudio);
+  const now = new Date();
+
+  useEffect(() => {
+    const unlockAudio = () => {
+      if (notificationAudioRef.current) {
+        notificationAudioRef.current
+          .play()
+          .then(() => {
+            notificationAudioRef.current.pause();
+            notificationAudioRef.current.currentTime = 0;
+          })
+          .catch(() => {});
+      }
+
+      window.removeEventListener("click", unlockAudio);
+      window.removeEventListener("keydown", unlockAudio);
+    };
+
+    window.addEventListener("click", unlockAudio);
+    window.addEventListener("keydown", unlockAudio);
+
+    return () => {
+      window.removeEventListener("click", unlockAudio);
+      window.removeEventListener("keydown", unlockAudio);
+    };
+  }, []);
+
+  const formatTime = (ms) => {
+    const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+    const m = Math.floor(totalSeconds / 60);
+    const s = totalSeconds % 60;
+    return `${m}:${s.toString().padStart(2, "0")}`;
   };
 
-  window.addEventListener("click", unlockAudio);
-  window.addEventListener("keydown", unlockAudio);
-
-  return () => {
-    window.removeEventListener("click", unlockAudio);
-    window.removeEventListener("keydown", unlockAudio);
-  };
-}, []);
-
-
-const formatTime = (ms) => {
-  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
-  const m = Math.floor(totalSeconds / 60);
-  const s = totalSeconds % 60;
-  return `${m}:${s.toString().padStart(2, "0")}`;
-};
-
-const navigate = useNavigate();
+  const navigate = useNavigate();
   //SAFETY NET
   useEffect(() => {
-  if (!localStorage.getItem("access_token")) {
-    navigate("/login");
-  }
-}, []);
+    if (!localStorage.getItem("access_token")) {
+      navigate("/login");
+    }
+  }, []);
 
   /* ================= VOICE UNLOCK ================= */
 
@@ -103,30 +137,37 @@ const navigate = useNavigate();
 
   /* ================= FETCH SHOP ================= */
 
-useEffect(() => {
-  const fetchShop = async () => {
-    try {
-      const res = await getMyShop();
-      const shopData = res.data;
+  useEffect(() => {
+    const fetchShop = async () => {
+      try {
+        const res = await getMyShop();
+        const shopData = res.data;
 
-      setShop(shopData);
+        setShop(shopData);
 
-      // ✅ AUTO-OPEN SHOP ON DASHBOARD LOAD
-      if (!shopData.is_active) {
-        try {
-          await setShopStatusManual(shopData.id, true);
-          setShop((prev) => ({ ...prev, is_active: true }));
-        } catch {
-          console.error("Failed to auto-open shop");
+        // ✅ AUTO-OPEN SHOP ON DASHBOARD LOAD
+        if (!shopData.is_active) {
+          try {
+            await setShopStatusManual(shopData.id, true);
+            setShop((prev) => ({ ...prev, is_active: true }));
+          } catch {
+            console.error("Failed to auto-open shop");
+          }
         }
+      } catch {
+        console.error("Failed to load shop info");
       }
-    } catch {
-      console.error("Failed to load shop info");
-    }
-  };
+    };
 
-  fetchShop();
-}, []);
+    fetchShop();
+  }, []);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60 * 1000); // every minute
+
+    return () => clearInterval(timer);
+  }, []);
 
   /* ================= MANUAL SHOP TOGGLE ================= */
 
@@ -173,19 +214,19 @@ useEffect(() => {
     window.speechSynthesis.speak(utterance);
   };
 
- const triggerNewOrderAlert = () => {
-  setShowNewOrderToast(true);
+  const triggerNewOrderAlert = () => {
+    setShowNewOrderToast(true);
 
-  // 🔔 play sound
-  if (voiceEnabled && notificationAudioRef.current) {
-    notificationAudioRef.current.currentTime = 0;
-    notificationAudioRef.current.play().catch(() => {});
-  }
+    // 🔔 play sound
+    if (voiceEnabled && notificationAudioRef.current) {
+      notificationAudioRef.current.currentTime = 0;
+      notificationAudioRef.current.play().catch(() => {});
+    }
 
-  speakNewOrder();
+    speakNewOrder();
 
-  setTimeout(() => setShowNewOrderToast(false), 4000);
-};
+    setTimeout(() => setShowNewOrderToast(false), 4000);
+  };
 
   /* ================= ORDERS ================= */
 
@@ -202,7 +243,7 @@ useEffect(() => {
 
       if (prevIds.size > 0 && freshOrders.length > 0) {
         setHasNewOrders(true);
-        setUnseenOrderCount((count) => count + freshOrders.length); // TAB Notification  
+        setUnseenOrderCount((count) => count + freshOrders.length); // TAB Notification
 
         // 🚨 urgent detection
         if (freshOrders.some((o) => o.isUrgent)) {
@@ -232,39 +273,63 @@ useEffect(() => {
   }, [activeTab]);
 
   useEffect(() => {
-  const baseTitle = "Lovely Prints";
+    const baseTitle = "Lovely Prints";
 
-  if (unseenOrderCount > 0) {
-    document.title = `(${unseenOrderCount}) New Orders | ${baseTitle}`;
-  } else {
-    document.title = baseTitle;
-  }
+    if (unseenOrderCount > 0) {
+      document.title = `(${unseenOrderCount}) New Orders | ${baseTitle}`;
+    } else {
+      document.title = baseTitle;
+    }
   }, [unseenOrderCount]);
 
   /* ================= FILTERING ================= */
 
-  const isSameDay = (d1, d2) =>
-    d1.getFullYear() === d2.getFullYear() &&
-    d1.getMonth() === d2.getMonth() &&
-    d1.getDate() === d2.getDate();
+  // const isSameDay = (d1, d2) =>
+  //   d1.getFullYear() === d2.getFullYear() &&
+  //   d1.getMonth() === d2.getMonth() &&
+  //   d1.getDate() === d2.getDate();
 
-  const isWithinDays = (d, days) =>
-    (new Date() - d) / (1000 * 60 * 60 * 24) <= days;
+  // const isWithinDays = (d, days) =>
+  //   (new Date() - d) / (1000 * 60 * 60 * 24) <= days;
 
-  const filteredOrders = orders.filter((order) => {
-    const createdAt = new Date(order.createdAt);
+  // const filteredOrders = orders.filter((order) => {
+  //   const createdAt = new Date(order.createdAt);
 
-    /* ---------- DATE FILTERS ---------- */
-    if (filterMode === "today" && !isSameDay(createdAt, new Date()))
-      return false;
-    if (filterMode === "7days" && !isWithinDays(createdAt, 7)) return false;
-    if (filterMode === "30days" && !isWithinDays(createdAt, 30)) return false;
+  //   /* ---------- DATE FILTERS ---------- */
+  //   if (filterMode === "today" && !isSameDay(createdAt, new Date()))
+  //     return false;
+  //   if (filterMode === "7days" && !isWithinDays(createdAt, 7)) return false;
+  //   if (filterMode === "30days" && !isWithinDays(createdAt, 30)) return false;
 
-    /* ---------- PAYMENT FILTERS ---------- */
+  //   /* ---------- PAYMENT FILTERS ---------- */
+  //   if (paymentFilter === "paid" && !order.isPaid) return false;
+  //   if (paymentFilter === "unpaid" && order.isPaid) return false;
+
+  //   /* ---------- URGENT FILTERS ---------- */
+  //   if (urgentFilter === "urgent" && !order.isUrgent) return false;
+  //   if (urgentFilter === "normal" && order.isUrgent) return false;
+
+  //   /* ---------- SEARCH FILTER ---------- */
+  //   if (searchQuery.trim()) {
+  //     const q = searchQuery.toLowerCase();
+
+  //     const orderId = String(order.id || "").toLowerCase();
+  //     const orderNo = String(order.orderNo || "").toLowerCase();
+
+  //     if (!orderId.includes(q) && !orderNo.includes(q)) {
+  //       return false;
+  //     }
+  //   }
+
+  //   return true;
+  // });
+
+  const visibleOrders = orders.filter((order) => {
+    /* ---------- PAYMENT FILTER ---------- */
     if (paymentFilter === "paid" && !order.isPaid) return false;
     if (paymentFilter === "unpaid" && order.isPaid) return false;
 
-    /* ---------- URGENT FILTERS ---------- */
+    /* ---------- URGENT FILTER ---------- */
     if (urgentFilter === "urgent" && !order.isUrgent) return false;
     if (urgentFilter === "normal" && order.isUrgent) return false;
 
@@ -299,65 +364,120 @@ useEffect(() => {
   };
 
   const forceSessionExpiry = async () => {
-  try {
-    alert("Session expired. Please login again.");
+    try {
+      alert("Session expired. Please login again.");
 
-    // close shop safely
-    if (shop?.id && shop?.is_active) {
-      await setShopStatusManual(shop.id, false);
+      // close shop safely
+      if (shop?.id && shop?.is_active) {
+        await setShopStatusManual(shop.id, false);
+      }
+    } catch (e) {
+      console.error("Error while expiring session", e);
+    } finally {
+      localStorage.removeItem(SESSION_KEY);
+      localStorage.removeItem("access_token");
+      navigate("/login");
     }
-  } catch (e) {
-    console.error("Error while expiring session", e);
-  } finally {
-    localStorage.removeItem(SESSION_KEY);
-    localStorage.removeItem("access_token");
-    navigate("/login");
-  }
-};
-useEffect(() => {
-  const now = Date.now();
-
-  let sessionStart = localStorage.getItem(SESSION_KEY);
-
-  // first time dashboard loads
-  if (!sessionStart) {
-    sessionStart = now;
-    localStorage.setItem(SESSION_KEY, sessionStart);
-  }
-
-  const elapsed = now - Number(sessionStart);
-  const remaining = SESSION_DURATION - elapsed;
-
-  // session already expired
-  if (remaining <= 0) {
-    forceSessionExpiry();
-    return;
-  }
-
-  // schedule auto logout
-  sessionTimerRef.current = setTimeout(() => {
-    forceSessionExpiry();
-  }, remaining);
-
-  return () => {
-    clearTimeout(sessionTimerRef.current);
   };
-}, []);
-useEffect(() => {
-  const interval = setInterval(() => {
-    const start = localStorage.getItem(SESSION_KEY);
-    if (!start) return;
+  useEffect(() => {
+    const now = Date.now();
 
-    const elapsed = Date.now() - Number(start);
-    const left = SESSION_DURATION - elapsed;
+    let sessionStart = localStorage.getItem(SESSION_KEY);
 
-    setRemainingTime(left > 0 ? left : 0);
-  }, 1000);
+    // first time dashboard loads
+    if (!sessionStart) {
+      sessionStart = now;
+      localStorage.setItem(SESSION_KEY, sessionStart);
+    }
 
-  return () => clearInterval(interval);
-}, []);
+    const elapsed = now - Number(sessionStart);
+    const remaining = SESSION_DURATION - elapsed;
 
+    // session already expired
+    if (remaining <= 0) {
+      forceSessionExpiry();
+      return;
+    }
 
+    // schedule auto logout
+    sessionTimerRef.current = setTimeout(() => {
+      forceSessionExpiry();
+    }, remaining);
+
+    return () => {
+      clearTimeout(sessionTimerRef.current);
+    };
+  }, []);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const start = localStorage.getItem(SESSION_KEY);
+      if (!start) return;
+
+      const elapsed = Date.now() - Number(start);
+      const left = SESSION_DURATION - elapsed;
+
+      setRemainingTime(left > 0 ? left : 0);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const today = new Date();
+
+  /* ================= DISCARDED / OVERDUE ================= */
+  const discardedOrders = visibleOrders.filter((order) => {
+    if (!order.pickup_at) return false;
+
+    const pickupDateTime = new Date(order.pickup_at);
+
+    // ignore completed / cancelled
+    if (["completed", "cancelled"].includes(order.status)) return false;
+
+    return pickupDateTime < now;
+  });
+  /* ================= TODAY (slot-wise) ================= */
+  const todaysOrdersBySlot = {};
+  TIME_SLOTS.forEach((s) => {
+    todaysOrdersBySlot[s.label] = [];
+  });
+
+  /* ================= SCHEDULED (date → slot-wise) ================= */
+  const scheduledOrdersByDateAndSlot = {};
+
+  visibleOrders.forEach((order) => {
+    if (!order.pickup_at) return;
+
+    const pickupDate = new Date(order.pickup_at);
+    // ⛔ skip overdue orders
+    if (
+      pickupDate < now &&
+      !["completed", "cancelled"].includes(order.status)
+    ) {
+      return;
+    }
+    const slot = getSlotForPickup(pickupDate);
+    if (!slot) return;
+
+    // TODAY
+    if (isSameDay(pickupDate, today)) {
+      todaysOrdersBySlot[slot.label].push(order);
+    }
+
+    // FUTURE
+    else if (isFutureDay(pickupDate)) {
+      const dateKey = pickupDate.toDateString();
+
+      if (!scheduledOrdersByDateAndSlot[dateKey]) {
+        scheduledOrdersByDateAndSlot[dateKey] = {};
+        TIME_SLOTS.forEach((s) => {
+          scheduledOrdersByDateAndSlot[dateKey][s.label] = [];
+        });
+      }
+
+      scheduledOrdersByDateAndSlot[dateKey][slot.label].push(order);
+    }
+  });
+  const currentSlotLabel = getCurrentSlotLabel(currentTime);
 
   /* ================= UI ================= */
 
@@ -381,8 +501,9 @@ useEffect(() => {
         }}
         hasNewOrders={hasNewOrders}
         hasUrgentOrders={hasUrgentOrders}
-          sessionTimeLeft={remainingTime !== null ? formatTime(remainingTime) : null}
-
+        sessionTimeLeft={
+          remainingTime !== null ? formatTime(remainingTime) : null
+        }
       />
 
       {showNewOrderToast && (
@@ -406,17 +527,7 @@ useEffect(() => {
 
             {/* Right: Filters */}
             <div className="order-filter-right">
-              <select
-                className="filter-select"
-                value={filterMode}
-                onChange={(e) => setFilterMode(e.target.value)}
-              >
-                <option value="today">Today</option>
-                <option value="7days">Last 7 Days</option>
-                <option value="30days">Last 30 Days</option>
-                <option value="all">All Orders</option>
-              </select>
-
+ 
               <select
                 className="filter-select"
                 value={paymentFilter}
@@ -444,12 +555,70 @@ useEffect(() => {
       {/* Content */}
       {activeTab === "orders" && (
         <>
-          <OrderList
-            orders={filteredOrders}
-            onStatusChange={handleStatusChange}
-            onSelectOrder={setSelectedOrder}
-            onRefresh={fetchOrders}
-          />
+          {TIME_SLOTS.map((slot) => (
+            <div
+              key={slot.label}
+              className={`time-slot-wrapper ${
+                currentSlotLabel === slot.label ? "active-slot" : ""
+              }`}
+            >
+              <div className="slot-label">{slot.label}</div>
+
+              {todaysOrdersBySlot[slot.label].length === 0 ? (
+                <div className="empty-slot-message">
+                  No orders in this time slot
+                </div>
+              ) : (
+                <OrderList
+                  orders={todaysOrdersBySlot[slot.label]}
+                  onStatusChange={handleStatusChange}
+                  onSelectOrder={setSelectedOrder}
+                  onRefresh={fetchOrders}
+                />
+              )}
+            </div>
+          ))}
+
+          {selectedOrder && (
+            <OrderPreview
+              order={selectedOrder}
+              onClose={() => setSelectedOrder(null)}
+            />
+          )}
+        </>
+      )}
+
+      {activeTab === "scheduled" && (
+        <>
+          {Object.keys(scheduledOrdersByDateAndSlot).length === 0 && (
+            // <EmptyShopOrders />
+            <p>No orders in this slot</p>
+          )}
+
+          {Object.entries(scheduledOrdersByDateAndSlot).map(([date, slots]) => (
+            <div key={date} className="scheduled-day">
+              <h3 className="date-header">{date}</h3>
+
+              {TIME_SLOTS.map((slot) => (
+                <div key={slot.label} className="time-slot-wrapper">
+                  <div className="slot-label">{slot.label}</div>
+
+                  {slots[slot.label].length === 0 ? (
+                    <div className="empty-slot-message">
+                      No orders in this time slot
+                    </div>
+                  ) : (
+                    <OrderList
+                      orders={slots[slot.label]}
+                      onStatusChange={handleStatusChange}
+                      onSelectOrder={setSelectedOrder}
+                      onRefresh={fetchOrders}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          ))}
 
           {selectedOrder && (
             <OrderPreview
@@ -462,8 +631,32 @@ useEffect(() => {
 
       {activeTab === "settings" && <PricingSettings />}
       {activeTab === "analytics" && <ShopAnalytics orders={orders} />}
-      <audio ref={notificationAudioRef} src="/notification.mp3" preload="auto" />
+      <audio
+        ref={notificationAudioRef}
+        src="/notification.mp3"
+        preload="auto"
+      />
+      {activeTab === "discarded" && (
+        <>
+          {discardedOrders.length === 0 ? (
+            <div className="empty-slot-message">No discarded orders</div>
+          ) : (
+            <OrderList
+              orders={discardedOrders}
+              onStatusChange={handleStatusChange}
+              onSelectOrder={setSelectedOrder}
+              onRefresh={fetchOrders}
+            />
+          )}
 
+          {selectedOrder && (
+            <OrderPreview
+              order={selectedOrder}
+              onClose={() => setSelectedOrder(null)}
+            />
+          )}
+        </>
+      )}
     </div>
   );
 }

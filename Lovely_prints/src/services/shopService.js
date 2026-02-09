@@ -12,6 +12,7 @@ const adaptOrder = (order) => {
     orderNo: order.order_no,
     status: order.status,
     createdAt: order.created_at,
+    pickup_at: order.pickup_at,
     orientation: order.orientation,
     isUrgent: order.is_urgent,
     notes:order.notes,

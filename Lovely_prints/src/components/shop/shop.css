@@ -907,6 +907,13 @@ body {
   margin-top: 6px;
 }
 
+.pickup-date
+{
+  border : 2px solid;
+  border-radius: 12px;
+  padding: 4px;
+
+}
 .order-filter-bar {
   display: flex;
   gap: 12px;
@@ -1162,4 +1169,60 @@ body {
   font-size: 13px;
   color: #6b7280;
   font-style: italic;
+}
+
+.time-slot-wrapper {
+  margin-bottom: 24px;
+}
+
+.slot-label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #374151;
+}
+
+.scheduled-day {
+  margin-bottom: 32px;
+}
+
+.date-header {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.empty-slot-message {
+  padding: 16px;
+  border: 1px dashed #e5e7eb;
+  border-radius: 10px;
+  background: #fafafa;
+  text-align: center;
+  font-size: 14px;
+  color: #6b7280;
+}
+.badge.today {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.badge.scheduled {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+/* ===== ACTIVE TIME SLOT ===== */
+.active-slot {
+  border-left: 4px solid #f58220;
+  padding: 12px;
+  background: linear-gradient(
+    to right,
+    rgba(245, 130, 32, 0.08),
+    transparent
+  );
+}
+
+.active-slot .slot-label {
+  font-weight: 700;
+  color: #f58220;
 }
