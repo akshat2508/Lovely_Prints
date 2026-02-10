@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { logoutUser } from "../../services/authService";
 import ShopAnalytics from "./analytics/ShopAnalytics";
 import ShopNavbar from "./ShopNavbar";
+import EmptyShopOrders from "./EmptyShopOrders";
 const SESSION_DURATION = 60 * 60 * 1000; // 1 hour
 const SESSION_KEY = "shop_session_start";
 
@@ -77,30 +78,45 @@ export default function ShopDashboard() {
 
   const now = new Date();
 
-  useEffect(() => {
-    const unlockAudio = () => {
-      if (notificationAudioRef.current) {
-        notificationAudioRef.current
-          .play()
-          .then(() => {
-            notificationAudioRef.current.pause();
-            notificationAudioRef.current.currentTime = 0;
-          })
-          .catch(() => {});
-      }
 
-      window.removeEventListener("click", unlockAudio);
-      window.removeEventListener("keydown", unlockAudio);
-    };
+// ---------------------voice unlock----------------------------//
+useEffect(() => {
+  const unlockMedia = () => {
+    // 🔊 unlock audio
+    if (notificationAudioRef.current) {
+      notificationAudioRef.current
+        .play()
+        .then(() => {
+          notificationAudioRef.current.pause();
+          notificationAudioRef.current.currentTime = 0;
+        })
+        .catch(() => {});
+    }
 
-    window.addEventListener("click", unlockAudio);
-    window.addEventListener("keydown", unlockAudio);
+    // 🗣️ unlock voice
+    if (window.speechSynthesis) {
+      const utterance = new SpeechSynthesisUtterance("");
+      window.speechSynthesis.speak(utterance);
+      window.speechSynthesis.cancel();
+      setVoiceEnabled(true);
+    }
 
-    return () => {
-      window.removeEventListener("click", unlockAudio);
-      window.removeEventListener("keydown", unlockAudio);
-    };
-  }, []);
+    window.removeEventListener("click", unlockMedia);
+    window.removeEventListener("keydown", unlockMedia);
+  };
+
+  window.addEventListener("click", unlockMedia);
+  window.addEventListener("keydown", unlockMedia);
+
+  return () => {
+    window.removeEventListener("click", unlockMedia);
+    window.removeEventListener("keydown", unlockMedia);
+  };
+}, []);
+useEffect(() => {
+  console.log("🔊 Voice enabled:", voiceEnabled);
+}, [voiceEnabled]);
+
 
   const formatTime = (ms) => {
     const totalSeconds = Math.max(0, Math.floor(ms / 1000));
@@ -117,23 +133,6 @@ export default function ShopDashboard() {
     }
   }, []);
 
-  /* ================= VOICE UNLOCK ================= */
-
-  useEffect(() => {
-    const unlockVoice = () => {
-      setVoiceEnabled(true);
-      window.removeEventListener("click", unlockVoice);
-      window.removeEventListener("keydown", unlockVoice);
-    };
-
-    window.addEventListener("click", unlockVoice);
-    window.addEventListener("keydown", unlockVoice);
-
-    return () => {
-      window.removeEventListener("click", unlockVoice);
-      window.removeEventListener("keydown", unlockVoice);
-    };
-  }, []);
 
   /* ================= FETCH SHOP ================= */
 
@@ -208,11 +207,13 @@ export default function ShopDashboard() {
   /* ================= VOICE ALERT ================= */
 
   const speakNewOrder = () => {
-    if (!voiceEnabled || !window.speechSynthesis) return;
-    const utterance = new SpeechSynthesisUtterance("New order received");
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(utterance);
-  };
+  if (!voiceEnabled || document.hidden) return;
+
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(
+    new SpeechSynthesisUtterance("New order received")
+  );
+};
 
   const triggerNewOrderAlert = () => {
     setShowNewOrderToast(true);
@@ -281,48 +282,6 @@ export default function ShopDashboard() {
       document.title = baseTitle;
     }
   }, [unseenOrderCount]);
-
-  /* ================= FILTERING ================= */
-
-  // const isSameDay = (d1, d2) =>
-  //   d1.getFullYear() === d2.getFullYear() &&
-  //   d1.getMonth() === d2.getMonth() &&
-  //   d1.getDate() === d2.getDate();
-
-  // const isWithinDays = (d, days) =>
-  //   (new Date() - d) / (1000 * 60 * 60 * 24) <= days;
-
-  // const filteredOrders = orders.filter((order) => {
-  //   const createdAt = new Date(order.createdAt);
-
-  //   /* ---------- DATE FILTERS ---------- */
-  //   if (filterMode === "today" && !isSameDay(createdAt, new Date()))
-  //     return false;
-  //   if (filterMode === "7days" && !isWithinDays(createdAt, 7)) return false;
-  //   if (filterMode === "30days" && !isWithinDays(createdAt, 30)) return false;
-
-  //   /* ---------- PAYMENT FILTERS ---------- */
-  //   if (paymentFilter === "paid" && !order.isPaid) return false;
-  //   if (paymentFilter === "unpaid" && order.isPaid) return false;
-
-  //   /* ---------- URGENT FILTERS ---------- */
-  //   if (urgentFilter === "urgent" && !order.isUrgent) return false;
-  //   if (urgentFilter === "normal" && order.isUrgent) return false;
-
-  //   /* ---------- SEARCH FILTER ---------- */
-  //   if (searchQuery.trim()) {
-  //     const q = searchQuery.toLowerCase();
-
-  //     const orderId = String(order.id || "").toLowerCase();
-  //     const orderNo = String(order.orderNo || "").toLowerCase();
-
-  //     if (!orderId.includes(q) && !orderNo.includes(q)) {
-  //       return false;
-  //     }
-  //   }
-
-  //   return true;
-  // });
 
   const visibleOrders = orders.filter((order) => {
     /* ---------- PAYMENT FILTER ---------- */
@@ -592,7 +551,7 @@ export default function ShopDashboard() {
         <>
           {Object.keys(scheduledOrdersByDateAndSlot).length === 0 && (
             // <EmptyShopOrders />
-            <p>No orders in this slot</p>
+            <EmptyShopOrders/>
           )}
 
           {Object.entries(scheduledOrdersByDateAndSlot).map(([date, slots]) => (
