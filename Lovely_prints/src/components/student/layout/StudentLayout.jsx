@@ -5,12 +5,33 @@ import StudentBottomNav from "./StudentBottomNav";
 import { logoutUser } from "../../../services/authService";
 import { StudentDataProvider } from "../context/StudentDataContext";
 import { getStudentOrders } from "../../../services/studentService";
+import "./StudentLayout.css";
+import StudentSidebar from "./StudentSidebar";
+import StudentRightRail from "./StudentRightRail";
+import { useLocation } from "react-router-dom";
+import { useStudentData } from "../context/StudentDataContext";
 
 const StudentLayout = () => {
   const navigate = useNavigate();
 
   const [hasReadyOrders, setHasReadyOrders] = useState(false);
   const [acknowledged, setAcknowledged] = useState(false);
+const location = useLocation();
+const { setFlowStage } = useStudentData();
+
+useEffect(() => {
+  if (location.pathname.startsWith("/student/shop")) {
+    setFlowStage(2);
+  }
+
+  if (location.pathname === "/student/orders") {
+    setFlowStage(5);
+  }
+
+  if (location.pathname === "/student") {
+    setFlowStage(1);
+  }
+}, [location.pathname]);
 
   const handleLogout = async () => {
     await logoutUser();
@@ -68,16 +89,38 @@ const StudentLayout = () => {
     setAcknowledged(true);
   };
 
-  return (
-    <StudentDataProvider>
-      <StudentNavbar
-        onLogout={handleLogout}
+   return (
+    // <StudentDataProvider>
+      <div className="student-layout-root">
+        {/* Top Navbar */}
+        <StudentNavbar onLogout={handleLogout}
         hasReadyOrders={hasReadyOrders}
-        onOrdersClick={handleOrdersClick}
-      />
-      <Outlet />
-      <StudentBottomNav />
-    </StudentDataProvider>
+        onOrdersClick={handleOrdersClick}/>
+
+        {/* Main Dashboard Body */}
+        <div className="student-layout-body">
+          {/* LEFT SIDEBAR */}
+          <aside className="student-sidebar">
+            {/* Sidebar component comes next */}
+            <StudentSidebar/>
+          </aside>
+
+          {/* CENTER CONTENT (FLUID) */}
+          <main className="student-layout-center">
+            <Outlet />
+          </main>
+
+          {/* RIGHT RAIL */}
+          <aside className="student-right-rail">
+            {/* Map + Support widgets come later */}
+            <StudentRightRail/>
+          </aside>
+        </div>
+
+        {/* Mobile Bottom Nav */}
+        <StudentBottomNav />
+      </div>
+    // </StudentDataProvider>
   );
 };
 

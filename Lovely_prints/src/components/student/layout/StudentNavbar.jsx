@@ -8,13 +8,18 @@ const StudentNavbar = ({
   onOrdersClick,
 }) => {
   return (
-    <nav className="student-navbar">
-      <div className="nav-left">
-        <img src={logo} alt="Lovely Prints" className="nav-logo" />
-        <span className="nav-title">Lovely Prints</span>
+    <header className="student-navbar-glass">
+      {/* LEFT */}
+      <div className="navbar-left">
+        <img src={logo} alt="KaagaZ" className="navbar-logo" />
+        <div className="navbar-brand">
+          <span className="brand-name">KaagaZ</span>
+          <span className="brand-sub">Student Dashboard</span>
+        </div>
       </div>
 
-      <div className="nav-center">
+      {/* CENTER */}
+      <nav className="navbar-center">
         <NavLink to="/student" end>
           Home
         </NavLink>
@@ -22,25 +27,26 @@ const StudentNavbar = ({
         <NavLink
           to="/student/orders"
           onClick={onOrdersClick}
-          className="nav-orders-link"
+          className="orders-link"
         >
           Orders
           {hasReadyOrders && (
-            <span className="nav-ready-badge">READY</span>
+            <span className="ready-pill">READY</span>
           )}
         </NavLink>
 
         <NavLink to="/student/profile">
           Profile
         </NavLink>
-      </div>
+      </nav>
 
-      <div className="nav-right">
-        <button className="logout-btn" onClick={onLogout}>
+      {/* RIGHT */}
+      <div className="navbar-right">
+        <button className="logout-glass-btn" onClick={onLogout}>
           Logout
         </button>
       </div>
-    </nav>
+    </header>
   );
 };
 

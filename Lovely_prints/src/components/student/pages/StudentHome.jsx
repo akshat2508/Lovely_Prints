@@ -9,7 +9,7 @@ import "./studentHome.css";
 
 const StudentHome = () => {
   const navigate = useNavigate();
-  const { shops, shopsLoading, fetchShops } = useStudentData();
+  const { shops, shopsLoading, fetchShops , setFlowStage } = useStudentData();
   const [shopStatusFilter, setShopStatusFilter] = useState("all");
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -101,9 +101,13 @@ const StudentHome = () => {
           <div
             key={shop.id}
             className={`shop-card-A ${!shop.is_active ? "shop-closed" : ""}`}
-            onClick={() =>
-              shop.is_active && navigate(`/student/shop/${shop.id}`)
-            }
+            onClick={() => {
+  if (!shop.is_active) return;
+
+  setFlowStage(2); // 🔥 Move to Print Options stage
+  navigate(`/student/shop/${shop.id}`);
+}}
+
           >
             {/* Open / Closed Tag */}
             <div
@@ -133,7 +137,7 @@ const StudentHome = () => {
 
               <div className="shop-details-box-A">
                 <span className="shop-time-A">
-                  <strong>Closes at:</strong> 10pm
+                  <strong>Closes at:</strong> {shop.close_time.slice(0 , 5)} PM
                 </span>
               </div>
             </div>

@@ -1,7 +1,7 @@
 import TrackOrderModal from "./TrackOrderModal"
 import { useState } from "react"
 // import "../dashboard.css"
-import "./modals.css"
+import "./orderDetailsModal-H.css"
 
 const OrderDetailsModal = ({ order, onClose }) => {
   const [showTracking, setShowTracking] = useState(false)
@@ -54,7 +54,7 @@ const OrderDetailsModal = ({ order, onClose }) => {
           <div className="modal-actions">
             {order.status !== "completed" && (
               <button
-                className="primary-btn"
+                className="primary-btn-H"
                 onClick={() => setShowTracking(true)}
               >
                 Track Order

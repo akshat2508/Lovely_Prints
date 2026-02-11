@@ -14,6 +14,7 @@ import StudentProfile from "../components/student/pages/StudentProfile";
 import ForgotPassword from "../components/auth/ForgotPassword";
 import ResetPassword from "../components/auth/ResetPassword";
 import AdminDashboard from "../components/admin/AdminDashboard";
+import { StudentDataProvider } from "../components/student/context/StudentDataContext";
 
 const AppRoutes = () => {
   return (
@@ -27,7 +28,11 @@ const AppRoutes = () => {
 
       {/* Student (Protected) */}
       <Route element={<ProtectedRoute role="student" />}>
-        <Route path="/student" element={<StudentLayout />}>
+        <Route path="/student"  element={
+    <StudentDataProvider>
+      <StudentLayout />
+    </StudentDataProvider>
+  }>
           <Route index element={<StudentHome />} />
           <Route path="shop/:shopId" element={<ShopDetails />} />
           <Route path="orders" element={<StudentOrders />} />

@@ -9,7 +9,7 @@ import "./shopDetails.css";
 const ShopDetails = () => {
   const { shopId } = useParams();
   const navigate = useNavigate();
-  const { shops, fetchShops, fetchShopOptions, invalidateShopOptions } =
+  const { shops, fetchShops, fetchShopOptions, invalidateShopOptions , setFlowStage } =
     useStudentData();
 
   const [shop, setShop] = useState(null);
@@ -43,7 +43,10 @@ const ShopDetails = () => {
       <div className="shop-top-bar-B">
         <button
           className="secondary-btn-B back-btn-B"
-          onClick={() => navigate("/student")}
+onClick={() => {
+  setFlowStage(1);  // back to Choose Shop
+  navigate("/student");
+}}
         >
           ← Back to Shops
         </button>
@@ -61,17 +64,20 @@ const ShopDetails = () => {
 
           <div className="shop-meta-B">
             <span className="meta-label-B">Opens:</span>
-            <span className="meta-value-B">{shop.opening_time || "9:00 AM"}</span>
+            <span className="meta-value-B">{shop.open_time.slice(0 , 5) || "9:00 AM"} AM </span>
             <span className="meta-label-B">Closes:</span>
             <span className="meta-value-B">
-              {shop.closing_time || "10:00 PM"}
+              {shop.close_time.slice(0 ,5) || "10:00 PM"} PM
             </span>
           </div>
 
           {/* ➕ Create Order Button (Inside Header) */}
           <button
             className="primary-btn-B create-order-btn-B"
-            onClick={() => setShowCreateModal(true)}
+onClick={() => {
+  setFlowStage(3);   // 🔥 Move sidebar to Review Order stage
+  setShowCreateModal(true);
+}}
           >
             Create Print Order
           </button>
@@ -138,6 +144,8 @@ const ShopDetails = () => {
           onSuccess={() => {
             invalidateShopOptions(shop.id);
             setShowCreateModal(false);
+              setFlowStage(4);   // 🔥 Orders stage
+
             navigate("/student/orders");
           }}
         />

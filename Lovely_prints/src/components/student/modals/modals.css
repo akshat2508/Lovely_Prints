@@ -23,12 +23,14 @@
     0 20px 60px rgba(0, 0, 0, 0.25),
     0 0 0 1px rgba(0, 0, 0, 0.05);
   animation: modalEnter 0.28s ease;
+  margin-top: 10px;
 }
 
 /* ================= LARGE MODAL ================= */
 .modal-card.large {
   max-width: 620px;
   padding: 32px;
+  margin-top: 10px;
 }
 
 /* ================= MODAL ANIMATION ================= */
@@ -747,16 +749,16 @@
 }
 
 .policy-modal {
-  background: #ffffff;
-  width: 420px;
-  max-width: 100%;
-  max-height: 85vh;
-  padding: 24px;
-  border-radius: 16px;
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25);
-  display: flex;
-  flex-direction: column;
-  animation: scaleIn 0.25s ease;
+    background: #ffffff;
+    width: 420px;
+    max-width: 100%;
+    max-height: 50vh;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    animation: scaleIn 0.25s ease;
 }
 
 /* Title */
@@ -799,16 +801,17 @@
 
 /* Button */
 .policy-btn {
-  width: 100%;
-  padding: 12px;
-  border-radius: 12px;
-  border: none;
-  background: linear-gradient(135deg, #f58220, #ff7a00);
-  color: #ffffff;
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+ width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    background: rgba(255, 245, 126, 0.25);
+    color: #92400e;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid rgba(255, 183, 108, 0.6);
 }
 
 .policy-btn:hover {

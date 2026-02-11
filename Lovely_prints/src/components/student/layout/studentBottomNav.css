@@ -15,7 +15,6 @@
     justify-content: space-around;
     align-items: center;
     z-index: 120;
-    display: none;
   }
 
   .student-bottom-nav a {
@@ -30,14 +29,14 @@
   }
 
   .student-bottom-nav a.active {
-    color: #F58220;
+    color: #26ccc2;
   }
   .student-bottom-nav svg {
   stroke-width: 2;
 }
 
 .student-bottom-nav a.active svg {
-  color: #F58220;
+  color:  #26ccc2;
 }
 
 }

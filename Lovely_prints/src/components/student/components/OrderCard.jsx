@@ -132,7 +132,7 @@ const OrderCard = ({ order }) => {
               )}
 
             <button
-              className="order-btn-secondary-D"
+              className="order-btn-secondary-B-D"
               onClick={() => setShowDetails(true)}
             >
               Open full details →

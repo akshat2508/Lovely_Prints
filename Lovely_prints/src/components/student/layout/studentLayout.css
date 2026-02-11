@@ -1,0 +1,119 @@
+/* ================= ROOT ================= */
+.student-layout-root {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(106,236,225,0.25), transparent 40%),
+    radial-gradient(circle at bottom right, rgba(255,183,108,0.25), transparent 45%),
+    linear-gradient(180deg, #f9fbfc 0%, #f4f6f8 100%);
+  display: flex;
+  flex-direction: column;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont;
+  overflow-x: hidden;
+}
+
+/* ================= BODY GRID ================= */
+.student-layout-body {
+  display: grid;
+  grid-template-columns: 260px 1fr 300px;
+  gap: 24px;
+  padding: 24px;
+  flex: 1;
+  align-items: stretch;
+}
+
+/* ================= LEFT SIDEBAR ================= */
+.student-sidebar {
+  position: sticky;
+  top: 88px;
+  height: calc(100vh - 120px);
+
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.08),
+    inset 0 0 0 1px rgba(255,255,255,0.35);
+
+  padding: 18px;
+}
+
+/* ================= CENTER CONTENT ================= */
+.student-layout-center {
+  min-width: 0;
+  border-radius: 22px;
+
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(18px) saturate(1.25);
+  -webkit-backdrop-filter: blur(18px) saturate(1.25);
+
+  box-shadow:
+    0 25px 60px rgba(0,0,0,0.08),
+    inset 0 0 0 1px rgba(255,255,255,0.4);
+
+  padding: 28px;
+  overflow: hidden;
+}
+
+/* ================= RIGHT RAIL ================= */
+.student-right-rail {
+  position: sticky;
+  top: 88px;
+  height: calc(100vh - 120px);
+
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.08),
+    inset 0 0 0 1px rgba(255,255,255,0.35);
+
+  padding: 18px;
+}
+
+/* ================= MOBILE ================= */
+@media (max-width: 1100px) {
+  .student-layout-body {
+    grid-template-columns: 1fr;
+    padding: 16px;
+  }
+
+  .student-sidebar,
+  .student-right-rail {
+    display: none;
+  }
+
+  .student-layout-center {
+    padding: 20px;
+  }
+}
+
+/* ===== MOBILE BOTTOM NAV VISIBILITY ===== */
+
+.student-bottom-nav {
+  display: none;
+}
+
+/* Show only on mobile */
+@media (max-width: 768px) {
+  .student-bottom-nav {
+    display: flex;
+  }
+
+  /* Hide sidebar on mobile */
+  .student-sidebar {
+    display: none;
+  }
+
+  /* Hide right rail on mobile */
+  .student-right-rail {
+    display: none;
+  }
+}
