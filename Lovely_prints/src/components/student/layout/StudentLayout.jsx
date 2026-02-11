@@ -5,7 +5,7 @@ import StudentBottomNav from "./StudentBottomNav";
 import { logoutUser } from "../../../services/authService";
 import { StudentDataProvider } from "../context/StudentDataContext";
 import { getStudentOrders } from "../../../services/studentService";
-import "./StudentLayout.css";
+import "./studentLayout.css";
 import StudentSidebar from "./StudentSidebar";
 import StudentRightRail from "./StudentRightRail";
 import { useLocation } from "react-router-dom";
