@@ -1,134 +1,116 @@
-/* ================= STUDENT ORDERS PAGE ================= */
+/* ================= PAGE WRAPPER ================= */
+.dashboard {
+  background: transparent;
+  padding: 0;
+}
 
-/* ===== HEADER ===== */
+/* ================= HEADER ================= */
 .header-C {
-  position: sticky;
-  top: 0;
-  z-index: 5;
+  margin-bottom: 22px;
+}
+
+.header-left-C {
   background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.97),
-    rgba(255, 255, 255, 0.92)
+    135deg,
+    rgba(255,255,255,0.95),
+    rgba(255,255,255,0.85)
   );
-  backdrop-filter: blur(10px);
-  padding: 22px 28px 18px;
-  border-bottom: 1px solid rgba(229, 231, 235, 0.9);
+  border-radius: 22px;
+  padding: 26px 28px;
 
   box-shadow:
-    0 1px 0 rgba(0, 0, 0, 0.03),
-    0 6px 18px rgba(0, 0, 0, 0.04);
+    0 18px 45px rgba(0,0,0,0.08),
+    inset 0 0 0 1px rgba(255,255,255,0.6);
+    border: 1px solid;
+    border-bottom: none;
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    gap: 5px;
 }
 
-/* Inner alignment */
-.header-left-C {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-/* Title */
 .header-title-C {
   font-size: 1.6rem;
-  font-weight: 700;
-  margin: 0;
-  color: #111827;
-  letter-spacing: -0.4px;
+  font-weight: 800;
+  margin: 10px;
+  color: #0f172a;
 }
 
-/* Subtitle */
 .header-subtitle-C {
-  margin-top: 6px;
+  margin-top: 20px;
   font-size: 0.9rem;
-  color: #6b7280;
+  color: #64748b;
   font-weight: 500;
 }
 
-/* ================= CONTENT WRAPPER ================= */
-
-.orders-wrapper-C {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 28px;
-}
-
-/* ================= EMPTY STATE ================= */
-
-.empty-state-C {
-  text-align: center;
-  padding: 96px 20px;
-  color: #6b7280;
-}
-
-.empty-state-C h3 {
-  margin-top: 14px;
-  font-size: 1.15rem;
-  font-weight: 600;
-  color: #111827;
-}
-
-.empty-state-C p {
-  font-size: 0.9rem;
-  margin-top: 6px;
-  color: #6b7280;
-  max-width: 420px;
-  margin-left: auto;
-  margin-right: auto;
-  line-height: 1.5;
-}
-
-/* ================= LOADING STATE ================= */
-
-.loading-C {
-  padding: 28px;
-}
-
-/* ================= RESPONSIVE ================= */
-
-@media (max-width: 768px) {
-  .header-C {
-    padding: 18px 16px 14px;
-  }
-
-  .header-title-C {
-    font-size: 1.35rem;
-    letter-spacing: -0.2px;
-  }
-
-  .header-subtitle-C {
-    font-size: 0.85rem;
-  }
-
-  .orders-wrapper-C {
-    padding: 18px;
-  }
-
-  .empty-state-C {
-    padding: 72px 16px;
-  }
-}
-/* ================= FILTER BAR ================= */
-
+/* ================= FILTER ================= */
 .orders-filter-row-C {
-  margin-top: 14px;
+  margin-top: 16px;
+  display: flex;
+  gap: 12px;
 }
 
 .orders-filter-select-C {
-  padding: 8px 12px;
+  appearance: none;
+  border-radius: 999px;
+  padding: 8px 18px;
   font-size: 0.85rem;
-  border-radius: 10px;
-  border: 1.5px solid #e5e7eb;
+  font-weight: 600;
+
   background: #ffffff;
-  color: #374151;
-  font-weight: 500;
+  border: 1px solid #e5e7eb;
+  color: #0f172a;
+
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .orders-filter-select-C:hover {
-  border-color: #f58220;
+  border-color: #26ccc2;
 }
 
 .orders-filter-select-C:focus {
   outline: none;
-  border-color: #f58220;
-  box-shadow: 0 0 0 2px rgba(245, 130, 32, 0.15);
+  box-shadow: 0 0 0 3px rgba(38,204,194,0.2);
+}
+
+/* ================= ORDERS LIST ================= */
+.orders-wrapper-C {
+  margin-top: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ================= EMPTY / LOADING STATES ================= */
+.orders-wrapper-C > * {
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ================= MOBILE ================= */
+@media (max-width: 768px) {
+  .header-left-C {
+    padding: 20px;
+    border-radius: 18px;
+  }
+
+  .header-title-C {
+    font-size: 1.35rem;
+  }
+
+  .orders-filter-select-C {
+    width: 100%;
+    text-align: center;
+  }
 }

@@ -56,15 +56,73 @@ const { data, error } =
 
 export const createOrder = async (req, res, next) => {
   try {
-    const studentId = req.user.id;
-    const token = req.headers.authorization.split(' ')[1];
+    // 🔐 Auth context (already validated by middleware)
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+      return errorResponse(res, "Authorization token missing", 401);
+    }
+
+    const {
+      shop_id,
+      description,
+      orientation,
+      is_urgent,
+      pickup_at,
+    } = req.body;
+
+    // ============================
+    // 🚨 PICKUP TIME VALIDATION
+    // ============================
+
+    if (!pickup_at) {
+      return errorResponse(
+        res,
+        "Pickup date & time is required",
+        400
+      );
+    }
+
+    const pickupTime = new Date(pickup_at);
+    const now = new Date();
+
+    if (isNaN(pickupTime.getTime())) {
+      return errorResponse(
+        res,
+        "Invalid pickup date & time",
+        400
+      );
+    }
+
+    if (pickupTime < now) {
+      return errorResponse(
+        res,
+        "Pickup time cannot be in the past",
+        400
+      );
+    }
+
+    const maxAllowed = new Date(
+      now.getTime() + 24 * 60 * 60 * 1000
+    );
+
+    if (pickupTime > maxAllowed) {
+      return errorResponse(
+        res,
+        "Pickup time must be within 24 hours of order creation",
+        400
+      );
+    }
+
+    // ============================
+    // 🧱 ORDER PAYLOAD (NO TRUST)
+    // ============================
 
     const orderData = {
-      student_id: studentId,
-      shop_id: req.body.shop_id,
-      notes: req.body.description || null,
-      orientation: req.body.orientation || 'portrait',
-      is_urgent: Boolean(req.body.is_urgent),
+      shop_id,
+      notes: description || null,
+      orientation: orientation || "portrait",
+      is_urgent: Boolean(is_urgent),
+      pickup_at: pickupTime.toISOString(), // ✅ normalized
     };
 
     const { data, error } =
@@ -74,11 +132,17 @@ export const createOrder = async (req, res, next) => {
       return errorResponse(res, error.message, 400);
     }
 
-    return successResponse(res, data, 'Order created successfully', 201);
+    return successResponse(
+      res,
+      data,
+      "Order created successfully",
+      201
+    );
   } catch (error) {
     next(error);
   }
 };
+
 
 export const addDocumentToOrder = async (req, res, next) => {
   try {

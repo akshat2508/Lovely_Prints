@@ -20,28 +20,13 @@ const OrderCard = ({ order }) => {
 
   /* ================= DATE HELPERS ================= */
 
-  const isSameDay = (d1, d2) =>
-    d1.getDate() === d2.getDate() &&
-    d1.getMonth() === d2.getMonth() &&
-    d1.getFullYear() === d2.getFullYear();
+  const now = new Date();
 
-  const today = new Date();
-
-  // 👇 the day pickup became available
-  const pickupReadyDate =
-  order.status === "ready"
-    ? new Date(order.ready_at || order.created_at)
-    : null;
-
-
-  const isCompleted = order.status === "completed";
-
-  const isExpired =
-    order.status === "ready" &&
-    pickupReadyDate &&
-    !isSameDay(pickupReadyDate, today);
-
-  const isReady = order.status === "ready" && !isExpired;
+  const parseDate = (value) => {
+    if (!value) return null;
+    const d = new Date(value);
+    return isNaN(d.getTime()) ? null : d;
+  };
 
   const formatDate = (dateString) =>
     new Date(dateString).toLocaleString("en-IN", {
@@ -52,6 +37,22 @@ const OrderCard = ({ order }) => {
       minute: "2-digit",
       hour12: true,
     });
+
+  /* ================= STATE DERIVED ================= */
+
+  const pickupAt = parseDate(order.pickup_at);
+
+  const isCompleted = order.status === "completed";
+
+  const isExpired =
+    pickupAt &&
+    now > pickupAt &&
+    !isCompleted;
+
+  const isReady =
+    order.status === "ready" && !isExpired;
+
+  /* ================= RENDER ================= */
 
   return (
     <>
@@ -87,11 +88,11 @@ const OrderCard = ({ order }) => {
           </p>
         )}
 
-        {/* ================= EXPIRED WARNING (ALWAYS VISIBLE) ================= */}
+        {/* ================= EXPIRED WARNING ================= */}
         {isExpired && (
           <div className="order-expired-warning-D">
-            ⚠ Pickup expired. This order was not collected on the same day and
-            can no longer be picked up.
+            ⚠ Pickup expired. This order was not collected before the pickup
+            time.
           </div>
         )}
 
@@ -107,9 +108,16 @@ const OrderCard = ({ order }) => {
             </p>
 
             <p className="order-btn-secondary-D">ID: {order.id}</p>
+
             <p className="order-btn-secondary-D">
               Placed At : {formatDate(order.created_at)}
             </p>
+
+            {order.pickup_at && (
+              <p className="order-btn-secondary-D">
+                Pickup At : {formatDate(order.pickup_at)}
+              </p>
+            )}
 
             {/* ================= OTP (READY & NOT EXPIRED ONLY) ================= */}
             {isReady &&
@@ -124,7 +132,7 @@ const OrderCard = ({ order }) => {
               )}
 
             <button
-              className="order-btn-secondary-D"
+              className="order-btn-secondary-B-D"
               onClick={() => setShowDetails(true)}
             >
               Open full details →

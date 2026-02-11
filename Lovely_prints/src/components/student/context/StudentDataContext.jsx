@@ -13,63 +13,74 @@ export const StudentDataProvider = ({ children }) => {
   // cache print options by shopId
   const [shopOptionsMap, setShopOptionsMap] = useState({});
 
+  /* ================= FLOW STATE ================= */
+
+  // 1 = Choose Shop
+  // 2 = Print Options
+  // 3 = Upload & Pickup
+  // 4 = Review Order
+  // 5 = Orders
+
+  const [flowStage, setFlowStage] = useState(1);
+
+  const goToFlowStage = (stage) => {
+    setFlowStage(stage);
+  };
+
+  const resetFlow = () => {
+    setFlowStage(1);
+  };
+
   /* ================= SHOPS ================= */
 
+  const fetchShops = async (isPolling = false) => {
+    try {
+      if (!isPolling) setShopsLoading(true);
 
-const fetchShops = async (isPolling = false) => {
-  try {
-    if (!isPolling) setShopsLoading(true);
+      const res = await getAllShops();
+      if (!res?.success) return;
 
-    const res = await getAllShops();
-    if (!res?.success) return;
+      setShops((prevShops) => {
+        if (!prevShops) return res.data;
 
-    setShops((prevShops) => {
-      // first load
-      if (!prevShops) return res.data;
+        return prevShops.map((oldShop) => {
+          const updatedShop = res.data.find(
+            (s) => s.id === oldShop.id
+          );
 
-      // patch only changed shops
-      return prevShops.map((oldShop) => {
-        const updatedShop = res.data.find(
-          (s) => s.id === oldShop.id
-        );
+          if (!updatedShop) return oldShop;
 
-        // shop removed (rare)
-        if (!updatedShop) return oldShop;
+          if (oldShop.is_active !== updatedShop.is_active) {
+            return { ...oldShop, is_active: updatedShop.is_active };
+          }
 
-        // only patch if status changed
-        if (oldShop.is_active !== updatedShop.is_active) {
-          return { ...oldShop, is_active: updatedShop.is_active };
-        }
-
-        return oldShop; // no change → no re-render
+          return oldShop;
+        });
       });
-    });
 
-    return res.data;
-  } catch (err) {
-    console.error("Failed to fetch shops");
-  } finally {
-    if (!isPolling) setShopsLoading(false);
-  }
-};
+      return res.data;
+    } catch (err) {
+      console.error("Failed to fetch shops");
+    } finally {
+      if (!isPolling) setShopsLoading(false);
+    }
+  };
 
+  useEffect(() => {
+    fetchShops(false);
 
-  // ✅ INITIAL FETCH + POLLING
- useEffect(() => {
-  fetchShops(false); // initial load (shows skeleton)
+    const interval = setInterval(() => {
+      fetchShops(true);
+    }, 15000);
 
-  const interval = setInterval(() => {
-    fetchShops(true); // polling (NO loading, NO flicker)
-  }, 15000);
-
-  return () => clearInterval(interval);
-}, []);
+    return () => clearInterval(interval);
+  }, []);
 
   /* ================= SHOP OPTIONS ================= */
 
   const fetchShopOptions = async (shopId) => {
     if (shopOptionsMap[shopId]) {
-      return shopOptionsMap[shopId]; // cache hit
+      return shopOptionsMap[shopId];
     }
 
     const res = await getShopPrintOptions(shopId);
@@ -99,12 +110,19 @@ const fetchShops = async (isPolling = false) => {
   return (
     <StudentDataContext.Provider
       value={{
+        // Shops
         shops,
         shopsLoading,
         fetchShops,
         fetchShopOptions,
         invalidateAllShopOptions,
         invalidateShopOptions,
+
+        // Flow
+        flowStage,
+        setFlowStage,
+        goToFlowStage,
+        resetFlow,
       }}
     >
       {children}

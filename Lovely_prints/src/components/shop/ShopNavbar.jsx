@@ -10,7 +10,7 @@ const ShopNavbar = ({
   setActiveTab,
   hasNewOrders,
   hasUrgentOrders,
-  sessionTimeLeft
+  sessionTimeLeft,
 }) => {
   return (
     <nav className="shop-navbar">
@@ -37,6 +37,18 @@ const ShopNavbar = ({
                 {hasUrgentOrders ? "URGENT" : "NEW"}
               </span>
             )}
+          </button>
+          <button
+            className={`${activeTab === "scheduled" ? "active" : ""}`}
+            onClick={() => setActiveTab("scheduled")}
+          >
+            Scheduled
+          </button>
+          <button
+            className={`${activeTab === "discarded" ? "active" : ""}`}
+            onClick={() => setActiveTab("discarded")}
+          >
+            Discarded
           </button>
 
           <button
@@ -79,7 +91,7 @@ const ShopNavbar = ({
               }`}
               title="Session expires in"
             >
-               {sessionTimeLeft}
+              {sessionTimeLeft}
             </div>
           )}
 
@@ -87,7 +99,6 @@ const ShopNavbar = ({
             Logout
           </button>
         </div>
-
       </div>
     </nav>
   );

@@ -1,236 +1,227 @@
-/* ===== MAIN WRAPPER ===== */
+/* ================= ROOT WRAPPER ================= */
 .shop-details-B {
-  min-height: 100vh;
+  width: 100%;
   padding: 28px;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  margin-bottom: 48px;
-  background: #f9fafb;
-  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont;
+  animation: fadeIn 0.25s ease;
 }
 
-/* ===== HEADER ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ================= TOP BAR ================= */
+.shop-top-bar-B {
+  margin-bottom: 18px;
+}
+
+.back-btn-B {
+  font-size: 0.8rem;
+  padding: 8px 14px;
+  border-radius: 999px;
+}
+
+/* ================= HEADER CARD ================= */
 .shop-header-B {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr 320px;
   gap: 28px;
+
   padding: 26px;
-  border-radius: 18px;
-  background: linear-gradient(180deg, #ffffff, #fdfdfd);
+  border-radius: 26px;
+
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
   box-shadow:
-    0 18px 42px rgba(0, 0, 0, 0.08),
-    0 6px 16px rgba(0, 0, 0, 0.04);
-  margin-bottom: 30px;
+    0 30px 60px rgba(0,0,0,0.12),
+    inset 0 0 0 1px rgba(255,255,255,0.45);
+
+  margin-bottom: 34px;
+  border: 1px solid;
 }
 
-/* ===== HEADER LEFT ===== */
+/* ================= LEFT ================= */
 .shop-header-left-B {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
-/* SHOP NAME */
 .shop-name-B {
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 12px;
-  background: linear-gradient(135deg, #ff9500, #ff7a00);
-  -webkit-background-clip: text;
+  font-size: 2rem;
+  font-weight: 900;
+  background: black;
   background-clip: text;
+  -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-/* META INFO */
+/* Meta rows */
 .shop-meta-B {
   display: flex;
-  gap: 14px;
-  font-size: 15px;
-  margin-top: 6px;
+  gap: 8px;
   flex-wrap: wrap;
+  font-size: 0.85rem;
 }
 
 .meta-label-B {
-  font-weight: 500;
   color: #6b7280;
+  font-weight: 600;
 }
 
 .meta-value-B {
   color: #111827;
-  font-weight: 600;
+  font-weight: 700;
 }
 
-/* ===== HEADER IMAGE ===== */
+/* CTA */
+.create-order-btn-B {
+  margin-top: 8px;
+  align-self: flex-start;
+}
+
+/* ================= RIGHT (IMAGE) ================= */
 .shop-header-right-B {
-  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .shop-header-banner-B {
-  width: 360px;
-  height: 170px;
+  width: 100%;
+  height: 180px;
   object-fit: contain;
-  border-radius: 14px;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  border-radius: 20px;
+
+  box-shadow:
+    0 18px 40px rgba(0,0,0,0.25),
+    inset 0 0 0 1px rgba(255,255,255,0.4);
 }
 
-/* ===== PRINT OPTIONS ===== */
+/* ================= OPTIONS ================= */
+.shop-options-B {
+  margin-top: 10px;
+}
+
 .shop-options-B h2 {
+  font-size: 1.25rem;
+  font-weight: 800;
   margin-bottom: 18px;
-  font-size: 22px;
-  font-weight: 600;
   color: #111827;
 }
 
-/* GRID */
+/* Grid */
 .options-grid-B {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 18px;
+  gap: 22px;
 }
 
-/* ===== OPTION GROUP ===== */
+/* ================= OPTION GROUP ================= */
 .option-group-B {
-  background: #ffffff;
   padding: 18px;
-  border-radius: 16px;
+  border-radius: 22px;
+
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(18px);
+
   box-shadow:
-    0 10px 28px rgba(0, 0, 0, 0.08),
-    0 4px 10px rgba(0, 0, 0, 0.04);
+    0 18px 36px rgba(0,0,0,0.1),
+    inset 0 0 0 1px rgba(255,255,255,0.4);
+
   transition: transform 0.25s ease, box-shadow 0.25s ease;
+  border: 1px solid;
 }
 
 .option-group-B:hover {
-  transform: translateY(-4px);
+  transform: translateY(-3px);
   box-shadow:
-    0 16px 36px rgba(0, 0, 0, 0.12),
-    0 6px 16px rgba(0, 0, 0, 0.08);
+    0 26px 50px rgba(0,0,0,0.14),
+    inset 0 0 0 1px rgba(255,255,255,0.55);
 }
 
 .option-group-B h3 {
-  font-size: 17px;
-  font-weight: 600;
-  margin-bottom: 14px;
-  color: #ff9500;
-  letter-spacing: 0.3px;
+  font-size: 1rem;
+  font-weight: 800;
+  margin-bottom: 12px;
+  color: #26ccc2;
 }
 
-/* ===== OPTION ITEM ===== */
+/* ================= OPTION ITEM ================= */
 .option-item-B {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #f9fafb;
+
   padding: 10px 14px;
-  border-radius: 10px;
   margin-bottom: 8px;
-  font-size: 14px;
-  color: #374151;
-  box-shadow: inset 0 0 0 1px #e5e7eb;
-  transition: all 0.2s ease;
-}
 
-
-
-.option-item-B span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* ===== ACTIONS ===== */
-.shop-actions-B {
-  margin-top: 28px;
-  display: flex;
-  gap: 14px;
-}
-
-/* PRIMARY BUTTON */
-.primary-btn-B {
-  background: linear-gradient(135deg, #ff9500, #ff7a00);
-  color: #fff;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 12px;
-  cursor: pointer;
-  flex: 1;
+  border-radius: 14px;
+  font-size: 0.85rem;
   font-weight: 600;
-  font-size: 15px;
+
+  background: rgba(255,255,255,0.75);
+  box-shadow: inset 0 0 0 1px rgba(229,231,235,0.9);
+}
+
+.option-item-B span:last-child {
+  color: #111827;
+}
+
+/* ================= BUTTONS ================= */
+.primary-btn-B {
+  background: rgba(255, 245, 126, 0.25);
+  color: black;
+  border: 1px solid;
+  padding: 12px 22px;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 800;
+  cursor: pointer;
   transition: all 0.25s ease;
+
+  box-shadow: 0 2px 10px rgba(238, 207, 95, 0.45);
 }
 
 .primary-btn-B:hover {
   transform: translateY(-1px);
-  box-shadow: 0 14px 32px rgba(255, 149, 0, 0.45);
 }
 
-/* SECONDARY BUTTON */
 .secondary-btn-B {
-  background: #ffffff;
-  border: 1px solid #d1d5db;
-  padding: 12px 20px;
-  border-radius: 12px;
+  background: rgba(255,255,255,0.75);
+  border: 1px solid rgba(229,231,235,0.9);
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
   cursor: pointer;
-  flex: 1;
-  font-weight: 500;
-  font-size: 15px;
-  color: #374151;
-  transition: all 0.2s ease;
 }
 
-.secondary-btn-B:hover {
-  border-color: #ff9500;
-  color: #ff9500;
-  box-shadow: 0 8px 20px rgba(255, 149, 0, 0.2);
-}
-
-/* ===== MOBILE RESPONSIVE ===== */
-@media (max-width: 768px) {
-  .shop-details-B {
-    padding: 18px;
-  }
-
+/* ================= MOBILE ================= */
+@media (max-width: 900px) {
   .shop-header-B {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .shop-header-banner-B {
-    width: 100%;
-    height: 220px;
-  }
-
-  .options-grid-B {
     grid-template-columns: 1fr;
   }
 
-  .shop-actions-B {
-    flex-direction: column;
-  }
-
-  .primary-btn-B,
-  .secondary-btn-B {
-    width: 100%;
+  .shop-header-banner-B {
+    height: 200px;
   }
 }
 
-.shop-top-bar-B {
-  padding: 16px 24px 0;
-}
+@media (max-width: 640px) {
+  .shop-details-B {
+    padding: 16px;
+  }
 
-.back-btn-B {
-  font-size: 14px;
-  padding: 6px 14px;
-  margin-bottom: 4px;
-}
-
-.shop-header-left-B {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.create-order-btn-B {
-  margin-top: 16px;
-  align-self: flex-start;
+  .shop-name-B {
+    font-size: 1.6rem;
+  }
 }

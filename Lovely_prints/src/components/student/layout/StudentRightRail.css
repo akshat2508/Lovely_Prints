@@ -1,0 +1,122 @@
+/* ================= WRAPPER ================= */
+.right-rail-inner {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ================= CARD BASE ================= */
+.rail-card {
+  position: relative;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+
+  box-shadow:
+    0 20px 40px rgba(0,0,0,0.08),
+    inset 0 0 0 1px rgba(255,255,255,0.35);
+
+  overflow: hidden;
+  padding: 16px;
+}
+
+/* ================= MAP CARD ================= */
+.map-card {
+  height: 240px;
+  padding: 0;
+}
+
+.map-graphic {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.95;
+}
+
+/* Soft gradient overlay */
+.map-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.35),
+    rgba(0,0,0,0.05)
+  );
+}
+
+.map-overlay {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  z-index: 2;
+  color: #ffffff;
+}
+
+.map-overlay h4 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.map-overlay p {
+  margin: 4px 0 0;
+  font-size: 0.75rem;
+  opacity: 0.9;
+}
+
+/* ================= SUPPORT CARD ================= */
+.support-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Avatar */
+.support-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #26ccc2, #6aece1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  box-shadow: 0 6px 18px rgba(38,204,194,0.45);
+}
+
+/* Text */
+.support-text strong {
+  font-size: 0.95rem;
+  color: #111827;
+}
+
+.support-text p {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+/* Button */
+.support-btn {
+  margin-top: 6px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #ffffff;
+
+  background: linear-gradient(135deg, #26ccc2, #6aece1);
+  box-shadow: 0 10px 24px rgba(38,204,194,0.45);
+  transition: all 0.25s ease;
+}
+
+.support-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(38,204,194,0.6);
+}

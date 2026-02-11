@@ -4,7 +4,7 @@ const OpenPoliciesModal = ({ onAccept }) => {
   return (
     <div className="policy-overlay">
       <div className="policy-modal">
-        <h2>📜 Lovely Prints – Usage Policies</h2>
+        <h2>📜 KaagaZ – Usage Policies</h2>
 
         <div className="policy-content">
           <ul>

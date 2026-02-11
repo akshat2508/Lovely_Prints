@@ -110,13 +110,32 @@ async getUserById(userId) {
 async createOrder(orderData, token) {
   const supabaseUser = getUserSupabase(token);
 
-  const { data: userData } = await supabaseUser.auth.getUser();
+  // 1️⃣ Authenticated user
+  const { data: userData, error: userError } =
+    await supabaseUser.auth.getUser();
 
+  if (userError || !userData?.user) {
+    return { error: { message: "Invalid user" } };
+  }
+
+  // 2️⃣ Fetch shop → organisation (trusted source)
+  const { data: shop, error: shopError } = await supabaseUser
+    .from("shops")
+    .select("organisation_id")
+    .eq("id", orderData.shop_id)
+    .single();
+
+  if (shopError || !shop) {
+    return { error: { message: "Invalid shop" } };
+  }
+
+  // 3️⃣ Insert order (RLS-safe)
   return await supabaseUser
-    .from('orders')
+    .from("orders")
     .insert({
       ...orderData,
-      student_id: userData.user.id, // ✅ FIX
+      student_id: userData.user.id,           // 🔐 derived
+      organisation_id: shop.organisation_id,  // 🔐 derived
     })
     .select()
     .single();
@@ -148,6 +167,7 @@ async getOrdersByStudentId(studentId, token) {
       urgency_fee,
       delivery_otp,
       otp_verified,
+      pickup_at,
 
       total_price,
       notes,
@@ -524,6 +544,7 @@ return await supabaseAdmin
     is_paid,
     notes,
     created_at,
+    pickup_at,
     student_id,
     total_price,
 

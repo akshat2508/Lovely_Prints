@@ -1,4 +1,4 @@
-import "./modals.css";
+import "./trackOrderModal-G.css";
 import { useEffect, useState } from "react";
 import {
   Clock,
