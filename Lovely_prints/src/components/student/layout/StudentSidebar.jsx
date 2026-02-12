@@ -1,5 +1,6 @@
 import { useStudentData } from "../context/StudentDataContext";
 import "./StudentSidebar.css";
+import { useEffect, useState } from "react";
 
 const StudentSidebar = () => {
   const { flowStage } = useStudentData();
@@ -11,6 +12,23 @@ const StudentSidebar = () => {
     { id: 4, title: "Review Order", subtitle: "Confirm & pay" },
     { id: 5, title: "Orders", subtitle: "Track & collect" },
   ];
+const tips = [
+  "Choose nearby shops for faster prints",
+  "Double-check page orientation before uploading",
+  "Bulk prints may get discounted pricing",
+  "Upload PDFs for best formatting results",
+  "Urgent orders close before shop closing time"
+];
+
+const [tipIndex, setTipIndex] = useState(0);
+
+useEffect(() => {
+  const interval = setInterval(() => {
+    setTipIndex((prev) => (prev + 1) % tips.length);
+  }, 5000);
+
+  return () => clearInterval(interval);
+}, []);
 
   return (
     <div className="student-sidebar-inner">
@@ -47,12 +65,24 @@ const StudentSidebar = () => {
       </nav>
 
       {/* Footer */}
-      <div className="sidebar-footer">
-        <div className="sidebar-tip">
-          💡 Tip  
-          <span>Choose nearby shops for faster prints</span>
-        </div>
+     <div className="sidebar-footer">
+  <div className="sidebar-tip">
+    💡 Tip
+    <div className="tip-slider">
+      <div
+        className="tip-track"
+        style={{ transform: `translateX(-${tipIndex * 100}%)` }}
+      >
+        {tips.map((tip, index) => (
+          <span key={index} className="tip-item">
+            {tip}
+          </span>
+        ))}
       </div>
+    </div>
+  </div>
+</div>
+
     </div>
   );
 };

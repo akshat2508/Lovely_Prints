@@ -15,7 +15,7 @@
   width: 80px;
   height: 80px;
   background: #f4f6ff;
-  color: #ff9500;
+  color: #92400e;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -37,17 +37,18 @@
   margin-bottom: 24px;
 }
 
-.primary-btn {
+.primary-btn-k {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: #ff9500;
-  color: #fff;
+  background: rgba(255, 245, 126, 0.25);
+  color: #92400e;
   border: none;
   padding: 10px 18px;
   border-radius: 10px;
   font-weight: 500;
   cursor: pointer;
+  border: 1px solid;
   transition: background 0.2s ease, transform 0.2s ease;
 }
 

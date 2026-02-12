@@ -5,7 +5,12 @@
   flex-direction: column;
   gap: 22px;
 }
+.sidebar-header{
+      border: 1px solid;
+    border-radius: 12px;
+    padding: 16px;
 
+}
 /* ================= HEADER ================= */
 .sidebar-header h2 {
   font-size: 1.15rem;
@@ -108,5 +113,32 @@
 .sidebar-tip span {
   display: block;
   margin-top: 4px;
+  font-size: 0.75rem;
+}
+.sidebar-tip {
+  font-size: 0.8rem;
+  background: rgba(255, 245, 126, 0.25);
+  border: 1px dashed rgba(255, 183, 108, 0.6);
+  padding: 12px;
+  border-radius: 12px;
+  color: #92400e;
+  overflow: hidden;
+}
+
+/* Slider container */
+.tip-slider {
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+/* Track that moves */
+.tip-track {
+  display: flex;
+  transition: transform 0.6s ease-in-out;
+}
+
+/* Each tip */
+.tip-item {
+  min-width: 100%;
   font-size: 0.75rem;
 }

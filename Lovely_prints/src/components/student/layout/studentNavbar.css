@@ -118,6 +118,11 @@
   align-items: center;
   gap: 12px;
 }
+.brand-z {
+  color: #ff9a4d;
+  font-weight: 700;
+}
+
 
 .logout-glass-btn {
   padding: 8px 16px;

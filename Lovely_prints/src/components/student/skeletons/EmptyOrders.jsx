@@ -15,7 +15,7 @@ export default function EmptyOrders() {
         Once you do, they’ll appear right here.
       </p>
 
-      <button className="primary-btn">
+      <button className="primary-btn-k">
         <FilePlus size={18} />
         Place your first order
       </button>

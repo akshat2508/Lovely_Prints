@@ -41,10 +41,12 @@
 
 /* ================= CENTER CONTENT ================= */
 .student-layout-center {
+  position: relative;
   min-width: 0;
   border-radius: 22px;
+  padding: 28px;
 
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(18px) saturate(1.25);
   -webkit-backdrop-filter: blur(18px) saturate(1.25);
 
@@ -52,9 +54,26 @@
     0 25px 60px rgba(0,0,0,0.08),
     inset 0 0 0 1px rgba(255,255,255,0.4);
 
-  padding: 28px;
   overflow: hidden;
+  isolation: isolate; /* VERY IMPORTANT */
 }
+.student-layout-center::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 22px;
+
+  background-image: url("../assets/bg.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  opacity: 0.3; /* keep LOW */
+  z-index: -1;   /* behind everything */
+
+  pointer-events: none;
+}
+
 
 /* ================= RIGHT RAIL ================= */
 .student-right-rail {

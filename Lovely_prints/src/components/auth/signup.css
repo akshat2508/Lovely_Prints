@@ -1,0 +1,187 @@
+/* ================= SIGNUP SPECIFIC STYLES ================= */
+/* This file extends auth.css with signup-specific features */
+
+/* Select Dropdown Enhancement */
+.auth-select-lp {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 18px;
+  padding-right: 48px;
+  cursor: pointer;
+}
+
+.auth-select-lp:focus {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%234ecdc4'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+}
+
+.auth-select-lp option {
+  padding: 12px;
+  background: var(--bg-white);
+  color: var(--text-primary);
+}
+
+/* Password Strength Indicator */
+.password-strength-indicator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+  animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.strength-bars {
+  flex: 1;
+  display: flex;
+  gap: 6px;
+  height: 4px;
+}
+
+.strength-bar {
+  flex: 1;
+  height: 100%;
+  border-radius: 2px;
+  background-color: #e2e8f0;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.strength-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  min-width: 60px;
+  text-align: right;
+  transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced Input Group for Multiple Fields */
+.input-group + .input-group {
+  margin-top: 0;
+}
+
+/* Consistent spacing between all inputs */
+.input-group {
+  margin-bottom: 20px;
+}
+
+/* Better spacing for signup form with more fields */
+.auth-card-lp .auth-form .input-group:first-child {
+  margin-top: 0;
+}
+
+.auth-card-lp .auth-form .input-group:last-of-type {
+  margin-bottom: 20px;
+}
+
+/* Enhanced eye toggle positioning for confirm password */
+.input-group:has(.eye-toggle) .auth-input-lp {
+  padding-right: 48px;
+}
+
+/* Responsive adjustments for signup */
+@media (max-width: 900px) {
+  /* Ensure proper spacing on mobile for longer form */
+  .auth-card-lp {
+    max-height: calc(100vh - 80px);
+    overflow-y: auto;
+  }
+
+  /* Custom scrollbar for form overflow */
+  .auth-card-lp::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .auth-card-lp::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 3px;
+  }
+
+  .auth-card-lp::-webkit-scrollbar-thumb {
+    background: rgba(56, 178, 172, 0.3);
+    border-radius: 3px;
+  }
+
+  .auth-card-lp::-webkit-scrollbar-thumb:hover {
+    background: rgba(56, 178, 172, 0.5);
+  }
+}
+
+@media (max-width: 480px) {
+  /* Tighter spacing on small screens */
+  .input-group {
+    margin-bottom: 16px;
+  }
+
+  .password-strength-indicator {
+    gap: 10px;
+  }
+
+  .strength-label {
+    font-size: 0.75rem;
+    min-width: 50px;
+  }
+}
+
+/* Accessibility enhancements */
+.auth-select-lp:focus-visible {
+  outline: 2px solid #4ecdc4;
+  outline-offset: 2px;
+}
+
+/* Smooth transitions for all interactive elements */
+.auth-select-lp,
+.strength-bar,
+.strength-label {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced visual feedback for filled select */
+.input-group.filled .auth-select-lp {
+  border-color: #cbd5e1;
+  color: var(--text-primary);
+}
+
+/* Better placeholder styling for select */
+.auth-select-lp option:first-child {
+  color: var(--text-tertiary);
+}
+
+/* Loading state enhancements */
+.auth-btn-lp.loading .btn-content {
+  gap: 12px;
+}
+
+/* Additional polish for the signup experience */
+.auth-card-lp .card-title {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #38b2ac 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Subtle hover effect on input labels */
+.input-label {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.input-group:hover .input-label {
+  color: var(--text-primary);
+}
+
+/* Enhanced focus ring for better accessibility */
+.auth-input-lp:focus-visible,
+.auth-select-lp:focus-visible {
+  outline: 2px solid #4ecdc4;
+  outline-offset: 2px;
+}

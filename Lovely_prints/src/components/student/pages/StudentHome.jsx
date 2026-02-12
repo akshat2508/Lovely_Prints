@@ -9,7 +9,7 @@ import "./studentHome.css";
 
 const StudentHome = () => {
   const navigate = useNavigate();
-  const { shops, shopsLoading, fetchShops , setFlowStage } = useStudentData();
+  const { shops, shopsLoading, fetchShops, setFlowStage } = useStudentData();
   const [shopStatusFilter, setShopStatusFilter] = useState("all");
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -20,30 +20,27 @@ const StudentHome = () => {
     fetchShops();
   }, []);
   const handleAcceptPolicies = () => {
-  setShowPolicies(false);
-};
-
+    setShowPolicies(false);
+  };
 
   useEffect(() => {
     if (!shops) return;
 
     const filtered = shops.filter((shop) => {
-  const matchesSearch =
-    shop.shop_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    shop.block.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesSearch =
+        shop.shop_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        shop.block.toLowerCase().includes(searchTerm.toLowerCase());
 
-  const matchesStatus =
-    shopStatusFilter === "all" ||
-    (shopStatusFilter === "open" && shop.is_active) ||
-    (shopStatusFilter === "closed" && !shop.is_active);
+      const matchesStatus =
+        shopStatusFilter === "all" ||
+        (shopStatusFilter === "open" && shop.is_active) ||
+        (shopStatusFilter === "closed" && !shop.is_active);
 
-  return matchesSearch && matchesStatus;
-});
-
+      return matchesSearch && matchesStatus;
+    });
 
     setFilteredShops(filtered);
   }, [searchTerm, shops, shopStatusFilter]);
-
 
   if (shopsLoading) {
     return (
@@ -65,6 +62,7 @@ const StudentHome = () => {
       <h1 className="student-home-title">Choose a Print Shop</h1>
 
       {/* Search */}
+      <div className="shop-filter-AB">
       <div className="shop-search-A">
         <input
           type="text"
@@ -74,27 +72,28 @@ const StudentHome = () => {
         />
       </div>
       <div className="shop-filter-A">
-  <button
-    className={shopStatusFilter === "all" ? "active" : ""}
-    onClick={() => setShopStatusFilter("all")}
-  >
-    All
-  </button>
+        <button
+          className={shopStatusFilter === "all" ? "active" : ""}
+          onClick={() => setShopStatusFilter("all")}
+        >
+          All
+        </button>
 
-  <button
-    className={shopStatusFilter === "open" ? "active" : ""}
-    onClick={() => setShopStatusFilter("open")}
-  >
-    Open
-  </button>
+        <button
+          className={shopStatusFilter === "open" ? "active" : ""}
+          onClick={() => setShopStatusFilter("open")}
+        >
+          Open
+        </button>
 
-  <button
-    className={shopStatusFilter === "closed" ? "active" : ""}
-    onClick={() => setShopStatusFilter("closed")}
-  >
-    Closed
-  </button>
-</div>
+        <button
+          className={shopStatusFilter === "closed" ? "active" : ""}
+          onClick={() => setShopStatusFilter("closed")}
+        >
+          Closed
+        </button>
+      </div>
+      </div>
 
       <div className="shop-grid">
         {filteredShops.map((shop) => (
@@ -102,12 +101,11 @@ const StudentHome = () => {
             key={shop.id}
             className={`shop-card-A ${!shop.is_active ? "shop-closed" : ""}`}
             onClick={() => {
-  if (!shop.is_active) return;
+              if (!shop.is_active) return;
 
-  setFlowStage(2); // 🔥 Move to Print Options stage
-  navigate(`/student/shop/${shop.id}`);
-}}
-
+              setFlowStage(2); // 🔥 Move to Print Options stage
+              navigate(`/student/shop/${shop.id}`);
+            }}
           >
             {/* Open / Closed Tag */}
             <div
@@ -135,9 +133,14 @@ const StudentHome = () => {
                 </span>
               </div>
 
+               <div className="shop-details-box-A">
+                <span className="shop-time-A">
+                  <strong>Opens at:</strong> {shop.open_time.slice(0, 5)} AM
+                </span>
+              </div>
               <div className="shop-details-box-A">
                 <span className="shop-time-A">
-                  <strong>Closes at:</strong> {shop.close_time.slice(0 , 5)} PM
+                  <strong>Closes at:</strong> {shop.close_time.slice(0, 5)} PM
                 </span>
               </div>
             </div>
@@ -145,42 +148,38 @@ const StudentHome = () => {
         ))}
 
         {filteredShops.length === 0 && !shopsLoading && (
-  <div className="no-shops-minimal-A">
-    <div className="no-shops-icon-A">
-      <svg
-        width="48"
-        height="48"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M6 9V2h12v7" />
-        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
-        <path d="M6 14h12v8H6z" />
-      </svg>
-    </div>
+          <div className="no-shops-minimal-A">
+            <div className="no-shops-icon-A">
+              <svg
+                width="48"
+                height="48"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M6 9V2h12v7" />
+                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                <path d="M6 14h12v8H6z" />
+              </svg>
+            </div>
 
-    {/* Show heading ONLY when Open filter has no shops */}
-    {shopStatusFilter === "open" && (
-      <h3>No print shops available</h3>
-    )}
+            {/* Show heading ONLY when Open filter has no shops */}
+            {shopStatusFilter === "open" && <h3>No print shops available</h3>}
 
-    <p>
-      {searchTerm
-        ? "Try adjusting your search or filters."
-        : shopStatusFilter === "open"
-        ? "All shops are currently closed."
-        : shopStatusFilter === "closed"
-        ? "All available shops are open right now."
-        : "Print shops will appear here once available."}
-    </p>
-  </div>
-)}
-
-
+            <p>
+              {searchTerm
+                ? "Try adjusting your search or filters."
+                : shopStatusFilter === "open"
+                  ? "All shops are currently closed."
+                  : shopStatusFilter === "closed"
+                    ? "All available shops are open right now."
+                    : "Print shops will appear here once available."}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
