@@ -6,15 +6,17 @@
 
 /* ================= TITLE ================= */
 .student-home-title {
-  font-size: 1.8rem;
-  font-weight: 800;
-  color: #111827;
-  margin-bottom: 18px;
+      font-size: 1.8rem;
+    font-weight: 800;
+    color: #111827;
+    margin-bottom: 18px;
+    border: 1px solid;
+    padding: 10px;
+    border-radius: 12px;
 }
-
 /* ================= SEARCH ================= */
 .shop-search-A {
-  margin-bottom: 16px;
+    margin-bottom: 16px;
 }
 
 .shop-search-A input {
@@ -39,11 +41,15 @@
 
 /* ================= FILTERS ================= */
 .shop-filter-A {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 26px;
+    display: flex;
+    gap: 10px;
+    margin-bottom: 26px;
+ 
 }
-
+.shop-filter-AB {
+    display: flex;
+    justify-content: space-between;
+}
 .shop-filter-A button {
   padding: 8px 16px;
   border-radius: 999px;

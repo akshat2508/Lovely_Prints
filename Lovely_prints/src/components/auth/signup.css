@@ -1,0 +1,642 @@
+/* ================= ENHANCED SIGNUP STYLES ================= */
+/* This file extends auth.css with rich signup-specific features */
+
+:root {
+  --primary-teal: #6AECE1;
+  --primary-cyan: #26CCC2;
+  --accent-yellow: #FFF57E;
+  --accent-orange: #FFB76C;
+  --bg-white: #ffffff;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-tertiary: #94a3b8;
+}
+
+/* ================= SELECT DROPDOWN ================= */
+.auth-select-lp {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 18px;
+  padding-right: 48px;
+  cursor: pointer;
+}
+
+.auth-select-lp:focus {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2326CCC2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+}
+
+.auth-select-lp option {
+  padding: 12px;
+  background: var(--bg-white);
+  color: var(--text-primary);
+}
+
+/* ================= PASSWORD STRENGTH INDICATOR ================= */
+.password-strength-indicator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+  animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.strength-bars {
+  flex: 1;
+  display: flex;
+  gap: 6px;
+  height: 4px;
+}
+
+.strength-bar {
+  flex: 1;
+  height: 100%;
+  border-radius: 2px;
+  background-color: #e2e8f0;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.strength-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  min-width: 60px;
+  text-align: right;
+  transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ================= ENHANCED LEFT PANEL ================= */
+
+/* Floating Shapes */
+.floating-shapes {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.shape {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.15;
+  animation: float 20s infinite ease-in-out;
+}
+
+.shape-1 {
+  width: 400px;
+  height: 400px;
+  background: linear-gradient(135deg, var(--primary-teal), var(--primary-cyan));
+  top: -100px;
+  left: -100px;
+  animation-delay: 0s;
+}
+
+.shape-2 {
+  width: 300px;
+  height: 300px;
+  background: linear-gradient(135deg, var(--accent-yellow), var(--accent-orange));
+  bottom: -80px;
+  right: -80px;
+  animation-delay: -7s;
+}
+
+.shape-3 {
+  width: 250px;
+  height: 250px;
+  background: linear-gradient(135deg, var(--primary-cyan), var(--accent-yellow));
+  top: 50%;
+  right: -50px;
+  animation-delay: -14s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -30px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+/* Additional Particles */
+.particle-6,
+.particle-7,
+.particle-8 {
+  position: absolute;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-teal), var(--accent-yellow));
+  opacity: 0.3;
+}
+
+.particle-6 {
+  width: 8px;
+  height: 8px;
+  top: 25%;
+  left: 15%;
+  animation: particleFloat 15s infinite ease-in-out;
+  animation-delay: -3s;
+}
+
+.particle-7 {
+  width: 6px;
+  height: 6px;
+  top: 65%;
+  left: 75%;
+  animation: particleFloat 18s infinite ease-in-out;
+  animation-delay: -8s;
+}
+
+.particle-8 {
+  width: 10px;
+  height: 10px;
+  top: 45%;
+  left: 85%;
+  animation: particleFloat 20s infinite ease-in-out;
+  animation-delay: -12s;
+}
+
+@keyframes particleFloat {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-100px) translateX(50px);
+    opacity: 0.6;
+  }
+}
+
+/* Logo Enhancements */
+.logo-glow {
+  position: absolute;
+  inset: -20px;
+  background: radial-gradient(circle, var(--primary-teal) 0%, transparent 70%);
+  opacity: 0.4;
+  filter: blur(30px);
+  animation: pulse 3s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.1);
+  }
+}
+
+/* Gradient Text */
+.gradient-text {
+  background: var(--accent-yellow);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.highlight-text {
+  color: var(--primary-teal);
+  font-weight: 600;
+}
+
+/* Enhanced Feature Pills */
+.feature-pills {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 32px;
+  position: relative;
+  z-index: 2;
+}
+
+.feature-pill {
+      display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background: var(--accent-yellow);
+    backdrop-filter: blur(10px);
+    border-radius: 100px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: black;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.feature-pill:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(106, 236, 225, 0.2);
+}
+
+.pill-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: linear-gradient(135deg, var(--primary-teal), var(--primary-cyan));
+  border-radius: 50%;
+  color: white;
+}
+
+/* ================= STATS GRID ================= */
+.stats-grid-k {
+  display: none;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 40px;
+  position: relative;
+  z-index: 2;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--primary-teal), var(--primary-cyan));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(106, 236, 225, 0.25);
+  border-color: var(--primary-teal);
+}
+
+.stat-card:hover::before {
+  opacity: 0.1;
+}
+
+.stat-icon {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, var(--primary-teal), var(--primary-cyan));
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  position: relative;
+  z-index: 1;
+}
+
+.stat-content {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.stat-number {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+}
+
+/* ================= BENEFITS LIST ================= */
+.benefits-list {
+  margin-top: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: relative;
+  z-index: 2;
+}
+
+.benefit-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: white;
+  font-size: 0.95rem;
+  animation: fadeInUp 0.6s ease-out backwards;
+}
+
+.benefit-item:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.benefit-item:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.benefit-item:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.benefit-check {
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, var(--primary-teal), var(--primary-cyan));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: white;
+}
+
+/* ================= TESTIMONIAL CARD ================= */
+.testimonial-card {
+  margin-top: 36px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  padding: 24px;
+  position: relative;
+  z-index: 2;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.testimonial-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary-teal), var(--accent-yellow), var(--accent-orange));
+  border-radius: 20px 20px 0 0;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(106, 236, 225, 0.2);
+}
+
+.testimonial-stars {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.testimonial-text {
+  color: white;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 16px;
+  font-style: italic;
+}
+
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.author-avatar {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--accent-orange), var(--accent-yellow));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 1.1rem;
+}
+
+.author-info {
+  flex: 1;
+}
+
+.author-name {
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 2px;
+}
+
+.author-role {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8rem;
+}
+
+/* ================= FORM INPUT ENHANCEMENTS ================= */
+.input-group + .input-group {
+  margin-top: 0;
+}
+
+.input-group {
+  margin-bottom: 20px;
+}
+
+.auth-card-lp .auth-form .input-group:first-child {
+  margin-top: 0;
+}
+
+.auth-card-lp .auth-form .input-group:last-of-type {
+  margin-bottom: 20px;
+}
+
+.input-group:has(.eye-toggle) .auth-input-lp {
+  padding-right: 48px;
+}
+
+/* Enhanced card title */
+.auth-card-lp .card-title {
+  background: linear-gradient(135deg, #0f172a 0%, var(--primary-cyan) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Subtle hover effect on input labels */
+.input-label {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.input-group:hover .input-label {
+  color: var(--text-primary);
+}
+
+/* Enhanced focus ring for better accessibility */
+.auth-input-lp:focus-visible,
+.auth-select-lp:focus-visible {
+  outline: 2px solid var(--primary-cyan);
+  outline-offset: 2px;
+}
+
+.input-group.filled .auth-select-lp {
+  border-color: #cbd5e1;
+  color: var(--text-primary);
+}
+
+.auth-select-lp option:first-child {
+  color: var(--text-tertiary);
+}
+
+/* Loading state enhancements */
+.auth-btn-lp.loading .btn-content {
+  gap: 12px;
+}
+
+/* ================= RESPONSIVE DESIGN ================= */
+
+@media (max-width: 1200px) {
+  .stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .stat-card {
+    padding: 16px 12px;
+  }
+
+  .stat-number {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 900px) {
+  /* Hide some elements on tablet/mobile to reduce clutter */
+  .stats-grid,
+  .testimonial-card {
+    display: none;
+  }
+
+  .benefits-list {
+    margin-top: 24px;
+  }
+
+  /* Ensure proper spacing on mobile for longer form */
+  .auth-card-lp {
+    max-height: calc(100vh - 80px);
+    overflow-y: auto;
+  }
+
+  /* Custom scrollbar for form overflow */
+  .auth-card-lp::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .auth-card-lp::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 3px;
+  }
+
+  .auth-card-lp::-webkit-scrollbar-thumb {
+    background: rgba(38, 204, 194, 0.3);
+    border-radius: 3px;
+  }
+
+  .auth-card-lp::-webkit-scrollbar-thumb:hover {
+    background: rgba(38, 204, 194, 0.5);
+  }
+}
+
+@media (max-width: 480px) {
+  /* Tighter spacing on small screens */
+  .input-group {
+    margin-bottom: 16px;
+  }
+
+  .password-strength-indicator {
+    gap: 10px;
+  }
+
+  .strength-label {
+    font-size: 0.75rem;
+    min-width: 50px;
+  }
+
+  .feature-pills {
+    gap: 8px;
+  }
+
+  .feature-pill {
+    font-size: 0.75rem;
+    padding: 8px 14px;
+  }
+
+  .benefit-item {
+    font-size: 0.85rem;
+  }
+
+  .shape-1,
+  .shape-2,
+  .shape-3 {
+    display: none;
+  }
+}
+
+/* ================= ACCESSIBILITY ================= */
+.auth-select-lp:focus-visible {
+  outline: 2px solid var(--primary-cyan);
+  outline-offset: 2px;
+}
+
+/* Smooth transitions for all interactive elements */
+.auth-select-lp,
+.strength-bar,
+.strength-label,
+.stat-card,
+.feature-pill,
+.testimonial-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

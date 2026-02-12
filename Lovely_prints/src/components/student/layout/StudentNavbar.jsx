@@ -13,8 +13,10 @@ const StudentNavbar = ({
       <div className="navbar-left">
         <img src={logo} alt="KaagaZ" className="navbar-logo" />
         <div className="navbar-brand">
-          <span className="brand-name">KaagaZ</span>
-          <span className="brand-sub">Student Dashboard</span>
+         <span className="brand-name">
+  Kaaga<span className="brand-z">Z</span>
+</span>
+
         </div>
       </div>
 

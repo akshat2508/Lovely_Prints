@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AppRoutes from "./routes/AppRoutes";
+import "leaflet/dist/leaflet.css";
 
 export default function App() {
   const navigate = useNavigate();

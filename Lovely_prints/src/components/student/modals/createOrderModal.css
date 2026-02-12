@@ -194,6 +194,7 @@ textarea.modal-input {
   background: #f9fffe;
   color: #666;
   font-size: 14px;
+  overflow: hidden;
 }
 
 .upload-box:hover {
