@@ -91,7 +91,7 @@
   margin-right: 18px;
 }
 
-.timeline-dot {
+.timeline-dot-G {
   width: 34px;
   height: 34px;
   border-radius: 50%;
@@ -112,12 +112,12 @@
   top: 34px;
 }
 
-.timeline-row.done .timeline-dot {
+.timeline-row.done .timeline-dot-G {
   background: #6AECE1;
   color: #063B3A;
 }
 
-.timeline-row.active .timeline-dot {
+.timeline-row.active .timeline-dot-G {
   background: #FFB76C;
   color: #111827;
 }

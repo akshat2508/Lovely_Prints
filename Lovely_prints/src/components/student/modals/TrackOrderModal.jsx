@@ -117,7 +117,7 @@ const TrackOrderModal = ({ order, onClose }) => {
               >
                 {/* Rail */}
                 <div className="timeline-rail">
-                  <div className="timeline-dot">
+                  <div className="timeline-dot-G">
                     <Icon size={16} />
                   </div>
                   {index !== STATUS_FLOW.length - 1 && (
