@@ -1,28 +1,25 @@
 import "./StudentRightRail.css";
 import mapImg from "../assets/map-illustration.png"; // placeholder (can swap later)
-
+import { Headset } from "lucide-react";
+import LiveMap from "../../liveMap/LiveMap";
 const StudentRightRail = () => {
   return (
     <div className="right-rail-inner">
       
       {/* MAP / GRAPHIC CARD */}
       <div className="rail-card map-card">
-        <img
-          src={mapImg}
-          alt="Nearby print shops"
-          className="map-graphic"
-        />
+        <LiveMap/>
 
         <div className="map-overlay">
           <h4>Nearby Print Shops</h4>
-          <p>Optimized for fastest pickup</p>
+          <p>Will Soon be available for real time navigation</p>
         </div>
       </div>
 
       {/* SUPPORT CARD */}
       <div className="rail-card support-card">
         <div className="support-avatar">
-          <span>👋</span>
+    <Headset size={22} strokeWidth={2} />
         </div>
 
         <div className="support-text">

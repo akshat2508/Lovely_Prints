@@ -3,8 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import { registerUser, getOrganisations } from "../../services/authService";
 import "./auth.css";
+import "./signup.css";
 import EmailConfirmationModal from "./modal/EmailConfirmationModal";
-import { Eye, EyeOff, Mail, Lock, User, Building2, CheckCircle2, ArrowRight, Sparkles, Shield, Users, Zap } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User, Building2, CheckCircle2, ArrowRight, Sparkles, Shield, Users, Zap, Award, Clock, TrendingUp, Globe, Star, Printer } from "lucide-react";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -105,9 +106,9 @@ export default function Signup() {
       case 1:
         return "#ef4444";
       case 2:
-        return "#f59e0b";
+        return "#FFB76C";
       case 3:
-        return "#10b981";
+        return "#26CCC2";
       default:
         return "#e2e8f0";
     }
@@ -120,45 +121,136 @@ export default function Signup() {
         <div className="auth-visual-lp">
           <div className="visual-overlay" />
 
-          {/* Animated particles */}
+          {/* Enhanced animated background elements */}
           <div className="particles-container">
             <div className="particle particle-1"></div>
             <div className="particle particle-2"></div>
             <div className="particle particle-3"></div>
             <div className="particle particle-4"></div>
             <div className="particle particle-5"></div>
+            <div className="particle particle-6"></div>
+            <div className="particle particle-7"></div>
+            <div className="particle particle-8"></div>
+          </div>
+
+          {/* Floating shapes */}
+          <div className="floating-shapes">
+            <div className="shape shape-1"></div>
+            <div className="shape shape-2"></div>
+            <div className="shape shape-3"></div>
           </div>
 
           <div className="visual-content">
             <div className="logo-container">
+              <div className="logo-glow"></div>
               <img src={logo} alt="Lovely Prints" className="visual-logo" />
               <div className="logo-shine"></div>
             </div>
 
             <h1 className="visual-heading">
               <span className="heading-line">Join Our</span>
-              <span className="heading-line">Community.</span>
+              <span className="heading-line gradient-text">Community.</span>
             </h1>
 
             <p className="visual-description">
               Start your journey with seamless printing.
               <br />
-              Create. Order. Collect.
+              <span className="highlight-text">Create. Order. Collect.</span>
             </p>
 
-            {/* Feature pills */}
+            {/* Enhanced Feature pills */}
             <div className="feature-pills">
               <div className="feature-pill">
-                <Zap size={14} />
+                <div className="pill-icon">
+                  <Zap size={16} />
+                </div>
                 <span>Quick Setup</span>
               </div>
               <div className="feature-pill">
-                <Shield size={14} />
+                <div className="pill-icon">
+                  <Shield size={16} />
+                </div>
                 <span>Secure Account</span>
               </div>
               <div className="feature-pill">
-                <Users size={14} />
+                <div className="pill-icon">
+                  <Users size={16} />
+                </div>
                 <span>Campus Network</span>
+              </div>
+            </div>
+
+            {/* New Stats Section */}
+            <div className="stats-grid-k">
+              <div className="stat-card">
+                <div className="stat-icon">
+                  <Printer size={20} />
+                </div>
+                <div className="stat-content">
+                  <div className="stat-number">50K+</div>
+                  <div className="stat-label">Prints Delivered</div>
+                </div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-icon">
+                  <Users size={20} />
+                </div>
+                <div className="stat-content">
+                  <div className="stat-number">2,500+</div>
+                  <div className="stat-label">Active Users</div>
+                </div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-icon">
+                  <Clock size={20} />
+                </div>
+                <div className="stat-content">
+                  <div className="stat-number">24/7</div>
+                  <div className="stat-label">Support Available</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Benefits List */}
+            <div className="benefits-list">
+              <div className="benefit-item">
+                <div className="benefit-check">
+                  <CheckCircle2 size={18} />
+                </div>
+                <span>Instant order tracking</span>
+              </div>
+              <div className="benefit-item">
+                <div className="benefit-check">
+                  <CheckCircle2 size={18} />
+                </div>
+                <span>Campus-wide collection points</span>
+              </div>
+              <div className="benefit-item">
+                <div className="benefit-check">
+                  <CheckCircle2 size={18} />
+                </div>
+                <span>Eco-friendly printing options</span>
+              </div>
+            </div>
+
+            {/* Testimonial Section */}
+            <div className="testimonial-card">
+              <div className="testimonial-stars">
+                <Star size={14} fill="#FFF57E" color="#FFF57E" />
+                <Star size={14} fill="#FFF57E" color="#FFF57E" />
+                <Star size={14} fill="#FFF57E" color="#FFF57E" />
+                <Star size={14} fill="#FFF57E" color="#FFF57E" />
+                <Star size={14} fill="#FFF57E" color="#FFF57E" />
+              </div>
+              <p className="testimonial-text">
+                "Made my college life so much easier! No more last-minute printing stress."
+              </p>
+              <div className="testimonial-author">
+                <div className="author-avatar">S</div>
+                <div className="author-info">
+                  <div className="author-name">Sarah Chen</div>
+                  <div className="author-role">Engineering Student</div>
+                </div>
               </div>
             </div>
           </div>

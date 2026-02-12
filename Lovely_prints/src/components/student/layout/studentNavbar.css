@@ -23,9 +23,13 @@
 
 /* ================= LEFT ================= */
 .navbar-left {
-  display: flex;
-  align-items: center;
-  gap: 14px;
+     display: flex;
+    align-items: center;
+    gap: 14px;
+    border-top: 1px solid;
+    padding: 7px;
+    border-radius: 12px;
+    border-bottom: 1px solid;
 }
 
 .navbar-logo {
@@ -61,13 +65,16 @@
 }
 
 .navbar-center a {
-  text-decoration: none;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #6b7280;
-  position: relative;
-  padding-bottom: 6px;
-  transition: color 0.25s ease;
+     text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #6b7280;
+    position: relative;
+    padding-bottom: 6px;
+    transition: color 0.25s ease;
+    border: 1px solid;
+    padding: 7px;
+    border-radius: 12px;
 }
 
 .navbar-center a:hover {
