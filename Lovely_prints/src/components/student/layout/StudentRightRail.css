@@ -126,14 +126,12 @@
 
   font-size: 0.85rem;
   font-weight: 600;
-  color: #ffffff;
+  color: black;
 
-  background: linear-gradient(135deg, #26ccc2, #6aece1);
-  box-shadow: 0 10px 24px rgba(38,204,194,0.45);
+  background: #FFECA5;
   transition: all 0.25s ease;
 }
 
 .support-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 14px 30px rgba(38,204,194,0.6);
 }

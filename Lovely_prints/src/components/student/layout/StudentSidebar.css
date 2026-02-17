@@ -3,68 +3,66 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 18px;
 }
-.sidebar-header{
-      border: 1px solid;
-    border-radius: 12px;
-    padding: 16px;
 
-}
 /* ================= HEADER ================= */
+.sidebar-header {
+  padding: 18px;
+  border-radius: 20px;
+  background: #F9F7F0; /* DarkCream */
+  border: 1px solid rgba(32,29,30,0.15);
+}
+
 .sidebar-header h2 {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   font-weight: 700;
   margin: 0;
-  color: #111827;
+  color: #201D1E; /* AlmostBlack */
 }
 
 .sidebar-header p {
-  font-size: 0.85rem;
-  color: #6b7280;
+  font-size: 0.8rem;
   margin-top: 4px;
+  color: #6F6F6F; /* MediumGray */
 }
 
-/* ================= NAV ================= */
+/* ================= sidebar ================= */
 .sidebar-nav {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  margin-top: 10px;
+  gap: 8px;
 }
 
-/* ================= ITEM ================= */
+/* ================= ITEM BASE ================= */
 .sidebar-item {
   display: flex;
   gap: 14px;
   align-items: flex-start;
-  padding: 12px 14px;
-  border-radius: 14px;
+  padding: 14px 16px;
+  border-radius: 18px;
   cursor: pointer;
-  transition: all 0.25s ease;
-  position: relative;
+  transition: all 0.2s ease;
+
+  background: #F9F7F0;
+  border: 1px solid rgba(32,29,30,0.15);
 }
 
-/* Hover */
-.sidebar-item:hover {
-  background: rgba(106, 236, 225, 0.12);
-}
-
-/* Active */
+/* ================= ACTIVE ================= */
 .sidebar-item.active {
-  background: linear-gradient(
-    135deg,
-    rgba(38, 204, 194, 0.22),
-    rgba(106, 236, 225, 0.18)
-  );
-  box-shadow:
-    inset 0 0 0 1px rgba(38,204,194,0.35),
-    0 8px 18px rgba(38,204,194,0.25);
+  background: #C4CE48; /* DarkGreen */
+  border: none;
 }
 
-/* Muted */
+/* Active text */
+.sidebar-item.active .sidebar-text strong,
+.sidebar-item.active .sidebar-text small {
+  color: #201D1E;
+}
+
+/* ================= MUTED ================= */
 .sidebar-item.muted {
-  opacity: 0.55;
+  opacity: 0.5;
 }
 
 /* ================= DOT ================= */
@@ -72,72 +70,50 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #d1d5db;
+  background: #201D1E; /* AlmostBlack */
   margin-top: 6px;
   flex-shrink: 0;
 }
 
-.sidebar-item.active .sidebar-dot {
-  background: linear-gradient(135deg, #26ccc2, #6aece1);
-  box-shadow: 0 0 0 4px rgba(38,204,194,0.25);
-}
+/* Active dot stays black for clean look */
 
 /* ================= TEXT ================= */
 .sidebar-text strong {
   font-size: 0.9rem;
-  color: #111827;
+  color: #201D1E;
   font-weight: 600;
 }
 
 .sidebar-text small {
   display: block;
   font-size: 0.75rem;
-  color: #6b7280;
-  margin-top: 2px;
+  margin-top: 3px;
+  color: #6F6F6F;
 }
 
-/* ================= FOOTER ================= */
+/* ================= FOOTER TIP ================= */
 .sidebar-footer {
   margin-top: auto;
 }
 
 .sidebar-tip {
   font-size: 0.8rem;
-  background: rgba(255, 245, 126, 0.25);
-  border: 1px dashed rgba(255, 183, 108, 0.6);
-  padding: 12px;
-  border-radius: 12px;
-  color: #92400e;
+  background: #FFECA5; /* SoftYellow */
+  border-radius: 18px;
+  padding: 14px;
+  color: #201D1E;
 }
 
-.sidebar-tip span {
-  display: block;
-  margin-top: 4px;
-  font-size: 0.75rem;
-}
-.sidebar-tip {
-  font-size: 0.8rem;
-  background: rgba(255, 245, 126, 0.25);
-  border: 1px dashed rgba(255, 183, 108, 0.6);
-  padding: 12px;
-  border-radius: 12px;
-  color: #92400e;
-  overflow: hidden;
-}
-
-/* Slider container */
 .tip-slider {
   overflow: hidden;
   margin-top: 6px;
 }
 
-/* Track that moves */
 .tip-track {
   display: flex;
   transition: transform 0.6s ease-in-out;
 }
 
-/* Each tip */
 .tip-item {
   min-width: 100%;
   font-size: 0.75rem;

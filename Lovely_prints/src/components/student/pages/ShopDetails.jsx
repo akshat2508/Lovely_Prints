@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useStudentData } from "../context/StudentDataContext";
-import CreateOrderModal from "../modals/CreateOrderModal";
+import CreateOrderPage from "../modals/createOrderPage";
 import ShopDetailsSkeleton from "../skeletons/ShopDetailsSkeleton";
 import ShopFallBack from "../assets/shop1.jpg";
 import "./shopDetails.css";
@@ -76,7 +76,7 @@ onClick={() => {
             className="primary-btn-B create-order-btn-B"
 onClick={() => {
   setFlowStage(3);   // 🔥 Move sidebar to Review Order stage
-  setShowCreateModal(true);
+  navigate(`/student/shop/${shop.id}/create`);
 }}
           >
             Create Print Order
@@ -143,7 +143,6 @@ onClick={() => {
           onClose={() => setShowCreateModal(false)}
           onSuccess={() => {
             invalidateShopOptions(shop.id);
-            setShowCreateModal(false);
               setFlowStage(4);   // 🔥 Orders stage
 
             navigate("/student/orders");
