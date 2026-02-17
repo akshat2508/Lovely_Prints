@@ -1,227 +1,163 @@
-/* ================= ROOT WRAPPER ================= */
+/* ================= ROOT ================= */
 .shop-details-B {
   width: 100%;
-  padding: 28px;
-  animation: fadeIn 0.25s ease;
+  padding: 32px;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* ================= TOP BAR ================= */
+/* ================= BACK BUTTON ================= */
 .shop-top-bar-B {
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
 
 .back-btn-B {
-  font-size: 0.8rem;
-  padding: 8px 14px;
-  border-radius: 999px;
+  background: #C4CE48;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
 }
 
-/* ================= HEADER CARD ================= */
+/* ================= HEADER ================= */
 .shop-header-B {
   display: grid;
-  grid-template-columns: 1fr 320px;
-  gap: 28px;
-
-  padding: 26px;
+  grid-template-columns: 1fr 420px;
   border-radius: 26px;
-
-  background: rgba(255,255,255,0.65);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-
-  box-shadow:
-    0 30px 60px rgba(0,0,0,0.12),
-    inset 0 0 0 1px rgba(255,255,255,0.45);
-
-  margin-bottom: 34px;
-  border: 1px solid;
+  overflow: hidden;
+  margin-bottom: 30px;
 }
 
-/* ================= LEFT ================= */
+/* LEFT PANEL */
 .shop-header-left-B {
+  background: #F4F4F4;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  justify-content: space-between;
 }
 
 .shop-name-B {
-  font-size: 2rem;
+  font-size: 24px;
   font-weight: 900;
-  background: black;
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #201D1E;
+  margin-bottom: 17px;
 }
 
-/* Meta rows */
 .shop-meta-B {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+  color: #6F6F6F;
 }
 
 .meta-label-B {
-  color: #6b7280;
   font-weight: 600;
+  margin-right: 6px;
 }
 
 .meta-value-B {
-  color: #111827;
   font-weight: 700;
+  color: #201D1E;
 }
 
-/* CTA */
-.create-order-btn-B {
-  margin-top: 8px;
-  align-self: flex-start;
+/* CREATE BUTTON */
+.primary-btn-B {
+  margin-top: 30px;
+  background: #B7C534;
+  border: none;
+  padding: 16px;
+  border-radius: 14px;
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  color: #201D1E;
+  transition: transform 0.2s ease;
 }
 
-/* ================= RIGHT (IMAGE) ================= */
+.primary-btn-B:hover {
+  transform: translateY(-2px);
+}
+
+/* RIGHT HERO PANEL */
 .shop-header-right-B {
+  background: linear-gradient(
+    180deg,
+    #F7C24B 0%,
+    #F1B640 100%
+  );
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 30px;
 }
 
 .shop-header-banner-B {
-  width: 100%;
-  height: 180px;
+  height: 170px;
   object-fit: contain;
-  border-radius: 20px;
-  border: 1px dashed;
-  box-shadow:
-    0 18px 40px rgba(0,0,0,0.25),
-    inset 0 0 0 1px rgba(255,255,255,0.4);
 }
 
-/* ================= OPTIONS ================= */
+/* ================= OPTIONS SECTION ================= */
 .shop-options-B {
-  margin-top: 10px;
+  margin-top: 20px;
 }
 
 .shop-options-B h2 {
-  font-size: 1.25rem;
+  font-size: 1.3rem;
   font-weight: 800;
-  margin-bottom: 18px;
-  color: #111827;
+  margin-bottom: 20px;
+  color: #201D1E;
 }
 
-/* Grid */
+/* GRID */
 .options-grid-B {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 22px;
 }
 
-/* ================= OPTION GROUP ================= */
+/* OPTION CARD */
 .option-group-B {
-  padding: 18px;
-  border-radius: 22px;
-
-  background: rgba(255,255,255,0.6);
-  backdrop-filter: blur(18px);
-
-  box-shadow:
-    0 18px 36px rgba(0,0,0,0.1),
-    inset 0 0 0 1px rgba(255,255,255,0.4);
-
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-  border: 1px solid;
-}
-
-.option-group-B:hover {
-  transform: translateY(-3px);
-  box-shadow:
-    0 26px 50px rgba(0,0,0,0.14),
-    inset 0 0 0 1px rgba(255,255,255,0.55);
+  padding: 22px;
+  border-radius: 20px;
+  border: 1px solid rgba(32,29,30,0.25);
+  background: #EFECE2;
 }
 
 .option-group-B h3 {
   font-size: 1rem;
   font-weight: 800;
-  margin-bottom: 12px;
-  color: #26ccc2;
+  margin-bottom: 14px;
+  color: #201D1E;
 }
 
-/* ================= OPTION ITEM ================= */
+/* OPTION ITEM */
 .option-item-B {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-
   padding: 10px 14px;
-  margin-bottom: 8px;
-
-  border-radius: 14px;
+  border-radius: 12px;
   font-size: 0.85rem;
-  font-weight: 600;
-
-  background: rgba(255,255,255,0.75);
-  box-shadow: inset 0 0 0 1px rgba(229,231,235,0.9);
+  margin-bottom: 8px;
+  background: #F9F7F0;
 }
 
 .option-item-B span:last-child {
-  color: #111827;
-}
-
-/* ================= BUTTONS ================= */
-.primary-btn-B {
-  background: rgba(255, 245, 126, 0.25);
-  color: black;
-  border: 1px solid;
-  padding: 12px 22px;
-  border-radius: 999px;
-  font-size: 0.9rem;
-  font-weight: 800;
-  cursor: pointer;
-  transition: all 0.25s ease;
-
-  box-shadow: 0 2px 10px rgba(238, 207, 95, 0.45);
-}
-
-.primary-btn-B:hover {
-  transform: translateY(-1px);
-}
-
-.secondary-btn-B {
-  background: rgba(255,255,255,0.75);
-  border: 1px solid rgba(229,231,235,0.9);
-  padding: 10px 18px;
-  border-radius: 999px;
-  font-size: 0.85rem;
   font-weight: 700;
-  cursor: pointer;
 }
 
-/* ================= MOBILE ================= */
+/* ================= RESPONSIVE ================= */
+@media (max-width: 1100px) {
+  .options-grid-B {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 @media (max-width: 900px) {
   .shop-header-B {
     grid-template-columns: 1fr;
   }
 
-  .shop-header-banner-B {
-    height: 200px;
-  }
-}
-
-@media (max-width: 640px) {
-  .shop-details-B {
-    padding: 16px;
-  }
-
-  .shop-name-B {
-    font-size: 1.6rem;
+  .options-grid-B {
+    grid-template-columns: 1fr;
   }
 }

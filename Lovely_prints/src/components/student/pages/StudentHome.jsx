@@ -116,11 +116,14 @@ const StudentHome = () => {
               {shop.is_active ? "Open" : "Closed"}
             </div>
 
-            <img
-              src={shop.banner_url || ShopFallBack}
-              alt={shop.shop_name}
-              className="shop-banner-A"
-            />
+           <div className="shop-banner-A">
+  <img
+    src={shop.banner_url || ShopFallBack}
+    alt={shop.shop_name}
+style={{ height: "160px", objectFit: "contain" }}
+  />
+</div>
+
 
             <div className="shop-info-A">
               <div className="shop-name-badge-A">

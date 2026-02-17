@@ -21,26 +21,26 @@ const StudentNavbar = ({
       </div>
 
       {/* CENTER */}
-      <nav className="navbar-center">
-        <NavLink to="/student" end>
-          Home
-        </NavLink>
+     <nav className="navbar-center">
+  <div className="nav-pill-container">
+    <NavLink to="/student" end>
+      Home
+    </NavLink>
 
-        <NavLink
-          to="/student/orders"
-          onClick={onOrdersClick}
-          className="orders-link"
-        >
-          Orders
-          {hasReadyOrders && (
-            <span className="ready-pill">READY</span>
-          )}
-        </NavLink>
+    <NavLink
+      to="/student/orders"
+      onClick={onOrdersClick}
+      className="orders-link"
+    >
+      Order
+    </NavLink>
 
-        <NavLink to="/student/profile">
-          Profile
-        </NavLink>
-      </nav>
+    <NavLink to="/student/profile">
+      Profile
+    </NavLink>
+  </div>
+</nav>
+
 
       {/* RIGHT */}
       <div className="navbar-right">

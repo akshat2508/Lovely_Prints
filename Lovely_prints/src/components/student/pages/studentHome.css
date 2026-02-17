@@ -1,172 +1,195 @@
 /* ================= ROOT ================= */
 .student-home {
   width: 100%;
-  padding: 28px;
+  padding: 4px;
 }
 
 /* ================= TITLE ================= */
 .student-home-title {
-      font-size: 1.8rem;
-    font-weight: 800;
-    color: #111827;
-    margin-bottom: 18px;
-    border: 1px solid;
-    padding: 10px;
-    border-radius: 12px;
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #201D1E;
+  margin-bottom: 6px;
 }
+
+/* ================= SEARCH + FILTER WRAPPER ================= */
+.shop-filter-AB {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
 /* ================= SEARCH ================= */
-.shop-search-A {
-    margin-bottom: 16px;
-}
-
 .shop-search-A input {
-  width: 100%;
-  max-width: 420px;
-  padding: 12px 16px;
-  border-radius: 14px;
-  border: 1px solid rgba(41, 39, 39, 0.4);
+  width: 340px;
+  padding: 14px 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(32,29,30,0.2);
 
-  background: rgba(255,255,255,0.65);
-  backdrop-filter: blur(14px);
-
+  background: #F9F7F0;
   font-size: 0.9rem;
   outline: none;
   transition: all 0.2s ease;
 }
 
 .shop-search-A input:focus {
-  border-color: #26ccc2;
-  box-shadow: 0 0 0 3px rgba(38,204,194,0.2);
+  border-color: #8AB62D;
+  box-shadow: 0 0 0 3px rgba(138,182,45,0.25);
 }
 
 /* ================= FILTERS ================= */
 .shop-filter-A {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 26px;
- 
+  display: flex;
+  gap: 14px;
 }
-.shop-filter-AB {
-    display: flex;
-    justify-content: space-between;
-}
+
 .shop-filter-A button {
-  padding: 8px 16px;
+  padding: 8px 18px;
   border-radius: 999px;
-  border: 1px solid;
-  cursor: pointer;
-
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #374151;
-
-  background: rgba(255,255,255,0.55);
-  backdrop-filter: blur(12px);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.4);
-
-  transition: all 0.2s ease;
-}
-
-.shop-filter-A button:hover {
-  transform: translateY(-1px);
+  border: 1px solid rgba(32,29,30,0.4);
+  background: transparent;
+  font-weight: 600;
 }
 
 .shop-filter-A button.active {
-    background: rgba(255, 245, 126, 0.25);
-    color: #92400e;
-    box-shadow: 0 8px 22px rgba(255, 245, 126, 0.25);
+  background: #C4CE48;
+  border: none;
 }
 
 /* ================= GRID ================= */
 .shop-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 22px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 28px;
 }
+@media (max-width: 900px) {
+  .shop-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 
 /* ================= SHOP CARD ================= */
 .shop-card-A {
   position: relative;
-  border-radius: 22px;
+  border-radius: 26px;
   overflow: hidden;
   cursor: pointer;
-
-  background: rgba(255,255,255,0.6);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-
-  box-shadow:
-    0 18px 40px rgba(0,0,0,0.08),
-    inset 0 0 0 1px rgba(255,255,255,0.35);
-
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition: transform 0.25s ease;
 }
 
 .shop-card-A:hover {
   transform: translateY(-4px);
-  box-shadow:
-    0 26px 60px rgba(0,0,0,0.12),
-    inset 0 0 0 1px rgba(255,255,255,0.45);
 }
 
 /* Closed */
 .shop-card-A.shop-closed {
-  opacity: 0.55;
+  opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* ================= HERO SECTION ================= */
+.shop-banner-A {
+  height: 200px;
+  background: linear-gradient(
+    180deg,
+    #F7C24B 0%,
+    #F1B640 100%
+  ); /* Golden Yellow feel */
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  padding: 8px;
 }
 
 /* ================= STATUS TAG ================= */
 .shop-status-tag {
   position: absolute;
-  top: 12px;
-  left: 12px;
-  z-index: 2;
-
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 0.65rem;
+  top: 20px;
+  left: 20px;
+  padding: 8px 18px;
+  border-radius: 14px;
+  font-size: 0.75rem;
   font-weight: 800;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.5px;
 }
 
 .shop-status-tag.open {
-  background: rgba(16,185,129,0.15);
-  color: #10b981;
+  background: #E6A92F;
+  color: white;
 }
 
 .shop-status-tag.closed {
-  background: rgba(239,68,68,0.15);
-  color: #ef4444;
+  background: #E57373;
+  color: white;
 }
 
-/* ================= IMAGE ================= */
-.shop-banner-A {
-  width: 100%;
-  height: 150px;
-  object-fit: contain;
-        border-top: 1px solid aquamarine;
-  border-radius: 20px;
-}
 
-/* ================= INFO ================= */
-.shop-info-A {
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  border: 1px solid;
-  border-radius: 20px;
+/* ================= INFO PANEL ================= */
+.shop-info-A   {  background: #ffffff;
+    padding: 8px;
+    /* border-radius: 30px; */
+    margin-top: -12px;
+    border-bottom: 1px solid;
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
 }
 
 .shop-name-A {
-  font-size: 1.05rem;
-  font-weight: 800;
-  color: #111827;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #201D1E;
+  margin-bottom: 10px;
 }
 
 .shop-details-box-A {
-  font-size: 0.8rem;
-  color: #6b7280;
+  font-size: 0.85rem;
+  color: #6F6F6F;
+  margin-bottom: 6px;
+}
+
+.no-shops-minimal-A {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  padding: 80px 20px;
+  border-radius: 22px;
+
+  background: #F9F7F0;
+  border: 1px solid rgba(32,29,30,0.15);
+}
+
+.no-shops-minimal-A h3 {
+  margin-top: 14px;
+  font-size: 1.2rem;
+  color: #201D1E;
+}
+
+.no-shops-minimal-A p {
+  margin-top: 6px;
+  font-size: 0.85rem;
+  color: #6F6F6F;
+  max-width: 400px;
+}
+
+/* ================= MOBILE ================= */
+@media (max-width: 640px) {
+  .student-home {
+    padding: 18px;
+  }
+
+  .shop-search-A input {
+    width: 100%;
+  }
 }
 
 /* ================= EMPTY STATE ================= */

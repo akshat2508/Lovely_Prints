@@ -1,166 +1,92 @@
 /* ================= NAVBAR ROOT ================= */
 .student-navbar-glass {
-  height: 72px;
+  height: 80px;
+  margin: 18px;
   padding: 0 28px;
 
   display: flex;
   align-items: center;
   justify-content: space-between;
 
-  position: sticky;
-  top: 0;
-  z-index: 1000;
+  border-radius: 32px;
 
-  background: rgba(255, 255, 255, 0.65);
-  backdrop-filter: blur(18px) saturate(1.2);
-  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  background: #F9F7F0; /* DarkCream */
+  border: 1px solid rgba(32,29,30,0.15);
 
-  border-bottom: 1px solid rgba(0,0,0,0.06);
-  box-shadow:
-    0 10px 30px rgba(0,0,0,0.06),
-    inset 0 0 0 1px rgba(255,255,255,0.35);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
 }
 
 /* ================= LEFT ================= */
 .navbar-left {
-     display: flex;
-    align-items: center;
-    gap: 14px;
-    border-top: 1px solid;
-    padding: 7px;
-    border-radius: 12px;
-    border-bottom: 1px solid;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .navbar-logo {
-  width: 38px;
-  height: 38px;
+  width: 42px;
+  height: 42px;
   object-fit: contain;
 }
 
-.navbar-brand {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.1;
-}
-
 .brand-name {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 800;
-  background: linear-gradient(135deg, #26ccc2, #6aece1);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.brand-sub {
-  font-size: 0.7rem;
-  color: #6b7280;
-  font-weight: 500;
+  color: #201D1E; /* AlmostBlack */
 }
 
 /* ================= CENTER ================= */
 .navbar-center {
   display: flex;
-  gap: 34px;
+  align-items: center;
 }
 
-.navbar-center a {
-     text-decoration: none;
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: #6b7280;
-    position: relative;
-    padding-bottom: 6px;
-    transition: color 0.25s ease;
-    border: 1px solid;
-    padding: 7px;
-    border-radius: 12px;
+.nav-pill-container {
+  display: flex;
+  gap: 16px;
 }
 
-.navbar-center a:hover {
-  color: #111827;
+.nav-pill-container a {
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 10px 22px;
+  border-radius: 14px;
+  transition: all 0.25s ease;
+
+  background: #FFECA5; /* SoftYellow */
+  color: #201D1E;
 }
 
-/* Active underline */
-.navbar-center a.active {
-  color: #92400e;
-}
-
-.navbar-center a.active::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -10px;
-  height: 3px;
-  border-radius: 999px;
-  background: #92400e;
-  box-shadow: 0 6px 16px rgba(38,204,194,0.45);
-}
-
-/* ================= READY PILL ================= */
-.ready-pill {
-  margin-left: 8px;
-  padding: 3px 10px;
-  font-size: 0.65rem;
-  font-weight: 800;
-  border-radius: 999px;
-
-  background: linear-gradient(135deg, #22c55e, #16a34a);
-  color: #ffffff;
-
-  box-shadow: 0 0 0 4px rgba(34,197,94,0.15);
-  animation: readyPulse 1.6s infinite;
-}
-
-@keyframes readyPulse {
-  0% { box-shadow: 0 0 0 0 rgba(34,197,94,0.4); }
-  70% { box-shadow: 0 0 0 8px rgba(34,197,94,0); }
-  100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+/* ACTIVE TAB */
+.nav-pill-container a.active {
+  background: #C4CE48; /* LimeGreen */
+  color: #201D1E;
+  box-shadow: 0 4px 10px rgba(138,182,45,0.3);
 }
 
 /* ================= RIGHT ================= */
-.navbar-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.brand-z {
-  color: #ff9a4d;
-  font-weight: 700;
-}
-
-
 .logout-glass-btn {
-  padding: 8px 16px;
-  border-radius: 12px;
-  font-size: 0.85rem;
+  padding: 10px 22px;
+  border-radius: 14px;
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
 
-  background: rgba(255, 255, 255, 0.65);
-  border: 1px solid rgba(0,0,0,0.08);
-  color: #374151;
+  background: #E57373; /* CoralRed */
+  border: none;
+  color: white;
 
-  backdrop-filter: blur(12px);
-  transition: all 0.25s ease;
+  transition: transform 0.2s ease;
 }
 
 .logout-glass-btn:hover {
-  background: linear-gradient(135deg, #ff6c6c, #f14343);
-  color: white;
-  box-shadow: 0 1px 4px rgba(255, 108, 108, 0.45);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
 }
 
 /* ================= MOBILE ================= */
 @media (max-width: 900px) {
   .navbar-center {
     display: none;
-  }
-
-  .student-navbar-glass {
-    height: 64px;
-    padding: 0 18px;
   }
 }

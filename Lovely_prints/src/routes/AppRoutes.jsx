@@ -15,7 +15,7 @@ import ForgotPassword from "../components/auth/ForgotPassword";
 import ResetPassword from "../components/auth/ResetPassword";
 import AdminDashboard from "../components/admin/AdminDashboard";
 import { StudentDataProvider } from "../components/student/context/StudentDataContext";
-
+import CreateOrderPage from "../components/student/modals/CreateOrderPage";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -36,6 +36,7 @@ const AppRoutes = () => {
           <Route index element={<StudentHome />} />
           <Route path="shop/:shopId" element={<ShopDetails />} />
           <Route path="orders" element={<StudentOrders />} />
+          <Route path="shop/:shopId/create" element={<CreateOrderPage />} />
           <Route path="profile" element={<StudentProfile />} />
         </Route>
       </Route>
