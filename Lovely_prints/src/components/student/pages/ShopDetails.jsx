@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useStudentData } from "../context/StudentDataContext";
 import ShopDetailsSkeleton from "../skeletons/ShopDetailsSkeleton";
-import ShopFallBack from "../assets/shop1.jpg";
+import ShopFallBack from "../assets/shop.png";
 import "./shopDetails.css";
 
 const ShopDetails = () => {

@@ -5,6 +5,7 @@ import {
   sendReadyForPickupEmail,
   sendOrderDeliveredEmail,
 } from "../services/email.service.js";
+import { sendPushToUser } from "../services/notification.service.js";
 
 export const createOrder = async (req, res, next) => {
   try {
@@ -79,20 +80,30 @@ export const updateOrderStatus = async (req, res, next) => {
     }
 
     // 📩 SEND READY EMAIL (ONLY ON TRANSITION)
-    if (status === "ready" && previousStatus !== "ready") {
-      const { data: context } = await supabaseService.getOrderEmailContext(id);
+  // 📩 SEND READY EMAIL + PUSH (ONLY ON TRANSITION)
+if (status === "ready" && previousStatus !== "ready") {
+  const { data: context } = await supabaseService.getOrderEmailContext(id);
 
-      if (context) {
-        try {
-          await sendReadyForPickupEmail({
-            email: context.student.email,
-            name: context.student.name,
-            orderNo: context.order_no,
-            shopName: context.shop.shop_name,
-          });
-        } catch (emailError) {}
-      }
-    }
+  if (context) {
+    try {
+      await sendReadyForPickupEmail({
+        email: context.student.email,
+        name: context.student.name,
+        orderNo: context.order_no,
+        shopName: context.shop.shop_name,
+      });
+    } catch (emailError) {}
+
+    try {
+      await sendPushToUser({
+        userId: existingOrder.student_id,
+        title: "Order Ready for Pickup 🖨️",
+        body: `Order #${context.order_no} is ready at ${context.shop.shop_name}`,
+      });
+    } catch (pushError) {}
+  }
+}
+
 
     return successResponse(res, data, "Order status updated successfully");
   } catch (error) {
@@ -152,14 +163,24 @@ export const verifyOrderOtp = async (req, res, next) => {
     const { data: context } = await supabaseService.getOrderEmailContext(id);
 
     if (context) {
-      try {
-        await sendOrderDeliveredEmail({
-          email: context.student.email,
-          name: context.student.name,
-          orderNo: context.order_no,
-        });
-      } catch (err) {}
-    }
+  try {
+    await sendOrderDeliveredEmail({
+      email: context.student.email,
+      name: context.student.name,
+      orderNo: context.order_no,
+    });
+  } catch (err) {}
+
+  try {
+    await sendPushToUser({
+  userId: context.student.id,
+  title: "Order Delivered ✅",
+  body: `Order #${context.order_no} has been delivered successfully.`,
+});
+
+  } catch (pushError) {}
+}
+
 
     return successResponse(res, data, "Order delivered successfully");
   } catch (err) {

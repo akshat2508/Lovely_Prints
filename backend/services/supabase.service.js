@@ -673,6 +673,7 @@ async getOrderEmailContext(orderId) {
     .select(`
       order_no,
       student:users!fk_order_student (
+        id,
         email,
         name
       ),
@@ -713,6 +714,28 @@ async updateShopById(shopId, updates) {
     .select()
     .single();
 }
+// Register device token
+async registerDeviceToken(userId, token, platform = "android") {
+  return await supabaseAdmin
+    .from("user_device_tokens")
+    .upsert(
+      {
+        user_id: userId,
+        fcm_token: token,
+        platform,
+      },
+      { onConflict: "user_id,fcm_token" }
+    );
+}
+
+// Get tokens by user
+async getUserDeviceTokens(userId) {
+  return await supabaseAdmin
+    .from("user_device_tokens")
+    .select("fcm_token")
+    .eq("user_id", userId);
+}
+
 
 }
 export { supabaseAdmin};
