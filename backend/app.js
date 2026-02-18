@@ -18,6 +18,7 @@ import finishTypeRoutes from './routes/finishType.routes.js';
 import paymentRoutes from './routes/payment.routes.js';
 import errorMiddleware from './middleware/error.middleware.js';
 import adminRoutes from "./routes/admin.routes.js";
+import notificationRoutes from "./routes/notification.routes.js";
 
 const app = express();
 
@@ -51,6 +52,7 @@ app.use('/api/shops', colorModeRoutes);
 app.use('/api/shops', finishTypeRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/admin',adminRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 app.use(errorMiddleware);
 

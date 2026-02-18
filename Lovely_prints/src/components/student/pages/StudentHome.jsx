@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useStudentData } from "../context/StudentDataContext";
 import ShopSkeleton from "../skeletons/ShopSkeleton";
-import ShopFallBack from "../assets/shop1.jpg";
+import ShopFallBack from "../assets/shop.png";
 import OpenPoliciesModal from "../modals/OpenPoliciesModal";
 
 import "./studentHome.css";
@@ -120,7 +120,7 @@ const StudentHome = () => {
   <img
     src={shop.banner_url || ShopFallBack}
     alt={shop.shop_name}
-style={{ height: "160px", objectFit: "contain" }}
+style={{ height: "220px", objectFit: "contain" }}
   />
 </div>
 
