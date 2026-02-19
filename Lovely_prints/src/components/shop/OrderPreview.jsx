@@ -1,5 +1,6 @@
 import React from "react";
 import { getDocumentDownloadUrl } from "../../services/shopService";
+import "./OrderPreview-L.css"
 
 export default function OrderPreview({ order, onClose }) {
   if (!order) return null;
@@ -8,158 +9,137 @@ export default function OrderPreview({ order, onClose }) {
     try {
       const url = await getDocumentDownloadUrl(order.documentId);
       window.open(url, "_blank");
-    } catch (err) {
+    } catch {
       alert("Failed to download document");
     }
   };
 
   return (
-    <div className="order-preview-overlay" onClick={onClose}>
+    <div className="order-preview-overlay-L" onClick={onClose}>
       <div
-        className={`order-preview ${order.isUrgent ? "urgent-preview" : ""}`}
+        className={`order-preview-L ${
+          order.isUrgent ? "urgent-preview-L" : ""
+        }`}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="preview-header">
+        {/* HEADER (fixed inside modal) */}
+        <div className="preview-header-L">
           <h3>Order Details</h3>
-          <button className="preview-close" onClick={onClose}>
+          <button className="preview-close-L" onClick={onClose}>
             ×
           </button>
         </div>
 
-        {/* Student Info */}
-        <div className="preview-section student">
-          <h4>Customer Information</h4>
+        {/* SCROLLABLE CONTENT AREA */}
+        <div className="preview-body-L">
 
-          <div className="preview-row">
-            <span className="preview-label">Name</span>
-            <span>{order.studentName || "—"}</span>
+          {/* Customer */}
+          <div className="preview-section-L">
+            <h4>Customer Information</h4>
+
+            <div className="preview-row-L">
+              <span className="preview-label-L">Name</span>
+              <span>{order.studentName || "—"}</span>
+            </div>
+
+            <div className="preview-row-L">
+              <span className="preview-label-L">Order ID</span>
+              <span>{order.id|| "—"}</span>
+            </div>
           </div>
 
-          <div className="preview-row">
-            <span className="preview-label">Customer ID</span>
-            <span>{order.studentId || "—"}</span>
+          {/* Document */}
+          <div className="preview-section-L">
+            <h4>Document</h4>
+
+            <div className="preview-row-L">
+              <span className="preview-label-L">File</span>
+              <span>{order.documentName}</span>
+            </div>
           </div>
+
+          {/* Specs */}
+          <div className="preview-section-L">
+            <h4>Print Specifications</h4>
+
+            <div className="preview-specs-L">
+              <span className="spec-pill-L">
+                <span className="spec-label-L">Paper:</span>
+                <span className="spec-value-L">{order.paperType}</span>
+              </span>
+
+              <span className="spec-pill-L">
+                <span className="spec-label-L">Color:</span>
+                <span className="spec-value-L">{order.colorMode}</span>
+              </span>
+
+              <span className="spec-pill-L">
+                <span className="spec-label-L">Finish:</span>
+                <span className="spec-value-L">{order.finishType}</span>
+              </span>
+
+              <span className="spec-pill-L">
+                <span className="spec-label-L">Copies:</span>
+                <span className="spec-value-L">{order.copies}</span>
+              </span>
+
+              <span className="spec-pill-L">
+                <span className="spec-label-L">Orientation:</span>
+                <span className="spec-value-L">{order.orientation}</span>
+              </span>
+            </div>
+          </div>
+
+          {/* Notes */}
+          <div className="preview-section-L">
+            <h4>Additional Instructions</h4>
+
+            <div className="notes-box-L">
+              {order.notes ? (
+                <p className="notes-text-L">{order.notes}</p>
+              ) : (
+                <p className="notes-empty-L">No additional instructions</p>
+              )}
+            </div>
+          </div>
+
+          {/* Meta */}
+          <div className="preview-section-L">
+            <div className="preview-row-L">
+              <span className="preview-label-L">Order No</span>
+              <span className="order-no-highlight-L">
+                #{order.orderNo}
+              </span>
+            </div>
+
+            <div className="preview-row-L">
+              <span className="preview-label-L">Status</span>
+              <span className={`status-badge-L ${order.status}`}>
+                {order.status}
+              </span>
+            </div>
+
+            <div className="preview-row-L">
+              <span className="preview-label-L">Placed At</span>
+              <span>
+                {new Date(order.createdAt).toLocaleString()}
+              </span>
+            </div>
+          </div>
+
         </div>
 
-        {/* Document */}
-        <div className="preview-section document">
-          <h4>Document</h4>
-
-          <div className="preview-row">
-            <span className="preview-label">File</span>
-            <span>{order.documentName}</span>
-          </div>
-        </div>
-
-        {/* Print Specifications */}
-        <div className="preview-section specs">
-          <h4>Print Specifications</h4>
-
-          <div className="preview-specs">
-            <span className="spec-pill">
-              <span className="spec-label">Paper:</span>
-              <span className="spec-value">{order.paperType}</span>
-            </span>
-
-            <span className="spec-pill">
-              <span className="spec-label">Color:</span>
-              <span className="spec-value">{order.colorMode}</span>
-            </span>
-
-            <span className="spec-pill">
-              <span className="spec-label">Finish:</span>
-              <span className="spec-value">{order.finishType}</span>
-            </span>
-
-            <span className="spec-pill">
-              <span className="spec-label">Copies:</span>
-              <span className="spec-value">{order.copies}</span>
-            </span>
-
-            <span className="spec-pill">
-              <span className="spec-label">Orientation:</span>
-              <span className="spec-value">{order.orientation}</span>
-            </span>
-          </div>
-        </div>
-
-        {/* Notes (placeholder for now) */}
-        <div className="preview-section notes">
-          <span className="preview-label">Additional Instructions</span>
-
-          <div className="notes-box">
-            {order.notes ? (
-              <p className="notes-text">{order.notes}</p>
-            ) : (
-              <p className="notes-empty">No additional instructions</p>
-            )}
-          </div>
-        </div>
-
-        {/* Order Meta */}
-        <div className="preview-section meta">
-          <div className="preview-row order-no-row">
-            <span className="preview-label">Order No</span>
-            <span className="order-no-highlight">#{order.orderNo}</span>
-          </div>
-
-          <div className="preview-row">
-            <span className="preview-label">Status</span>
-
-            <span className={`status-badge ${order.status}`}>
-              {order.status}
-            </span>
-          </div>
-          <div className="preview-row">
-            <span className="preview-label">Order ID</span>
-            <span>{`${order.id}`}</span>
-          </div>
-
-          <div className="preview-row">
-            <span className="preview-label">Urgency</span>
-            <span>
-              {order.isUrgent ? `Urgent (+₹${order.urgencyFee})` : "NO"}
-            </span>
-          </div>
-
-          <div className="preview-row">
-            <span className="preview-label">Payment</span>
-            <span>
-              {order.isPaid ? `₹${order.totalPrice} (Paid)` : "Not Paid ❌"}
-            </span>
-          </div>
-
-          {/* <div className="preview-row">
-            <span className="preview-label">Orientation</span>
-            <span>
-              {order.orientation === "landscape" ? "Landscape" : "Portrait"}
-            </span>
-          </div> */}
-
-          <div className="preview-row">
-            <span className="preview-label">Placed At</span>
-            <span>{new Date(order.createdAt).toLocaleString()}</span>
-          </div>
-        </div>
-
-        {/* ETA (placeholder for now) */}
-        <div className="preview-section eta">
-          <div className="preview-row">
-            <span className="preview-label">Estimated Time</span>
-            <span>{order.eta}</span>
-          </div>
-        </div>
-
-        {/* Actions */}
+        {/* ACTION FOOTER */}
         {order.isPaid && (
-          <div className="preview-actions">
+          <div className="preview-actions-L">
             <button
-              className="preview-download"
+              className="preview-download-L"
               onClick={handleDownload}
               disabled={order.status === "completed"}
             >
-              {order.status === "completed" ? "Completed" : "Download Document"}
+              {order.status === "completed"
+                ? "Completed"
+                : "Download Document"}
             </button>
           </div>
         )}

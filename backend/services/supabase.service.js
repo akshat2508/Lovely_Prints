@@ -584,7 +584,7 @@ async getPaymentByRazorpayOrder(razorpayOrderId) {
 async getShopByOwner(ownerId) {
   return await supabaseAnon
     .from('shops')
-    .select('id , shop_name , is_active')
+    .select('id , shop_name , is_active, close_time ,open_time')
     .eq('owner_id', ownerId)
     .single();
 }
