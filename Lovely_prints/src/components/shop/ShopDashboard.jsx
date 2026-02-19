@@ -17,21 +17,6 @@ import EmptyShopOrders from "./EmptyShopOrders";
 const SESSION_DURATION = 60 * 60 * 1000; // 1 hour
 const SESSION_KEY = "shop_session_start";
 
-const TIME_SLOTS = [
-  { label: "09:00 - 10:00", start: 9, end: 10 },
-  { label: "10:00 - 11:00", start: 10, end: 11 },
-  { label: "11:00 - 12:00", start: 11, end: 12 },
-  { label: "12:00 - 13:00", start: 12, end: 13 },
-  { label: "13:00 - 14:00", start: 13, end: 14 },
-  { label: "14:00 - 15:00", start: 14, end: 15 },
-  { label: "15:00 - 16:00", start: 15, end: 16 },
-  { label: "16:00 - 17:00", start: 16, end: 17 },
-];
-const getCurrentSlotLabel = (now) => {
-  const hour = now.getHours();
-  const slot = TIME_SLOTS.find((s) => hour >= s.start && hour < s.end);
-  return slot ? slot.label : null;
-};
 
 const normalizeDate = (d) => {
   const x = new Date(d);
@@ -44,10 +29,6 @@ const isSameDay = (a, b) =>
 
 const isFutureDay = (d) => normalizeDate(d) > normalizeDate(new Date());
 
-const getSlotForPickup = (date) => {
-  const hour = date.getHours();
-  return TIME_SLOTS.find((slot) => hour >= slot.start && hour < slot.end);
-};
 
 export default function ShopDashboard() {
   const [orders, setOrders] = useState([]);
@@ -78,6 +59,42 @@ export default function ShopDashboard() {
 
   const now = new Date();
 
+const generateTimeSlots = (openHour, closeHour) => {
+  const slots = [];
+
+  for (let hour = openHour; hour < closeHour; hour++) {
+    const start = hour;
+    const end = hour + 1;
+
+    slots.push({
+      label: `${String(start).padStart(2, "0")}:00 - ${String(end).padStart(2, "0")}:00`,
+      start,
+      end,
+    });
+  }
+
+  return slots;
+};
+
+const TIME_SLOTS = React.useMemo(() => {
+  if (!shop?.open_time || !shop?.close_time) return [];
+
+  // Extract hour from "09:00:00"
+  const openHour = parseInt(shop.open_time.split(":")[0], 10);
+  const closeHour = parseInt(shop.close_time.split(":")[0], 10);
+  return generateTimeSlots(openHour, closeHour);
+}, [shop]);
+
+
+const getCurrentSlotLabel = (now) => {
+  const hour = now.getHours();
+  const slot = TIME_SLOTS.find((s) => hour >= s.start && hour < s.end);
+  return slot ? slot.label : null;
+};
+const getSlotForPickup = (date) => {
+  const hour = date.getHours();
+  return TIME_SLOTS.find((slot) => hour >= slot.start && hour < slot.end);
+};
 
 // ---------------------voice unlock----------------------------//
 useEffect(() => {
@@ -395,6 +412,7 @@ useEffect(() => {
     return pickupDateTime < now;
   });
   /* ================= TODAY (slot-wise) ================= */
+  
   const todaysOrdersBySlot = {};
   TIME_SLOTS.forEach((s) => {
     todaysOrdersBySlot[s.label] = [];

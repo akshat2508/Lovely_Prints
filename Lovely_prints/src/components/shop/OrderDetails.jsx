@@ -176,7 +176,7 @@ export default function OrderDetails({
       <div className="order-body">
         <div className="student-info">
           <h3>{order.studentName}</h3>
-          <p>{order.id}</p>
+          <p>Order ID  : {order.id.slice(-6)}</p>
         </div>
 
         <div className="order-meta order-header">
