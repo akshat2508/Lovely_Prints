@@ -13,7 +13,7 @@ import {
 
 const ShopPrintOptions = ({ shop }) => {
   return (
-    <div className="admin-section">
+    <div className="admin-section-A">
       <h3>Print Options – {shop.shop_name}</h3>
 
       <PrintOptionSection

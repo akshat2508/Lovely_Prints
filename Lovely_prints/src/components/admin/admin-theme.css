@@ -45,7 +45,7 @@ body {
   100% { background-position: 400px 0; }
 }
 
-.skeleton {
+.skeleton-A {
   background: linear-gradient(
     90deg,
     #eee 25%,

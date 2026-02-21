@@ -1,5 +1,4 @@
 import "./admin.css";
-import "./admin-theme.css";
 import "./printOptions.css";
 
 import PrintOptionSection from "./PrintOptionSection";
@@ -19,47 +18,65 @@ const ShopPrintOptionsModal = ({ shop, onClose }) => {
   if (!shop) return null;
 
   return (
-    <div className="order-drawer-backdrop" onClick={onClose}>
+    <div className="settings-overlay-A" onClick={onClose}>
       <div
-        className="order-drawer print-options-drawer"
+        className="settings-panel-A"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="drawer-header">
-          <h3>Print Options – {shop.shop_name}</h3>
-          <button className="drawer-close" onClick={onClose}>
+        {/* Header */}
+        <div className="settings-header-A">
+          <div>
+            <div className="settings-label-A">
+              Print Configuration
+            </div>
+            <h2 className="settings-title-A">
+              {shop.shop_name}
+            </h2>
+          </div>
+
+          <button className="settings-close-A" onClick={onClose}>
             ✕
           </button>
         </div>
 
-        <PrintOptionSection
-          key={`paper-${shop.id}`}
-          title="Paper Types"
-          priceLabel="Base Price"
-          fetchFn={() => getShopPaperTypes(shop.id)}
-          addFn={(p) => addShopPaperType(shop.id, p)}
-          toggleFn={toggleShopPaperType}
-          priceKey="base_price"
-        />
+        <div className="settings-divider-A" />
 
-        <PrintOptionSection
-          key={`color-${shop.id}`}
-          title="Color Modes"
-          priceLabel="Extra Price"
-          fetchFn={() => getShopColorModes(shop.id)}
-          addFn={(p) => addShopColorMode(shop.id, p)}
-          toggleFn={toggleShopColorMode}
-          priceKey="extra_price"
-        />
+        {/* Sections */}
+        <div className="settings-section-A">
+          <PrintOptionSection
+            key={`paper-${shop.id}`}
+            title="Paper Types"
+            priceLabel="Base Price"
+            fetchFn={() => getShopPaperTypes(shop.id)}
+            addFn={(p) => addShopPaperType(shop.id, p)}
+            toggleFn={toggleShopPaperType}
+            priceKey="base_price"
+          />
+        </div>
 
-        <PrintOptionSection
-          key={`finish-${shop.id}`}
-          title="Finish Types"
-          priceLabel="Extra Price"
-          fetchFn={() => getShopFinishTypes(shop.id)}
-          addFn={(p) => addShopFinishType(shop.id, p)}
-          toggleFn={toggleShopFinishType}
-          priceKey="extra_price"
-        />
+        <div className="settings-section-A">
+          <PrintOptionSection
+            key={`color-${shop.id}`}
+            title="Color Modes"
+            priceLabel="Extra Price"
+            fetchFn={() => getShopColorModes(shop.id)}
+            addFn={(p) => addShopColorMode(shop.id, p)}
+            toggleFn={toggleShopColorMode}
+            priceKey="extra_price"
+          />
+        </div>
+
+        <div className="settings-section-A">
+          <PrintOptionSection
+            key={`finish-${shop.id}`}
+            title="Finish Types"
+            priceLabel="Extra Price"
+            fetchFn={() => getShopFinishTypes(shop.id)}
+            addFn={(p) => addShopFinishType(shop.id, p)}
+            toggleFn={toggleShopFinishType}
+            priceKey="extra_price"
+          />
+        </div>
       </div>
     </div>
   );
