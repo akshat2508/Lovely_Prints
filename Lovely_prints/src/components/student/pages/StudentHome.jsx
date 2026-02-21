@@ -99,7 +99,7 @@ const StudentHome = () => {
         {filteredShops.map((shop) => (
           <div
             key={shop.id}
-            className={`shop-card-A ${!shop.is_active ? "shop-closed" : ""}`}
+            className={`shop-card-AB ${!shop.is_active ? "shop-closed" : ""}`}
             onClick={() => {
               if (!shop.is_active) return;
 
@@ -116,7 +116,7 @@ const StudentHome = () => {
               {shop.is_active ? "Open" : "Closed"}
             </div>
 
-           <div className="shop-banner-A">
+           <div className="shop-banner-AB">
   <img
     src={shop.banner_url || ShopFallBack}
     alt={shop.shop_name}
