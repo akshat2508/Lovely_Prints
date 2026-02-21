@@ -14,7 +14,7 @@ import OrganisationTrends from "./OrganisationTrends";
 import ShopOrders from "./ShopOrders";
 import OrderDrawer from "./OrderDrawer";
 import ShopPrintOptionsModal from "./ShopPrintOptionsModal";
-import logo from "/Volumes/my_ssd/Lovely_prints/Lovely_prints/src/assets/logo.png"
+import logo from "/src/assets/logo.png"
 import "./admin-theme.css";
 import "./admin.css";
 
