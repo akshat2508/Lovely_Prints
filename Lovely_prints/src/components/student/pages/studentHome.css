@@ -73,7 +73,7 @@
 
 
 /* ================= SHOP CARD ================= */
-.shop-card-A {
+.shop-card-AB{
   position: relative;
   border-radius: 26px;
   overflow: hidden;
@@ -81,18 +81,18 @@
   transition: transform 0.25s ease;
 }
 
-.shop-card-A:hover {
+.shop-card-AB:hover {
   transform: translateY(-4px);
 }
 
 /* Closed */
-.shop-card-A.shop-closed {
+.shop-card-AB.shop-closed {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
 /* ================= HERO SECTION ================= */
-.shop-banner-A {
+.shop-banner-AB {
   height: 200px;
   background: linear-gradient(
     180deg,
