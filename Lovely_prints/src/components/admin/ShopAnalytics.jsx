@@ -1,37 +1,43 @@
-import React from 'react'
-import "./admin.css";
-import "./admin-theme.css"
+import "./organisationAnalytics.css";
 
 const ShopAnalytics = ({ shop, analytics }) => {
   if (!shop) return null;
-if (!analytics) {
-  return (
-    <div className="shop-analytics-grid">
-      <div className="stat-card skeleton stat-skeleton" />
-      <div className="stat-card skeleton stat-skeleton" />
-    </div>
-  );
-}
+
+  if (!analytics) {
+    return (
+      <div className="shop-metrics-A">
+        <div className="metric-card-A skeleton-A" />
+        <div className="metric-card-A skeleton-A" />
+      </div>
+    );
+  }
 
   return (
-    <div className="shop-analytics">
-      <h3>Shop: {shop.shop_name}</h3>
+    <div className="shop-analytics-section-A">
 
-      {!analytics ? (
-        <p>Loading shop analytics...</p>
-      ) : (
-        <div className="analytics-grid">
-          <div className="stat-card">
-            <div className="stat-value">{analytics.totalOrders}</div>
-            <div className="stat-label">Shop Orders</div>
-          </div>
-
-          <div className="stat-card">
-            <div className="stat-value">₹ {analytics.totalRevenue}</div>
-            <div className="stat-label">Shop Revenue</div>
-          </div>
+      <div className="shop-context-header-A">
+        <div>
+          <div className="shop-context-label-A">Shop Overview</div>
+          <h3 className="shop-context-title-A">{shop.shop_name}</h3>
         </div>
-      )}
+
+        <div className={`shop-context-status-A ${shop.is_active ? "open" : "closed"}`}>
+          {shop.is_active ? "Open" : "Closed"}
+        </div>
+      </div>
+
+      <div className="shop-metrics-A">
+        <div className="metric-card-A orders-A">
+          <div className="metric-label-A">Shop Orders</div>
+          <div className="metric-value-A">{analytics.totalOrders}</div>
+        </div>
+
+        <div className="metric-card-A  revenue-A">
+          <div className="metric-label-A">Shop Revenue</div>
+          <div className="metric-value-A">₹ {analytics.totalRevenue}</div>
+        </div>
+      </div>
+
     </div>
   );
 };

@@ -34,42 +34,65 @@ const PrintOptionSection = ({
   };
 
   return (
-    <div className="print-option-box">
-      <h4>{title}</h4>
+    <div className="config-section-A">
 
-      <div className="print-option-add">
+      <div className="config-header-A">
+        <h3 className="config-title-A">{title}</h3>
+      </div>
+
+      {/* Add Row */}
+      <div className="config-add-row-A">
         <input
+          className="config-input-A"
           placeholder="Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
+
         <input
           type="number"
+          className="config-input-A"
           placeholder={priceLabel}
           value={price}
           onChange={(e) => setPrice(e.target.value)}
         />
-        <button onClick={handleAdd}>Add</button>
+
+        <button className="config-add-btn-A" onClick={handleAdd}>
+          Add
+        </button>
       </div>
 
+      {/* Items */}
       {loading ? (
-        <div className="skeleton" style={{ height: 50 }} />
+        <div className="config-skeleton-A skeleton-A" />
       ) : (
-        items.map((item) => (
-          <div key={item.id} className="print-option-row">
-            <span>{item.name}</span>
-            <span>₹ {item[priceKey]}</span>
-            <button
-              className={item.is_active ? "active" : "inactive"}
-              onClick={() =>
-                toggleFn(item.id, !item.is_active).then(load)
-              }
-            >
-              {item.is_active ? "Disable" : "Enable"}
-            </button>
-          </div>
-        ))
+        <div className="config-list-A">
+          {items.map((item) => (
+            <div key={item.id} className="config-row-A">
+              <div className="config-left-A">
+                <div className="config-name-A">
+                  {item.name}
+                </div>
+                <div className="config-price-A">
+                  ₹ {item[priceKey]}
+                </div>
+              </div>
+
+              <button
+                className={`config-toggle-A ${
+                  item.is_active ? "enabled" : "disabled"
+                }`}
+                onClick={() =>
+                  toggleFn(item.id, !item.is_active).then(load)
+                }
+              >
+                {item.is_active ? "Enabled" : "Disabled"}
+              </button>
+            </div>
+          ))}
+        </div>
       )}
+
     </div>
   );
 };

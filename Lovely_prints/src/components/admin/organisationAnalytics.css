@@ -1,24 +1,190 @@
-.analytics-grid {
+/* ========== ANALYTICS GRID ========== */
+
+.analytics-grid-A {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin: 20px 0;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin-bottom: 32px;
 }
 
-.stat-card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 18px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+/* ========== METRIC CARD BASE ========== */
+
+.metric-card-A {
+  padding: 22px;
+  border-radius: var(--radius);
+  border: 1px solid var(--paper-border);
+  background: var(--paper-card);
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 110px;
 }
 
-.stat-value {
-  font-size: 1.6rem;
-  font-weight: 700;
+.metric-card-A:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-soft);
 }
 
-.stat-label {
-  font-size: 0.9rem;
-  color: #666;
+/* ========== TEXT ========== */
+
+.metric-label-A {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.metric-value-A {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* ========== VARIANTS USING YOUR PALETTE ========== */
+
+.metric-card-A.orders {
+  background: linear-gradient(
+    135deg,
+    rgba(138, 182, 45, 0.08),
+    rgba(196, 206, 72, 0.08)
+  );
+}
+
+.metric-card-A.revenue {
+  background: linear-gradient(
+    135deg,
+    rgba(223, 154, 6, 0.08),
+    rgba(255, 236, 165, 0.08)
+  );
+}
+
+.metric-card-A.active {
+  background: rgba(138, 182, 45, 0.12);
+}
+
+.metric-card-A.closed {
+  background: rgba(229, 115, 115, 0.12);
+}
+
+/* ========== SKELETON ========== */
+
+.metric-card-A.skeleton {
+  height: 110px;
+  border-radius: var(--radius);
+}
+
+/* ========== TRENDS SECTION ========== */
+
+.trends-section-A {
+  margin-top: 20px;
+}
+
+.section-header-A h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: var(--text-primary);
+}
+
+/* ========== GRID ========== */
+
+.trends-grid-A {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 24px;
+}
+
+/* ========== CARD ========== */
+
+.trend-card-A {
+  background: var(--paper-card);
+  border: 1px solid var(--paper-border);
+  border-radius: var(--radius);
+  padding: 20px;
+  height: 320px;
+  display: flex;
+  flex-direction: column;
+}
+
+.trend-title-A {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+.trend-chart-A {
+  flex: 1;
+}
+
+/* Skeleton */
+.trend-card-A.skeleton {
+  height: 320px;
+}
+
+
+
+/* ========== SHOP ANALYTICS SECTION ========== */
+
+.shop-analytics-section-A {
+  margin-bottom: 32px;
+}
+
+/* Context Header */
+
+.shop-context-header-A {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.shop-context-label-A {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+.shop-context-title-A {
+  font-size: 20px;
+  font-weight: 600;
   margin-top: 4px;
+  color: var(--text-primary);
+}
+
+.shop-context-status-A {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.shop-context-status-A.open {
+  background: rgba(138, 182, 45, 0.15);
+  color: var(--success);
+}
+
+.shop-context-status-A.closed {
+  background: rgba(229, 115, 115, 0.15);
+  color: var(--danger);
+}
+
+/* Shop Metrics Grid */
+
+.shop-metrics-A {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+.clickable-card-A {
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.clickable-card-A:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-soft);
 }

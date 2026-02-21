@@ -199,6 +199,7 @@ export const getShopOrders = async (req, res) => {
         total_price,
         status,
         created_at,
+        pickup_at,
 
         users (
           name

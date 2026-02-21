@@ -7,58 +7,80 @@ import {
   Tooltip,
   ResponsiveContainer
 } from "recharts";
-import "./admin.css"
-import "./admin-theme.css"
+
+import "./organisationAnalytics.css";
+
 const OrganisationTrends = ({ ordersByDate, revenueByDate }) => {
-if (!ordersByDate || !revenueByDate) {
-  return (
-    <div>
-      <div className="skeleton chart-skeleton" />
-      <div className="skeleton chart-skeleton" />
-    </div>
-  );
-}
+  if (!ordersByDate || !revenueByDate) {
+    return (
+      <div className="trends-grid-A">
+        <div className="trend-card-A skeleton-A" />
+        <div className="trend-card-A skeleton-A" />
+      </div>
+    );
+  }
 
   return (
-    <div className="trends-container">
-      <h3>Organisation Trends</h3>
-
-      {/* Orders Trend */}
-      <div className="trend-card" >
-        <h4>Orders Over Time</h4>
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={ordersByDate}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
-            <YAxis allowDecimals={false} />
-            <Tooltip />
-            <Line
-              type="monotone"
-              dataKey="count"
-              stroke="#2563eb"
-              strokeWidth={2}
-            />
-          </LineChart>
-        </ResponsiveContainer>
+    <div className="trends-section-A">
+      <div className="section-header-A">
+        <h3>Organisation Trends</h3>
       </div>
 
-      {/* Revenue Trend */}
-      <div className="trend-card" >
-        <h4>Revenue Over Time</h4>
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={revenueByDate}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
-            <YAxis />
-            <Tooltip />
-            <Line
-              type="monotone"
-              dataKey="amount"
-              stroke="#16a34a"
-              strokeWidth={2}
-            />
-          </LineChart>
-        </ResponsiveContainer>
+      <div className="trends-grid-A">
+        {/* Orders Trend */}
+        <div className="trend-card-A">
+          <div className="trend-title-A">Orders Over Time</div>
+          <div className="trend-chart-A">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={ordersByDate}>
+                <CartesianGrid stroke="rgba(0,0,0,0.04)" vertical={false} />
+                <XAxis
+                  dataKey="date"
+                  tick={{ fill: "var(--text-muted)", fontSize: 12 }}
+                />
+                <YAxis
+                  allowDecimals={false}
+                  tick={{ fill: "var(--text-muted)", fontSize: 12 }}
+                />
+                <Tooltip />
+                <Line
+                  type="monotone"
+                  dataKey="count"
+                  stroke="#8AB62D"
+                  strokeWidth={3}
+                  dot={false}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Revenue Trend */}
+        <div className="trend-card-A">
+          <div className="trend-title-A">Revenue Over Time</div>
+          <div className="trend-chart-A">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={revenueByDate}>
+                <CartesianGrid stroke="rgba(0,0,0,0.04)" vertical={false} />
+                <XAxis
+                  dataKey="date"
+                  tick={{ fill: "var(--text-muted)", fontSize: 12 }}
+                />
+                <YAxis
+                  tick={{ fill: "var(--text-muted)", fontSize: 12 }}
+                />
+                <Tooltip />
+                <Line
+                  type="monotone"
+                  dataKey="amount"
+                  stroke="#DF9A06"
+                  strokeWidth={3}
+                  dot={false}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
       </div>
     </div>
   );
