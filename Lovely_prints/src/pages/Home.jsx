@@ -3,7 +3,7 @@ import {
   motion, useScroll, useSpring, useTransform,
   useInView, AnimatePresence,
 } from "framer-motion";
-import "./home.css";
+import "./Home.css";
 
 const LOGO = "/src/assets/logo.png";
 const EXPO = [0.16, 1, 0.3, 1];
