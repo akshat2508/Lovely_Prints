@@ -4,8 +4,7 @@ import {
   useInView, AnimatePresence,
 } from "framer-motion";
 import "./Home.css";
-
-const LOGO = "/src/assets/logo.png";
+import LOGO from "../assets/logo.png"
 const EXPO = [0.16, 1, 0.3, 1];
 
 function Reveal({ children, delay = 0, y = 28, className = "" }) {
