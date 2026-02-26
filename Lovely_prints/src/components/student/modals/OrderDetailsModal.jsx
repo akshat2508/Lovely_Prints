@@ -1,28 +1,29 @@
-import TrackOrderModal from "./TrackOrderModal"
 import { useState } from "react"
-// import "../dashboard.css"
 import "./orderDetailsModal-H.css"
 
 const OrderDetailsModal = ({ order, onClose }) => {
-  const [showTracking, setShowTracking] = useState(false)
-  const doc = order.documents?.[0]
+
+  const doc = order.documents?.[0];
 
   return (
     <>
-      <div className="modal-overlay">
-        <div className="modal-card large">
-          <h2>Order #{order.order_no}</h2>
-          <h5 className="id">ID: {order.id}</h5>
-          <p className="muted">
-            {order.shops?.shop_name} • {order.shops?.block}
-          </p>
+      <div className="modal-overlay-H">
+        <div className="modal-card-H large-H">
 
-      
+          {/* HEADER */}
+          <div className="modal-header-H">
+            <h2>Order #{order.order_no}</h2>
+            <span className="order-id-H">ID: {order.id}</span>
+            <p className="muted-H">
+              {order.shops?.shop_name} • {order.shops?.block}
+            </p>
+          </div>
 
+          {/* DOCUMENT SECTION */}
           {doc && (
-            <>
+            <div className="section-H">
               <h4>Document</h4>
-              <p className="overflow">{doc.file_name}</p>
+              <p className="overflow-H">{doc.file_name}</p>
               <p>
                 {doc.page_count} pages × {doc.copies}
               </p>
@@ -36,43 +37,30 @@ const OrderDetailsModal = ({ order, onClose }) => {
               <p>
                 Orientation: {order.orientation}
                 {order.is_urgent && (
-                  <span className="urgent-badge">URGENT</span>
+                  <span className="urgent-badge-H">URGENT</span>
                 )}
               </p>
-            </>
+            </div>
           )}
 
-          <hr />
+          {/* PAYMENT */}
+          <div className="section-H payment-section-H">
+            <h4>Payment</h4>
+            <p>
+              Status:{" "}
+              <strong>{order.is_paid ? "Paid" : "Not Paid"}</strong>
+            </p>
+            <p>Total: ₹{order.total_price}</p>
+          </div>
 
-          <h4>Payment</h4>
-          <p>
-            Status:{" "}
-            <strong>{order.is_paid ? "Paid" : "Not Paid"}</strong>
-          </p>
-          <p>Total: ₹{order.total_price}</p>
-
-          <div className="modal-actions">
-            {order.status !== "completed" && (
-              <button
-                className="primary-btn-H"
-                onClick={() => setShowTracking(true)}
-              >
-                Track Order
-              </button>
-            )}
-            <button className="cancel-btn1" onClick={onClose}>
+          {/* ACTIONS */}
+          <div className="modal-actions-H">
+            <button className="cancel-btn-H" onClick={onClose}>
               Close
             </button>
           </div>
         </div>
       </div>
-
-      {showTracking && (
-        <TrackOrderModal
-          order={order}
-          onClose={() => setShowTracking(false)}
-        />
-      )}
     </>
   )
 }

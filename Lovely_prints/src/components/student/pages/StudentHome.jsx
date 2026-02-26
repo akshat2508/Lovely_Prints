@@ -63,67 +63,90 @@ const StudentHome = () => {
 
       {/* Search */}
       <div className="shop-filter-AB">
-      <div className="shop-search-A">
-        <input
-          type="text"
-          placeholder="Search by shop name or block..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
-      <div className="shop-filter-A">
-        <button
-          className={shopStatusFilter === "all" ? "active" : ""}
-          onClick={() => setShopStatusFilter("all")}
-        >
-          All
-        </button>
+        <div className="shop-search-A">
+          <input
+            type="text"
+            placeholder="Search by shop name or block..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        <div className="shop-filter-A">
+          <button
+            className={shopStatusFilter === "all" ? "active" : ""}
+            onClick={() => setShopStatusFilter("all")}
+          >
+            All
+          </button>
 
-        <button
-          className={shopStatusFilter === "open" ? "active" : ""}
-          onClick={() => setShopStatusFilter("open")}
-        >
-          Open
-        </button>
+          <button
+            className={shopStatusFilter === "open" ? "active" : ""}
+            onClick={() => setShopStatusFilter("open")}
+          >
+            Open
+          </button>
 
-        <button
-          className={shopStatusFilter === "closed" ? "active" : ""}
-          onClick={() => setShopStatusFilter("closed")}
-        >
-          Closed
-        </button>
-      </div>
+          <button
+            className={shopStatusFilter === "closed" ? "active" : ""}
+            onClick={() => setShopStatusFilter("closed")}
+          >
+            Closed
+          </button>
+        </div>
       </div>
 
       <div className="shop-grid">
         {filteredShops.map((shop) => (
           <div
             key={shop.id}
-            className={`shop-card-AB ${!shop.is_active ? "shop-closed" : ""}`}
+            className={`shop-card-AB
+  ${!shop.is_active && shop.is_accepting_orders ? "shop-closed-soft" : ""}
+  ${!shop.is_accepting_orders ? "shop-disabled" : ""}
+`}
             onClick={() => {
-              if (!shop.is_active) return;
+              // 🚫 Completely block if not accepting orders
+              if (!shop.is_accepting_orders) return;
 
-              setFlowStage(2); // 🔥 Move to Print Options stage
-              navigate(`/student/shop/${shop.id}`);
+              // ✅ Allow if open
+              if (shop.is_active) {
+                setFlowStage(2);
+                navigate(`/student/shop/${shop.id}`);
+                return;
+              }
+
+              // 🟡 Closed but accepting → still allow
+              if (!shop.is_active && shop.is_accepting_orders) {
+                setFlowStage(2);
+                navigate(`/student/shop/${shop.id}`);
+              }
             }}
           >
             {/* Open / Closed Tag */}
             <div
-              className={`shop-status-tag ${
-                shop.is_active ? "open" : "closed"
-              }`}
+              className={`shop-status-tag
+    ${
+      shop.is_active
+        ? "open"
+        : shop.is_accepting_orders
+          ? "closed-accepting"
+          : "not-accepting"
+    }
+  `}
             >
-              {shop.is_active ? "Open" : "Closed"}
+              {shop.is_active && "Open"}
+              {!shop.is_active &&
+                shop.is_accepting_orders &&
+                "Closed – Accepting Orders"}
+              {!shop.is_accepting_orders && "Not Accepting Orders"}
             </div>
 
-           <div className="shop-banner-AB">
-  <img
-    src={shop.banner_url || ShopFallBack}
-    alt={shop.shop_name}
-style={{ height: "220px", objectFit: "contain" }}
-  />
-</div>
-
+            <div className="shop-banner-AB">
+              <img
+                src={shop.banner_url || ShopFallBack}
+                alt={shop.shop_name}
+                style={{ height: "220px", objectFit: "contain" }}
+              />
+            </div>
 
             <div className="shop-info-A">
               <div className="shop-name-badge-A">
@@ -136,7 +159,7 @@ style={{ height: "220px", objectFit: "contain" }}
                 </span>
               </div>
 
-               <div className="shop-details-box-A">
+              <div className="shop-details-box-A">
                 <span className="shop-time-A">
                   <strong>Opens at:</strong> {shop.open_time.slice(0, 5)} AM
                 </span>

@@ -135,3 +135,12 @@ export const setShopStatusManual = async (shopId, isActive) => {
   });
   return res.data;
 };
+
+
+// MANUAL accepting orders toggle
+export const setShopAcceptingOrders = async (isAccepting) => {
+  const res = await api.patch("/shops/me/accepting-orders", {
+    is_accepting_orders: isAccepting,
+  });
+  return res.data;
+};

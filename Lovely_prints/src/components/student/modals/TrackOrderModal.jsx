@@ -52,7 +52,7 @@ const TrackOrderModal = ({ order, onClose }) => {
       try {
         const res = await getStudentOrders();
         if (res?.success) {
-          const updated = res.data.find(o => o.id === liveOrder.id);
+          const updated = res.data.find((o) => o.id === liveOrder.id);
           if (updated && updated.updated_at !== liveOrder.updated_at) {
             setLiveOrder(updated);
           }
@@ -73,7 +73,7 @@ const TrackOrderModal = ({ order, onClose }) => {
         {/* Header */}
         <div className="track-header">
           <h2>Track Order #{liveOrder.order_no}</h2>
-          <p className="muted">
+          <p id="muted-H">
             {liveOrder.shops?.shop_name} • {liveOrder.shops?.block}
           </p>
         </div>
@@ -98,7 +98,7 @@ const TrackOrderModal = ({ order, onClose }) => {
         )}
 
         {/* ================= TIMELINE ================= */}
-        <div className="timeline-pro">
+        <div className="timeline-horizontal">
           {STATUS_FLOW.map((step, index) => {
             const Icon = STATUS_ICONS[step];
             const isDone = index < currentIndex;
@@ -109,35 +109,26 @@ const TrackOrderModal = ({ order, onClose }) => {
             if (isActive) timestamp = formatTime(liveOrder.updated_at);
 
             return (
-              <div
-                key={step}
-                className={`timeline-row ${
-                  isDone ? "done" : isActive ? "active" : ""
-                }`}
-              >
-                {/* Rail */}
-                <div className="timeline-rail">
-                  <div className="timeline-dot-G">
-                    <Icon size={16} />
-                  </div>
-                  {index !== STATUS_FLOW.length - 1 && (
-                    <div className="timeline-line" />
-                  )}
+              <div key={step} className="timeline-step">
+                <div
+                  className={`timeline-circle ${
+                    isDone ? "done" : isActive ? "active" : ""
+                  }`}
+                >
+                  <Icon size={18} />
                 </div>
 
-                {/* Timestamp */}
-                <div className="timeline-time-col">
-                  {timestamp && (
-                    <span className="timeline-time">{timestamp}</span>
-                  )}
-                </div>
+                <div className="timeline-label">{STATUS_LABELS[step]}</div>
 
-                {/* Stage */}
-                <div className="timeline-stage-col">
-                  <span className="timeline-text">
-                    {STATUS_LABELS[step]}
-                  </span>
-                </div>
+                {timestamp && (
+                  <div className="timeline-time-small">{timestamp}</div>
+                )}
+
+                {index !== STATUS_FLOW.length - 1 && (
+                  <div
+                    className={`timeline-connector ${isDone ? "done" : ""}`}
+                  />
+                )}
               </div>
             );
           })}

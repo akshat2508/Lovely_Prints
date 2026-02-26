@@ -5,6 +5,7 @@ const ShopNavbar = ({
   shop,
   isUpdating,
   onToggleShop,
+  onToggleAccepting,
   onLogout,
   activeTab,
   setActiveTab,
@@ -82,6 +83,26 @@ const ShopNavbar = ({
             </label>
 
             <span className={shop?.is_active ? "active" : "muted"}>Open</span>
+          </div>
+          {/* Accepting Orders Toggle */}
+          <div className="shop-toggle accepting-toggle">
+            <span className={!shop?.is_accepting_orders ? "muted" : ""}>
+              Not Accepting
+            </span>
+
+            <label className="switch">
+              <input
+                type="checkbox"
+                checked={shop?.is_accepting_orders}
+                disabled={isUpdating}
+                onChange={onToggleAccepting}
+              />
+              <span className="slider" />
+            </label>
+
+            <span className={shop?.is_accepting_orders ? "active" : "muted"}>
+              Accepting Orders
+            </span>
           </div>
 
           {sessionTimeLeft && (
