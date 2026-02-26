@@ -225,7 +225,7 @@ export default function Home() {
         <div className="nav-right_z">
           <a href="/login" className="btn-nav-login_z">Log In</a>
           <div className="nav-divider_z" />
-          <a href="/register" className="btn-nav-register_z">Register →</a>
+          <a href="/signup" className="btn-nav-register_z">Register →</a>
         </div>
       </nav>
 
@@ -251,7 +251,7 @@ export default function Home() {
           </Reveal>
           <Reveal delay={0.54}>
             <div className="hero-btns_z">
-              <a href="/register" className="btn-hero-sage_z">Start Printing →</a>
+              <a href="/signup" className="btn-hero-sage_z">Start Printing →</a>
               <a href="/login" className="btn-hero-gold_z">Log In</a>
             </div>
           </Reveal>
@@ -422,7 +422,7 @@ export default function Home() {
                     <li key={l}><span className="p-dot_z" />{l}</li>
                   ))}
                 </ul>
-                <a href="/register" className="p-action_z">Get Started as Student →</a>
+                <a href="/signup" className="p-action_z">Get Started as Student →</a>
               </div>
             </Reveal>
             <Reveal delay={0.2}>
@@ -439,7 +439,7 @@ export default function Home() {
                     <li key={l}><span className="p-dot_z" />{l}</li>
                   ))}
                 </ul>
-                <a href="/register?role=shop" className="p-action_z">Register Your Shop →</a>
+                <a href="/signup?role=shop" className="p-action_z">Get Started →</a>
               </div>
             </Reveal>
           </div>
@@ -534,8 +534,7 @@ export default function Home() {
               We're onboarding universities and print shops across Delhi. Be among the first to experience frictionless campus printing.
             </p>
             <div className="cta-btns_z">
-              <a href="/register" className="btn-cta-gold_z">Register as Student →</a>
-              <a href="/register?role=shop" className="btn-cta-ghost_z">Register Your Shop</a>
+              <a href="/signup" className="btn-cta-gold_z">Register as Student →</a>
             </div>
           </div>
         </Reveal>

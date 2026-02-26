@@ -283,3 +283,29 @@ export const updateShopStatusManually = async (req, res, next) => {
     next(err);
   }
 };
+
+// Updating shop accepting orders status
+export const updateMyShopAcceptingOrders = async (req, res, next) => {
+  try {
+    const { is_accepting_orders } = req.body;
+
+    if (typeof is_accepting_orders !== "boolean") {
+      return errorResponse(res, "Invalid is_accepting_orders value", 400);
+    }
+
+    const userId = req.user.id; // from auth middleware
+
+    const { data, error } = await supabaseService.updateShopByOwner(
+      userId,
+      { is_accepting_orders }
+    );
+
+    if (error) {
+      return errorResponse(res, error.message, 400);
+    }
+
+    return successResponse(res, data, "Shop accepting orders status updated");
+  } catch (err) {
+    next(err);
+  }
+};

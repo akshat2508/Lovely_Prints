@@ -220,3 +220,23 @@
     height: 130px;
   }
 }
+/* 🔴 Completely Disabled */
+.shop-disabled {
+  opacity: 0.45;
+  pointer-events: none;
+  filter: grayscale(80%);
+  cursor: not-allowed;
+}
+
+
+
+/* Status Variants */
+.shop-status-tag.closed-accepting {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.shop-status-tag.not-accepting {
+  background: #fee2e2;
+  color: #b91c1c;
+}

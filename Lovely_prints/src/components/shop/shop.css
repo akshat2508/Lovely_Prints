@@ -1228,3 +1228,24 @@ body {
   font-weight: 700;
   color: #f58220;
 }
+.download-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  justify-content: space-between;
+}
+
+.ready-button {
+  background: #C4CE48;
+  color: #063B3A;
+  border: 1px solid black;
+  padding: 6px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.ready-button:hover {
+  background: #6ad954;
+}

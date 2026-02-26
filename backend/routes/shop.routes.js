@@ -14,7 +14,7 @@ import {
 } from '../controllers/shop.controller.js';
 import { updateOrderStatus } from '../controllers/shop.controller.js';
 import { updateMyShopStatus } from '../controllers/shop.controller.js';
-
+import { updateMyShopAcceptingOrders } from '../controllers/shop.controller.js';
 const router = express.Router();
 
 // --------------------
@@ -69,6 +69,12 @@ router.patch(
   authMiddleware,
   requireRole('shop_owner'),
   updateMyShopStatus
+);
+router.patch(
+  '/me/accepting-orders',
+  authMiddleware,
+  requireRole('shop_owner'),
+  updateMyShopAcceptingOrders
 );
 router.patch("/:shopId/status", authMiddleware, updateShopStatusManually);
 

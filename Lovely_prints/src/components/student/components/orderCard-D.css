@@ -192,9 +192,11 @@ border: 1px solid #bfbfbf;
     cursor: pointer;
     font-size: 0.85rem;
     font-weight: 600;
-    color: #ffffff;
-    background: linear-gradient(135deg, #26ccc2, #6aece1);
+    color: #000000;
+    background: #C4CE48;
     transition: all 0.25s ease;
+    border: 1px solid black ;
+
 }
 
 .order-btn-secondary-B-D {
@@ -213,16 +215,16 @@ border: 1px solid #bfbfbf;
 }
 
 .order-btn-primary-D {
-  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  background: #FFECA5;
   border: none;
   padding: 8px 16px;
   border-radius: 999px;
   font-size: 0.8rem;
   font-weight: 700;
-  color: white;
+  color: rgb(0, 0, 0);
   cursor: pointer;
-  box-shadow: 0 8px 20px rgba(245,158,11,0.35);
   transition: transform 0.2s ease;
+  border: 1px solid black;
 }
 
 .order-btnBTN-primary-D:hover {

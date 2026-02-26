@@ -44,14 +44,20 @@ export const StudentDataProvider = ({ children }) => {
         if (!prevShops) return res.data;
 
         return prevShops.map((oldShop) => {
-          const updatedShop = res.data.find(
-            (s) => s.id === oldShop.id
-          );
+          const updatedShop = res.data.find((s) => s.id === oldShop.id);
 
           if (!updatedShop) return oldShop;
 
-          if (oldShop.is_active !== updatedShop.is_active) {
-            return { ...oldShop, is_active: updatedShop.is_active };
+          // Update both fields if changed
+          if (
+            oldShop.is_active !== updatedShop.is_active ||
+            oldShop.is_accepting_orders !== updatedShop.is_accepting_orders
+          ) {
+            return {
+              ...oldShop,
+              is_active: updatedShop.is_active,
+              is_accepting_orders: updatedShop.is_accepting_orders,
+            };
           }
 
           return oldShop;

@@ -120,13 +120,18 @@ async createOrder(orderData, token) {
 
   // 2️⃣ Fetch shop → organisation (trusted source)
   const { data: shop, error: shopError } = await supabaseUser
-    .from("shops")
-    .select("organisation_id")
-    .eq("id", orderData.shop_id)
-    .single();
-
+  .from("shops")
+  .select("organisation_id, is_active, is_accepting_orders")
+  .eq("id", orderData.shop_id)
+  .single();
   if (shopError || !shop) {
     return { error: { message: "Invalid shop" } };
+  }
+  // 🚫 Shop not accepting orders at all
+  if (!shop.is_accepting_orders) {
+    return {
+      error: { message: "Shop is not accepting orders right now" },
+    };
   }
 
   // 3️⃣ Insert order (RLS-safe)
@@ -584,7 +589,7 @@ async getPaymentByRazorpayOrder(razorpayOrderId) {
 async getShopByOwner(ownerId) {
   return await supabaseAnon
     .from('shops')
-    .select('id , shop_name , is_active, close_time ,open_time')
+    .select('id , shop_name , is_active,is_accepting_orders, close_time ,open_time')
     .eq('owner_id', ownerId)
     .single();
 }

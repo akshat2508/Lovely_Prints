@@ -16,7 +16,7 @@ export default function OrderDetails({
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [otp, setOtp] = useState("");
   const [verifyingOtp, setVerifyingOtp] = useState(false);
-
+  const [hasDownloaded, setHasDownloaded] = useState(false);
   const createdDate = new Date(order.createdAt);
   const pickUpDate = new Date(order.pickup_at);
 
@@ -81,16 +81,18 @@ export default function OrderDetails({
     try {
       setDownloading(true);
 
-      // 1️⃣ Download document
       const url = await getDocumentDownloadUrl(order.documentId);
       window.open(url, "_blank");
 
-      // 2️⃣ Auto-move status → READY
-      if (order.status === "confirmed" || order.status === "printing") {
+      // ✅ If status is confirmed → move to printing
+      if (order.status === "confirmed") {
         setUpdating(true);
-        await onStatusChange(order.id, "ready");
+        await onStatusChange(order.id, "printing");
         await onRefresh();
       }
+
+      // ✅ Show ready button
+      setHasDownloaded(true);
     } catch (err) {
       alert("Failed to download document");
     } finally {
@@ -98,7 +100,6 @@ export default function OrderDetails({
       setUpdating(false);
     }
   };
-
   /* ---------------- MANUAL STATUS UPDATE ---------------- */
 
   const handleStatusUpdate = async (e) => {
@@ -176,7 +177,7 @@ export default function OrderDetails({
       <div className="order-body">
         <div className="student-info">
           <h3>{order.studentName}</h3>
-          <p>Order ID  : {order.id.slice(-6)}</p>
+          <p>Order ID : {order.id.slice(-6)}</p>
         </div>
 
         <div className="order-meta order-header">
@@ -206,21 +207,43 @@ export default function OrderDetails({
         </div>
 
         {/* DOWNLOAD BUTTON */}
-        <button
-          className="download-button"
-          disabled={
-            !order.isPaid || order.status === "completed" || downloading
-          }
-          onClick={handleDownload}
-        >
-          {!order.isPaid
-            ? "Not Paid"
-            : order.status === "completed"
-              ? "Completed"
-              : downloading
-                ? "Preparing..."
-                : "Download"}
-        </button>
+        <div className="download-group">
+          <button
+            className="download-button"
+            disabled={
+              !order.isPaid || order.status === "completed" || downloading
+            }
+            onClick={handleDownload}
+          >
+            {!order.isPaid
+              ? "Not Paid"
+              : order.status === "completed"
+                ? "Completed"
+                : downloading
+                  ? "Preparing..."
+                  : "Download"}
+          </button>
+
+          {/* ✅ SHOW READY BUTTON AFTER DOWNLOAD */}
+          {order.status === "printing" && (
+            <button
+              className="ready-button"
+              disabled={updating}
+              onClick={async (e) => {
+                e.stopPropagation();
+                try {
+                  setUpdating(true);
+                  await onStatusChange(order.id, "ready");
+                  await onRefresh();
+                } finally {
+                  setUpdating(false);
+                }
+              }}
+            >
+              {updating ? "Updating..." : "Mark Ready"}
+            </button>
+          )}
+        </div>
 
         {/* PRINT DETAILS */}
         <div className="print-details">
@@ -234,19 +257,33 @@ export default function OrderDetails({
         </div>
 
         {/* ACTION BUTTON (HIDDEN WHEN READY) */}
-        {nextStatus && order.isPaid && order.status !== "completed" && (
-          <button
-            className="action-button"
-            disabled={order.status === "printing" || updating}
-            onClick={handleStatusUpdate}
-          >
-            {order.status === "printing"
-              ? "Click on Download"
-              : updating
-                ? "Updating..."
-                : getActionLabel(order.status)}
-          </button>
-        )}
+        {/* CONFIRM / START PRINTING */}
+{order.isPaid &&
+  order.status !== "completed" &&
+  order.status !== "printing" &&
+  order.status !== "ready" && (
+    <button
+      className="action-button"
+      disabled={updating}
+      onClick={handleStatusUpdate}
+    >
+      {updating ? "Updating..." : getActionLabel(order.status)}
+    </button>
+)}
+
+
+{/* VERIFY OTP BUTTON */}
+{order.status === "ready" && (
+  <button
+    className="action-button"
+    onClick={(e) => {
+      e.stopPropagation();
+      setShowOtpModal(true);
+    }}
+  >
+    Verify OTP
+  </button>
+)}
       </div>
 
       {/* OTP MODAL */}

@@ -2,29 +2,27 @@
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(20, 24, 35, 0.55);
   backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999;
+  z-index: 110000;
 }
 
 /* ===== CARD ===== */
 .modal-card.large {
-  width: 450px;
-  max-width: 100%;
-  background: linear-gradient(
-    135deg,
-    rgba(255,255,255,0.9),
-    rgba(255,255,255,0.75)
-  );
+
+  width: 820px;
+  max-width: 95%;
+  margin-top: 0;
+  max-height: none;
   backdrop-filter: blur(16px);
   border-radius: 22px;
   padding: 32px;
   box-shadow: 0 25px 60px rgba(0,0,0,0.15);
   animation: modalFadeIn 0.3s ease;
   margin-top: 15%;
+  border: 1px solid black ;
 }
 
 /* ===== HEADER ===== */
@@ -165,4 +163,78 @@
 @keyframes modalFadeIn {
   from { opacity: 0; transform: scale(0.95); }
   to { opacity: 1; transform: scale(1); }
+}
+
+
+/* ===== HORIZONTAL TIMELINE ===== */
+
+.timeline-horizontal {
+  margin-top: 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+}
+
+.timeline-step {
+  flex: 1;
+  text-align: center;
+  position: relative;
+}
+
+.timeline-circle {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  margin: 0 auto 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+.timeline-circle.done {
+  background: #FFECA5;
+  color: #063B3A;
+}
+
+.timeline-circle.active {
+  background: #C4CE48;
+  color: #111827;
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(255, 183, 108, 0.4);
+}
+
+.timeline-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.timeline-time-small {
+  margin-top: 4px;
+  font-size: 11px;
+  color: #6b7280;
+}
+
+.timeline-connector {
+  position: absolute;
+  top: 23px;
+  right: -50%;
+  width: 100%;
+  height: 3px;
+  background: #e5e7eb;
+  z-index: -1;
+}
+
+.timeline-connector.done {
+  background: #6AECE1;
+}
+
+#muted-H
+{
+  color:grey;
 }

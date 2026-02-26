@@ -8,6 +8,7 @@ import {
   updateOrderStatus,
   getMyShop,
   setShopStatusManual,
+  setShopAcceptingOrders
 } from "../../services/shopService";
 import { useNavigate } from "react-router-dom";
 import { logoutUser } from "../../services/authService";
@@ -204,6 +205,32 @@ useEffect(() => {
       setShopStatusLoading(false);
     }
   };
+
+
+  const handleAcceptingToggle = async () => {
+  if (!shop || shopStatusLoading) return;
+
+  const nextStatus = !shop.is_accepting_orders;
+
+  setShop((prev) => ({
+    ...prev,
+    is_accepting_orders: nextStatus,
+  }));
+
+  setShopStatusLoading(true);
+
+  try {
+    await setShopAcceptingOrders(nextStatus);
+  } catch {
+    setShop((prev) => ({
+      ...prev,
+      is_accepting_orders: !nextStatus,
+    }));
+    alert("Failed to update accepting orders status");
+  } finally {
+    setShopStatusLoading(false);
+  }
+};
 
   /* ================= LOGOUT ================= */
 
@@ -464,6 +491,7 @@ useEffect(() => {
         shop={shop}
         isUpdating={shopStatusLoading}
         onToggleShop={handleManualToggle}
+        onToggleAccepting={handleAcceptingToggle}
         onLogout={handleLogout}
         activeTab={activeTab}
         setActiveTab={(tab) => {
