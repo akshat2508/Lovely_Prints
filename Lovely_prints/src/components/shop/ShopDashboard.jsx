@@ -58,8 +58,6 @@ export default function ShopDashboard() {
   const notificationAudioRef = useRef(null);
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  const now = new Date();
-
 const generateTimeSlots = (openHour, closeHour) => {
   const slots = [];
 
@@ -328,6 +326,8 @@ useEffect(() => {
   }, [unseenOrderCount]);
 
   const visibleOrders = orders.filter((order) => {
+      if (order.isExpired) return false;
+
     /* ---------- PAYMENT FILTER ---------- */
     if (paymentFilter === "paid" && !order.isPaid) return false;
     if (paymentFilter === "unpaid" && order.isPaid) return false;
@@ -427,17 +427,7 @@ useEffect(() => {
 
   const today = new Date();
 
-  /* ================= DISCARDED / OVERDUE ================= */
-  const discardedOrders = visibleOrders.filter((order) => {
-    if (!order.pickup_at) return false;
 
-    const pickupDateTime = new Date(order.pickup_at);
-
-    // ignore completed / cancelled
-    if (["completed", "cancelled"].includes(order.status)) return false;
-
-    return pickupDateTime < now;
-  });
   /* ================= TODAY (slot-wise) ================= */
   
   const todaysOrdersBySlot = {};
@@ -448,41 +438,38 @@ useEffect(() => {
   /* ================= SCHEDULED (date → slot-wise) ================= */
   const scheduledOrdersByDateAndSlot = {};
 
-  visibleOrders.forEach((order) => {
-    if (!order.pickup_at) return;
+visibleOrders.forEach((order) => {
+  if (!order.pickup_at) return;
 
-    const pickupDate = new Date(order.pickup_at);
-    // ⛔ skip overdue orders
-    if (
-      pickupDate < now &&
-      !["completed", "cancelled"].includes(order.status)
-    ) {
-      return;
+  const pickupDate = new Date(order.pickup_at);
+
+  const slot = getSlotForPickup(pickupDate);
+  if (!slot) return;
+
+  // TODAY
+  if (isSameDay(pickupDate, today)) {
+    todaysOrdersBySlot[slot.label].push(order);
+  }
+
+  // FUTURE
+  else if (isFutureDay(pickupDate)) {
+    const dateKey = pickupDate.toDateString();
+
+    if (!scheduledOrdersByDateAndSlot[dateKey]) {
+      scheduledOrdersByDateAndSlot[dateKey] = {};
+      TIME_SLOTS.forEach((s) => {
+        scheduledOrdersByDateAndSlot[dateKey][s.label] = [];
+      });
     }
-    const slot = getSlotForPickup(pickupDate);
-    if (!slot) return;
 
-    // TODAY
-    if (isSameDay(pickupDate, today)) {
-      todaysOrdersBySlot[slot.label].push(order);
-    }
-
-    // FUTURE
-    else if (isFutureDay(pickupDate)) {
-      const dateKey = pickupDate.toDateString();
-
-      if (!scheduledOrdersByDateAndSlot[dateKey]) {
-        scheduledOrdersByDateAndSlot[dateKey] = {};
-        TIME_SLOTS.forEach((s) => {
-          scheduledOrdersByDateAndSlot[dateKey][s.label] = [];
-        });
-      }
-
-      scheduledOrdersByDateAndSlot[dateKey][slot.label].push(order);
-    }
-  });
+    scheduledOrdersByDateAndSlot[dateKey][slot.label].push(order);
+  }
+});
   const currentSlotLabel = getCurrentSlotLabel(currentTime);
-
+  /* ================= DISCARDED / OVERDUE ================= */
+const discardedOrders = orders.filter(
+  (order) => order.isExpired === true
+);
   /* ================= UI ================= */
 
   return (
@@ -642,26 +629,26 @@ useEffect(() => {
         preload="auto"
       />
       {activeTab === "discarded" && (
-        <>
-          {discardedOrders.length === 0 ? (
-            <div className="empty-slot-message">No discarded orders</div>
-          ) : (
-            <OrderList
-              orders={discardedOrders}
-              onStatusChange={handleStatusChange}
-              onSelectOrder={setSelectedOrder}
-              onRefresh={fetchOrders}
-            />
-          )}
+  <div className="discarded-wrapper">
+    {discardedOrders.length === 0 ? (
+      <div className="empty-slot-message">No discarded orders</div>
+    ) : (
+      <OrderList
+        orders={discardedOrders}
+        onStatusChange={handleStatusChange}
+        onSelectOrder={setSelectedOrder}
+        onRefresh={fetchOrders}
+      />
+    )}
 
-          {selectedOrder && (
-            <OrderPreview
-              order={selectedOrder}
-              onClose={() => setSelectedOrder(null)}
-            />
-          )}
-        </>
-      )}
+    {selectedOrder && (
+      <OrderPreview
+        order={selectedOrder}
+        onClose={() => setSelectedOrder(null)}
+      />
+    )}
+  </div>
+)}
     </div>
   );
 }

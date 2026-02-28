@@ -44,10 +44,7 @@ const OrderCard = ({ order }) => {
 
   const isCompleted = order.status === "completed";
 
-  const isExpired =
-    pickupAt &&
-    now > pickupAt &&
-    !isCompleted;
+const isExpired = order.is_expired === true;
 
   const isReady =
     order.status === "ready" && !isExpired;
