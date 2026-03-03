@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { supabase } from "../../services/supabase";
-import "./f.css"
+import { Link } from "react-router-dom";
+import { Mail, ArrowRight, ArrowLeft } from "lucide-react";
+import "./f.css";
+
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -26,30 +29,69 @@ export default function ForgotPassword() {
   };
 
   return (
-   <div className="auth-page-F">
-  <div className="auth-card-F">
-    <h2 className="auth-title-F">Forgot Password</h2>
+    <div className="fp-root">
+      <div className="fp-grid" />
 
-    <input
-      className="auth-input-F"
-      type="email"
-      placeholder="Enter your email"
-      value={email}
-      onChange={(e) => setEmail(e.target.value)}
-    />
+      <div className="fp-center">
+        <div className="fp-card">
 
-    {error && <p className="auth-error-F">{error}</p>}
-    {message && <p className="auth-success-F">{message}</p>}
+          {/* Top branding */}
+          <div className="fp-badge">ACCOUNT RECOVERY</div>
 
-    <button
-      className="auth-btn-F"
-      onClick={handleSubmit}
-      disabled={loading}
-    >
-      {loading ? "Sending..." : "Send reset link"}
-    </button>
-  </div>
-</div>
+          <div className="fp-headline">
+            <span className="fp-h-solid">Forgot</span>
+            <span className="fp-h-green"> your</span>
+            <br />
+            <span className="fp-h-outline">Password?</span>
+          </div>
 
+          <p className="fp-sub">
+            No worries. Enter your email and we'll send you a reset link instantly.
+          </p>
+
+          <div className={`fp-input-wrap${message ? " fp-input-disabled" : ""}`}>
+            <Mail size={16} className="fp-input-icon" />
+            <input
+              className="fp-input"
+              type="email"
+              placeholder="Email address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={!!message}
+            />
+          </div>
+
+          {error && <div className="fp-error">{error}</div>}
+
+          {message && (
+            <div className="fp-success">
+              <span className="fp-success-dot">✓</span>
+              {message}
+            </div>
+          )}
+
+          {!message && (
+            <button
+              className={`fp-btn${loading ? " fp-btn-loading" : ""}`}
+              onClick={handleSubmit}
+              disabled={loading}
+            >
+              {loading ? "Sending..." : (
+                <span className="fp-btn-inner">
+                  Send Reset Link <ArrowRight size={16} />
+                </span>
+              )}
+            </button>
+          )}
+
+          <div className="fp-back">
+            <Link to="/login" className="fp-back-link">
+              <ArrowLeft size={14} /> Back to Login
+            </Link>
+          </div>
+
+        </div>
+      </div>
+    </div>
   );
 }
