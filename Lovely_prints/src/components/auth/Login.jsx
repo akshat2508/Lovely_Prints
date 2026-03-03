@@ -3,11 +3,10 @@ import { Link, useNavigate } from "react-router-dom"
 import logo from "../../assets/logo.png"
 import { loginUser } from "../../services/authService"
 import "./auth.css"
-import { Eye, EyeOff, Mail, Lock } from "lucide-react"
+import { Eye, EyeOff, Mail, Lock, ArrowRight } from "lucide-react"
 
 export default function Login() {
   const navigate = useNavigate()
-
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
@@ -17,11 +16,9 @@ export default function Login() {
   const handleLogin = async () => {
     setError("")
     setLoading(true)
-
     try {
       const res = await loginUser({ email, password })
       const role = res.data.user.user_metadata.role
-
       if (role === "student") navigate("/student")
       else if (role === "shop_owner") navigate("/shop")
       else if (role === "admin") navigate("/admin")
@@ -34,80 +31,97 @@ export default function Login() {
   }
 
   return (
-    <div className="auth-page-clean">
+    <div className="ln-root">
+      <div className="ln-grid" />
 
       {/* LEFT PANEL */}
-      <div className="auth-left">
-        <div className="left-content">
-          <img src={logo} alt="KaagaZ" className="logo" />
+      <div className="ln-left">
+        <div className="ln-left-content">
+          <div className="ln-logo-row">
+            <img src={logo} alt="KaagaZ" className="ln-logo-img" />
+            <span className="ln-logo-text">KaagaZ</span>
+          </div>
 
-          <h1>Print smarter.</h1>
-          <h1>Collect faster.</h1>
+          <div className="ln-badge">
+            <span className="ln-badge-dot" />
+            CAMPUS PRINTING MARKETPLACE
+          </div>
 
-          <p>
-            Seamless campus printing experience.<br />
-            Upload. Order. Pick up.
+          <div className="ln-headline">
+            <div className="ln-h-solid">Welcome</div>
+            <div className="ln-h-green">Back.</div>
+            <div className="ln-h-outline">Print On.</div>
+          </div>
+
+          <p className="ln-sub">
+            Your campus printing hub.<br />
+            Upload. Order. Pick up. No queues.
           </p>
 
-          <div className="pills">
-            <span>Quick Setup</span>
-            <span>Secure</span>
-            <span>Fast</span>
+          <div className="ln-pills">
+            {["Quick Setup", "Secure", "Instant Pay"].map((p) => (
+              <span key={p} className="ln-pill">{p}</span>
+            ))}
           </div>
         </div>
       </div>
 
       {/* RIGHT PANEL */}
-      <div className="auth-right">
+      <div className="ln-right">
+        <div className="ln-card">
+          <div className="ln-form-badge">SIGN IN</div>
+          <h2 className="ln-form-title">Login</h2>
+          <p className="ln-form-sub">Welcome back! Please login to your account</p>
 
-        <div className="brand">
-          <img src={logo} alt="logo" />
-          <span>KaagaZ</span>
-        </div>
-
-        <div className="card">
-          <h2>Login</h2>
-          <p>Welcome back! Please login to your account</p>
-
-          <div className="input">
-            <Mail size={18} />
+          <div className="ln-input-wrap">
+            <Mail size={16} className="ln-input-icon" />
             <input
+              className="ln-input"
               type="email"
-              placeholder="Email"
+              placeholder="Email address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
 
-          <div className="input">
-            <Lock size={18} />
+          <div className="ln-input-wrap">
+            <Lock size={16} className="ln-input-icon" />
             <input
+              className="ln-input"
               type={showPassword ? "text" : "password"}
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <button onClick={() => setShowPassword(!showPassword)}>
-              {showPassword ? <Eye /> : <EyeOff />}
+            <button className="ln-eye-btn" onClick={() => setShowPassword(!showPassword)} type="button">
+              {showPassword ? <Eye size={16} /> : <EyeOff size={16} />}
             </button>
           </div>
 
-          {error && <div className="error">{error}</div>}
+          {error && <div className="ln-error">{error}</div>}
 
           <button
-            className="btn"
+            className={`ln-btn${loading ? " ln-btn-loading" : ""}`}
             onClick={handleLogin}
             disabled={loading}
           >
-            {loading ? "Logging in..." : "Login"}
+            {loading ? "Logging in..." : (
+              <span className="ln-btn-inner">Login <ArrowRight size={16} /></span>
+            )}
           </button>
 
-          <div className="links">
-            <Link to="/forgot-password">Forgot password?</Link>
+          <div className="ln-forgot-row">
+            <Link to="/forgot-password" className="ln-forgot-link">Forgot password?</Link>
           </div>
 
-          <div className="signup">
-            Don’t have an account? <Link to="/signup">Sign up</Link>
+          <div className="ln-divider">
+            <span className="ln-divider-line" />
+            <span className="ln-divider-text">or</span>
+            <span className="ln-divider-line" />
+          </div>
+
+          <div className="ln-signup-row">
+            Don't have an account? <Link to="/signup" className="ln-signup-link">Sign up →</Link>
           </div>
         </div>
       </div>

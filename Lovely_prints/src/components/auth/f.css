@@ -1,163 +1,208 @@
-/* ===== PAGE ===== */
-.auth-page-F {
-  min-height: 100vh;
-  background: radial-gradient(
-    circle at top,
-    #ffffff 0%,
-    #f3f4f6 65%
-  );
+/* ===== FORGOT PASSWORD — KaagaZ Vibe ===== */
+
+.fp-root {
   display: flex;
+  min-height: 100vh;
+  background-color: #f5f0e8;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  position: relative;
+  overflow: hidden;
   align-items: center;
   justify-content: center;
-  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont;
-  color: #111827;
+}
+
+.fp-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,0,0,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.06) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.fp-center {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 460px;
+  padding: 1.5rem;
 }
 
 /* ===== CARD ===== */
-.auth-card-F {
-  width: 100%;
-  max-width: 420px;
-  background: linear-gradient(
-    180deg,
-    #ffffff 0%,
-    #fafafa 100%
-  );
-  border-radius: 18px;
-  padding: 36px 32px;
-  box-shadow:
-    0 24px 60px rgba(0, 0, 0, 0.12),
-    inset 0 0 0 1px rgba(0, 0, 0, 0.04);
-  animation: fadeUp-F 0.45s ease;
+.fp-card {
+  background-color: #fff;
+  border-radius: 24px;
+  padding: 2.75rem 2.5rem 2.25rem;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.10);
+  border: 1px solid rgba(0,0,0,0.06);
 }
 
-/* ===== TITLE ===== */
-.auth-title-F {
-  font-size: 26px;
+.fp-badge {
+  display: inline-block;
+  background-color: #111;
+  color: #f5f0e8;
+  font-size: 0.65rem;
   font-weight: 700;
-  margin-bottom: 28px;
-  text-align: center;
-  letter-spacing: -0.3px;
-  color: #111827;
+  letter-spacing: 0.12em;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  margin-bottom: 1.75rem;
 }
 
-/* ===== INPUT ===== */
-.auth-input-F {
-  width: 100%;
-  height: 48px;
-  background: #ffffff;
-  border: 1px solid #d1d5db;
+/* Headline */
+.fp-headline {
+  line-height: 1.05;
+  margin-bottom: 1rem;
+}
+
+.fp-h-solid {
+  font-size: clamp(2.4rem, 6vw, 3.5rem);
+  font-weight: 900;
+  color: #111;
+  letter-spacing: -0.04em;
+}
+
+.fp-h-green {
+  font-size: clamp(2.4rem, 6vw, 3.5rem);
+  font-weight: 900;
+  color: #7cc832;
+  letter-spacing: -0.04em;
+}
+
+.fp-h-outline {
+  font-size: clamp(2.4rem, 6vw, 3.5rem);
+  font-weight: 900;
+  color: transparent;
+  -webkit-text-stroke: 2px #111;
+  letter-spacing: -0.04em;
+}
+
+.fp-sub {
+  font-size: 0.9rem;
+  color: #777;
+  line-height: 1.6;
+  margin-bottom: 1.75rem;
+}
+
+/* Input */
+.fp-input-wrap {
+  display: flex;
+  align-items: center;
+  background-color: #f9f8f5;
+  border: 1.5px solid #e5e0d8;
   border-radius: 12px;
-  padding: 0 14px;
-  font-size: 15px;
-  color: #111827;
-  outline: none;
-  transition: all 0.25s ease;
-  margin-bottom: 16px;
+  padding: 0 1rem;
+  margin-bottom: 1rem;
+  transition: border-color 0.2s;
 }
 
-.auth-input-F::placeholder {
-  color: #9ca3af;
+.fp-input-wrap:focus-within { border-color: #7cc832; }
+
+.fp-input-disabled {
+  opacity: 0.5;
+  pointer-events: none;
 }
 
-.auth-input-F:focus {
-  border-color: #ff9500;
-  box-shadow: 0 0 0 3px rgba(255, 149, 0, 0.25);
-}
+.fp-input-icon { color: #999; flex-shrink: 0; margin-right: 0.6rem; }
 
-/* ===== BUTTON ===== */
-.auth-btn-F {
-  width: 100%;
-  height: 48px;
-  background: linear-gradient(
-    135deg,
-    #ff9500,
-    #ff7a00
-  );
+.fp-input {
+  flex: 1;
   border: none;
-  border-radius: 14px;
-  color: #fff;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.25s ease;
-}
-
-.auth-btn-F:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 14px 32px rgba(255, 149, 0, 0.45);
-}
-
-.auth-btn-F:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* ===== SECONDARY LINK BUTTON ===== */
-.auth-link-btn-F {
-  margin-top: 16px;
   background: transparent;
+  outline: none;
+  font-size: 0.9rem;
+  color: #111;
+  padding: 0.85rem 0;
+  font-family: inherit;
+}
+
+/* Error */
+.fp-error {
+  background-color: #fff0f0;
+  border: 1px solid #fcc;
+  color: #c00;
+  border-radius: 10px;
+  padding: 0.65rem 1rem;
+  font-size: 0.82rem;
+  margin-bottom: 1rem;
+}
+
+/* Success */
+.fp-success {
+  background-color: #f0fce8;
+  border: 1px solid #b6e88a;
+  color: #3a7d0a;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.fp-success-dot {
+  font-weight: 800;
+  color: #7cc832;
+  font-size: 1rem;
+}
+
+/* Button */
+.fp-btn {
+  width: 100%;
+  background-color: #7cc832;
+  color: #fff;
   border: none;
-  color: #6b7280;
-  font-size: 14px;
+  border-radius: 12px;
+  padding: 0.9rem;
+  font-size: 0.95rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: color 0.2s ease;
+  letter-spacing: 0.02em;
+  transition: background 0.2s, transform 0.1s;
+  font-family: inherit;
+  margin-bottom: 0.5rem;
 }
 
-.auth-link-btn-F:hover {
-  color: #ff9500;
+.fp-btn:hover:not(:disabled) { background-color: #6ab527; transform: translateY(-1px); }
+.fp-btn:active { transform: translateY(0); }
+.fp-btn-loading { opacity: 0.7; cursor: not-allowed; }
+
+.fp-btn-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
-/* ===== TEXT STATES ===== */
-.auth-error-F {
-  color: #dc2626;
-  font-size: 14px;
-  margin-bottom: 10px;
-  font-weight: 500;
-}
-
-.auth-success-F {
-  color: #16a34a;
-  font-size: 14px;
-  margin-bottom: 10px;
-  font-weight: 500;
-}
-
-.auth-info-F {
-  color: #ff9500;
-  font-size: 14px;
-  margin-bottom: 14px;
+/* Back link */
+.fp-back {
+  margin-top: 1.25rem;
   text-align: center;
-  font-weight: 600;
 }
 
-/* ===== ANIMATION ===== */
-@keyframes fadeUp-F {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
+.fp-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: #888;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.fp-back-link:hover { color: #111; }
+
+/* ===== MOBILE ===== */
+@media (max-width: 480px) {
+  .fp-card {
+    border-radius: 20px;
+    padding: 2rem 1.25rem 1.75rem;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 
-.password-field-F {
-  position: relative;
-}
-
-.eye-toggle-F {
-  position: absolute;
-  right: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  color: #6b7280;
-}
-
-.eye-toggle-F:hover {
-  color: #111827;
+  .fp-center { padding: 1rem; }
 }
