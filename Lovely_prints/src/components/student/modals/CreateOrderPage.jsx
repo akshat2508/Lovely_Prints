@@ -24,7 +24,7 @@ const parseTimeToMinutes = (timeStr) => {
   const h = Number(parts[0]);
   const m = Number(parts[1]);
 
-  if (Number.isNaN(h) || Number.isNaN(m)) return null;
+  if (Number.isNaN(h) || Number.isNaN(m)) return null; 
 
   return h * 60 + m;
 };
@@ -253,15 +253,18 @@ const isUrgentDisabled = (() => {
   return closeMinutes - pickupMinutes < 60;
 })();
 
-  const shopIsClosedNow = (() => {
-    const openMinutes = parseTimeToMinutes(shop?.open_time);
-    const closeMinutes = parseTimeToMinutes(shop?.close_time);
+  // const shopIsClosedNow = (() => {
+  //   const openMinutes = parseTimeToMinutes(shop?.open_time);
+  //   const closeMinutes = parseTimeToMinutes(shop?.close_time);
 
-    if (openMinutes === null || closeMinutes === null) return false;
+  //   if (openMinutes === null || closeMinutes === null) return false;
 
-    const nowMinutes = getMinutesFromDate(new Date());
-    return nowMinutes < openMinutes || nowMinutes >= closeMinutes;
-  })();
+  //   const nowMinutes = getMinutesFromDate(new Date());
+  //   return nowMinutes < openMinutes || nowMinutes >= closeMinutes;
+  // })();
+  
+const shopNotAcceptingOrders = shop?.is_accepting_orders === false;
+
 if (!shop || !shopOptions) {
   return (
     <div className="create-order-page">
@@ -599,7 +602,7 @@ if (!shop || !shopOptions) {
         ) : (
           <button
             className="primary-btn-n"
-            disabled={!canSubmit || shopIsClosedNow}
+            disabled={!canSubmit || shopNotAcceptingOrders}
             onClick={handleSubmitAndPay}
           >
             Submit & Pay
