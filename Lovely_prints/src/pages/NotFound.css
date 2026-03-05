@@ -1,0 +1,283 @@
+/* ===== 404 PAGE — KaagaZ Vibe ===== */
+
+.nf-root {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f5f0e8;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Grid — parallax on mouse */
+.nf-grid {
+  position: absolute;
+  inset: -20px;
+  background-image:
+    linear-gradient(rgba(0,0,0,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.06) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+  transition: transform 0.1s ease-out;
+}
+
+/* Blobs */
+.nf-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.25;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.nf-blob-1 {
+  width: 400px;
+  height: 400px;
+  background: #7cc832;
+  top: -100px;
+  right: -100px;
+  animation: nf-float 8s ease-in-out infinite;
+}
+
+.nf-blob-2 {
+  width: 300px;
+  height: 300px;
+  background: #b6e88a;
+  bottom: -80px;
+  left: -80px;
+  animation: nf-float 10s ease-in-out infinite reverse;
+}
+
+@keyframes nf-float {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50%       { transform: translateY(-30px) scale(1.05); }
+}
+
+/* Floating pills */
+.nf-float-pill {
+  position: absolute;
+  background: #fff;
+  border: 1.5px solid #ddd;
+  border-radius: 999px;
+  padding: 0.4rem 1rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #333;
+  pointer-events: none;
+  z-index: 1;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+.nf-pill-1 {
+  top: 12%;
+  left: 8%;
+  animation: nf-drift 6s ease-in-out infinite;
+}
+
+.nf-pill-2 {
+  top: 20%;
+  right: 10%;
+  animation: nf-drift 7s ease-in-out infinite 1s;
+}
+
+.nf-pill-3 {
+  bottom: 20%;
+  right: 8%;
+  animation: nf-drift 5s ease-in-out infinite 0.5s;
+}
+
+@keyframes nf-drift {
+  0%, 100% { transform: translateY(0px) rotate(-2deg); }
+  50%       { transform: translateY(-12px) rotate(2deg); }
+}
+
+/* ===== CENTER CONTENT ===== */
+.nf-center {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 2rem 1.5rem;
+  max-width: 560px;
+}
+
+/* Badge */
+.nf-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #111;
+  color: #f5f0e8;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  margin-bottom: 1.5rem;
+  animation: nf-fade-down 0.6s ease both;
+}
+
+.nf-badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #7cc832;
+  flex-shrink: 0;
+  animation: nf-pulse 2s ease-in-out infinite;
+}
+
+@keyframes nf-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* Big 404 */
+.nf-big {
+  display: flex;
+  align-items: center;
+  line-height: 1;
+  margin-bottom: 1.25rem;
+  animation: nf-fade-up 0.7s ease 0.1s both;
+}
+
+.nf-four,
+.nf-zero {
+  font-size: clamp(6rem, 18vw, 11rem);
+  font-weight: 900;
+  letter-spacing: -0.05em;
+}
+
+.nf-solid  { color: #111; }
+.nf-green  { color: #7cc832; }
+.nf-outline {
+  color: transparent;
+  -webkit-text-stroke: 3px #111;
+}
+
+/* Text */
+.nf-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 0.5rem;
+  animation: nf-fade-up 0.7s ease 0.2s both;
+}
+
+.nf-sub {
+  font-size: 0.875rem;
+  color: #888;
+  margin-bottom: 1.75rem;
+  animation: nf-fade-up 0.7s ease 0.25s both;
+}
+
+/* Doc card */
+.nf-doc-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 0.9rem 1.2rem;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.09);
+  margin-bottom: 2rem;
+  min-width: 220px;
+  animation: nf-fade-up 0.7s ease 0.3s both, nf-wobble 4s ease-in-out 1s infinite;
+}
+
+@keyframes nf-wobble {
+  0%, 100% { transform: rotate(-1deg) translateY(0px); }
+  50%       { transform: rotate(1deg) translateY(-6px); }
+}
+
+.nf-doc-top {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.nf-doc-icon { font-size: 1.4rem; }
+
+.nf-doc-name {
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: #111;
+}
+
+.nf-doc-meta {
+  font-size: 0.75rem;
+  color: #aaa;
+}
+
+.nf-doc-status {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #e05555;
+  letter-spacing: 0.05em;
+}
+
+/* Actions */
+.nf-actions {
+  display: flex;
+  gap: 0.75rem;
+  animation: nf-fade-up 0.7s ease 0.4s both;
+}
+
+.nf-btn-primary {
+  background-color: #7cc832;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 0.8rem 1.75rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  transition: background 0.2s, transform 0.15s;
+  font-family: inherit;
+}
+
+.nf-btn-primary:hover { background-color: #6ab527; transform: translateY(-2px); }
+
+.nf-btn-secondary {
+  background-color: #fff;
+  color: #111;
+  border: 1.5px solid #ddd;
+  border-radius: 12px;
+  padding: 0.8rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color 0.2s, transform 0.15s;
+  font-family: inherit;
+}
+
+.nf-btn-secondary:hover { border-color: #111; transform: translateY(-2px); }
+
+/* ===== KEYFRAMES ===== */
+@keyframes nf-fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes nf-fade-down {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 480px) {
+  .nf-pill-1, .nf-pill-2, .nf-pill-3 { display: none; }
+
+  .nf-four, .nf-zero { font-size: clamp(5rem, 22vw, 7rem); }
+
+  .nf-actions { flex-direction: column; width: 100%; }
+  .nf-btn-primary, .nf-btn-secondary { text-align: center; }
+}
