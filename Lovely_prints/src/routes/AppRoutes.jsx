@@ -17,7 +17,7 @@ import AdminDashboard from "../components/admin/AdminDashboard";
 import { StudentDataProvider } from "../components/student/context/StudentDataContext";
 import CreateOrderPage from "../components/student/modals/CreateOrderPage";
 import WalkInOrderPage from "../components/student/modals/WalkInOrderPage";
-
+import NotFound from "../pages/NotFound";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -52,6 +52,7 @@ const AppRoutes = () => {
       <Route element={<ProtectedRoute role="admin" />}>
         <Route path="/admin" element={<AdminDashboard />} />
       </Route>
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };
