@@ -20,6 +20,7 @@ const adaptOrder = (order) => {
     isPaid: order.is_paid ?? false,
     isExpired: order.is_expired ?? false,
     totalPrice : order.total_price,
+    orderType: order.order_type,
     // student
     studentName: order.student?.name || "Unknown",
     studentId: order.student_id || "-",

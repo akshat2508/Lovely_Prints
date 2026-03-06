@@ -14,7 +14,7 @@ const StudentNavbar = ({
         <img src={logo} alt="KaagaZ" className="navbar-logo" />
         <div className="navbar-brand">
          <span className="brand-name">
-  Kaaga<span className="brand-z">Z</span>
+          Docuvio
 </span>
 
         </div>

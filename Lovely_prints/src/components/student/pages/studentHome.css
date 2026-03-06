@@ -240,3 +240,22 @@
   background: #fee2e2;
   color: #b91c1c;
 }
+.banner-open {
+  background: #2e7d32;
+  color: white;
+}
+
+.banner-walkin {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.banner-online {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.banner-closed {
+  background: #e0e0e0;
+  color: #616161;
+}

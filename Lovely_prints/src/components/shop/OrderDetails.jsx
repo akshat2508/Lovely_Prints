@@ -18,8 +18,7 @@ export default function OrderDetails({
   const [verifyingOtp, setVerifyingOtp] = useState(false);
   const [hasDownloaded, setHasDownloaded] = useState(false);
   const createdDate = new Date(order.createdAt);
-  const pickUpDate = new Date(order.pickup_at);
-
+  const pickUpDate = order.pickup_at ? new Date(order.pickup_at) : null;
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -191,14 +190,16 @@ export default function OrderDetails({
           </span>
           <span className="pickup-date">
             ⏰{" "}
-            {pickUpDate.toLocaleString("en-IN", {
-              day: "2-digit",
-              month: "short",
-              year: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-              hour12: true,
-            })}
+            {pickUpDate
+              ? pickUpDate.toLocaleString("en-IN", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: true,
+                })
+              : "Walk In Order"}
           </span>
         </div>
 
@@ -258,32 +259,31 @@ export default function OrderDetails({
 
         {/* ACTION BUTTON (HIDDEN WHEN READY) */}
         {/* CONFIRM / START PRINTING */}
-{order.isPaid &&
-  order.status !== "completed" &&
-  order.status !== "printing" &&
-  order.status !== "ready" && (
-    <button
-      className="action-button"
-      disabled={updating}
-      onClick={handleStatusUpdate}
-    >
-      {updating ? "Updating..." : getActionLabel(order.status)}
-    </button>
-)}
+        {order.isPaid &&
+          order.status !== "completed" &&
+          order.status !== "printing" &&
+          order.status !== "ready" && (
+            <button
+              className="action-button"
+              disabled={updating}
+              onClick={handleStatusUpdate}
+            >
+              {updating ? "Updating..." : getActionLabel(order.status)}
+            </button>
+          )}
 
-
-{/* VERIFY OTP BUTTON */}
-{order.status === "ready" && (
-  <button
-    className="action-button"
-    onClick={(e) => {
-      e.stopPropagation();
-      setShowOtpModal(true);
-    }}
-  >
-    Verify OTP
-  </button>
-)}
+        {/* VERIFY OTP BUTTON */}
+        {order.status === "ready" && (
+          <button
+            className="action-button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowOtpModal(true);
+            }}
+          >
+            Verify OTP
+          </button>
+        )}
       </div>
 
       {/* OTP MODAL */}

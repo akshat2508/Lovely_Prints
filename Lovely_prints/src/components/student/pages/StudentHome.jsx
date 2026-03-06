@@ -54,7 +54,36 @@ const StudentHome = () => {
       </div>
     );
   }
+const getShopBanner = (shop) => {
+  const isOpen = shop.is_active;
+  const isAcceptingOrder = shop.is_accepting_orders;
 
+  if (isOpen && isAcceptingOrder) {
+    return {
+      text: "OPEN",
+      className: "banner-open",
+    };
+  }
+
+  if (isOpen && !isAcceptingOrder) {
+    return {
+      text: "Open for Walk-in Orders",
+      className: "banner-walkin",
+    };
+  }
+
+  if (!isOpen && isAcceptingOrder) {
+    return {
+      text: "Online Orders Available",
+      className: "banner-online",
+    };
+  }
+
+  return {
+    text: "Currently Closed",
+    className: "banner-closed",
+  };
+};
   return (
     <div className="student-home">
       {showPolicies && <OpenPoliciesModal onAccept={handleAcceptPolicies} />}
@@ -101,44 +130,26 @@ const StudentHome = () => {
             key={shop.id}
             className={`shop-card-AB
   ${!shop.is_active && shop.is_accepting_orders ? "shop-closed-soft" : ""}
-  ${!shop.is_accepting_orders ? "shop-disabled" : ""}
-`}
+  ${!shop.is_active && !shop.is_accepting_orders ? "shop-disabled" : ""}`}
             onClick={() => {
-              // 🚫 Completely block if not accepting orders
-              if (!shop.is_accepting_orders) return;
+  // 🚫 Block ONLY when shop is closed AND not accepting online orders
+  if (!shop.is_active && !shop.is_accepting_orders) return;
 
-              // ✅ Allow if open
-              if (shop.is_active) {
-                setFlowStage(2);
-                navigate(`/student/shop/${shop.id}`);
-                return;
-              }
-
-              // 🟡 Closed but accepting → still allow
-              if (!shop.is_active && shop.is_accepting_orders) {
-                setFlowStage(2);
-                navigate(`/student/shop/${shop.id}`);
-              }
-            }}
+  // ✅ Otherwise allow entering shop page
+  setFlowStage(2);
+  navigate(`/student/shop/${shop.id}`);
+}}
           >
             {/* Open / Closed Tag */}
-            <div
-              className={`shop-status-tag
-    ${
-      shop.is_active
-        ? "open"
-        : shop.is_accepting_orders
-          ? "closed-accepting"
-          : "not-accepting"
-    }
-  `}
-            >
-              {shop.is_active && "Open"}
-              {!shop.is_active &&
-                shop.is_accepting_orders &&
-                "Closed – Accepting Orders"}
-              {!shop.is_accepting_orders && "Not Accepting Orders"}
-            </div>
+            {(() => {
+  const banner = getShopBanner(shop);
+
+  return (
+    <div className={`shop-status-tag ${banner.className}`}>
+      {banner.text}
+    </div>
+  );
+})()}
 
             <div className="shop-banner-AB">
               <img

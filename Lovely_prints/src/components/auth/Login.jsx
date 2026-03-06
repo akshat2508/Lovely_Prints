@@ -39,7 +39,7 @@ export default function Login() {
         <div className="ln-left-content">
           <div className="ln-logo-row">
             <img src={logo} alt="KaagaZ" className="ln-logo-img" />
-            <span className="ln-logo-text">KaagaZ</span>
+            <span className="ln-logo-text">Docuvio</span>
           </div>
 
           <div className="ln-badge">
@@ -64,10 +64,8 @@ export default function Login() {
             ))}
           </div>
         </div>
-      </div>
 
       {/* RIGHT PANEL */}
-      <div className="ln-right">
         <div className="ln-card">
           <div className="ln-form-badge">SIGN IN</div>
           <h2 className="ln-form-title">Login</h2>
