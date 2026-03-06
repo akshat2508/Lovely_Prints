@@ -116,12 +116,12 @@ function DashboardMock() {
     <div className="dashboard-mock_z">
       <div className="mock-topbar_z">
         <span className="mock-dot_z r_z" /><span className="mock-dot_z y_z" /><span className="mock-dot_z g_z" />
-        <div className="mock-url_z">kaagaz.app/dashboard</div>
+        <div className="mock-url_z">Docuvio.app/dashboard</div>
       </div>
       <div className="mock-nav_z">
         <div className="mock-nav-brand_z">
           <img src={LOGO} alt="" className="mock-logo_z" />
-          <span className="mock-name_z">KaagaZ</span>
+          <span className="mock-name_z">Docuvio</span>
         </div>
         <div className="mock-tabs_z">
           <span className="mock-tab_z active_z">Home</span>
@@ -215,7 +215,7 @@ export default function Home() {
       >
         <a className="nav-brand_z" href="/">
           <img src={LOGO} alt="KaagaZ" className="nav-logo-img_z" />
-          <span className="nav-brand-name_z">KaagaZ</span>
+          <span className="nav-brand-name_z">Docuvio</span>
         </a>
         <div className="nav-center_z">
           <a href="#how-it-works" className="nav-link_z">How it Works</a>
@@ -245,7 +245,7 @@ export default function Home() {
           </Reveal>
           <Reveal delay={0.42}>
             <p className="hero-desc_z">
-              KaagaZ connects students to campus print shops —{" "}
+              Docuvio connects students to campus print shops —{" "}
               <strong>upload, configure, pay, and pick up.</strong> No queues. No guesswork. Just your document, done.
             </p>
           </Reveal>
@@ -404,7 +404,7 @@ export default function Home() {
             <Tag color="var(--coral)">Who It's For</Tag>
             <h2 className="h2_z">Two sides.<br />One platform.</h2>
             <p className="lead_z" style={{ marginTop: 16 }}>
-              KaagaZ is built for students who need fast prints, and shop owners who need a professional digital operations layer.
+              Docuvio is built for students who need fast prints, and shop owners who need a professional digital operations layer.
             </p>
           </Reveal>
           <div className="persona-grid_z">
@@ -450,7 +450,7 @@ export default function Home() {
       <section className="feat-section_z" id="features">
         <div className="feat-inner_z">
           <Reveal>
-            <Tag color="#7A9EC0">Why KaagaZ</Tag>
+            <Tag color="#7A9EC0">Why Docuvio</Tag>
             <h2 className="h2_z">Everything<br />engineered for campus.</h2>
           </Reveal>
           <div className="feat-grid_z">
@@ -483,7 +483,7 @@ export default function Home() {
           </Reveal>
           <div className="proof-grid_z">
             {[
-              { q: "I used to miss morning lectures just waiting at the photocopy shop. With KaagaZ, I upload the night before and pick it up between classes.", name: "Priya S.", meta: "3rd Year · CSE", av: "P", avCol: "#8BAF29" },
+              { q: "I used to miss morning lectures just waiting at the photocopy shop. With Docuvio, I upload the night before and pick it up between classes.", name: "Priya S.", meta: "3rd Year · CSE", av: "P", avCol: "#8BAF29" },
               { q: "As a shop owner, managing 50+ orders on paper was chaos. The dashboard shows me everything — pending, printing, done. It's changed how I work.", name: "Ramesh K.", meta: "Owner · Block 38", av: "R", avCol: "#DF9A06" },
               { q: "The OTP pickup system is genius. No miscommunication, no wrong orders given out. My shop's error rate dropped to nearly zero.", name: "Anjali M.", meta: "Owner · Block 12", av: "A", avCol: "#E57373" },
             ].map((p, i) => (
@@ -544,7 +544,7 @@ export default function Home() {
       <footer className="footer_z">
         <div className="footer-brand-row_z">
           <img src={LOGO} alt="KaagaZ" className="footer-logo_z" />
-          <span className="footer-nm_z">KaagaZ</span>
+          <span className="footer-nm_z">Docuvio</span>
           <span className="footer-copy_z">© 2026. All rights reserved.</span>
         </div>
         <ul className="footer-links_z">

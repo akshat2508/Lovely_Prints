@@ -1,0 +1,145 @@
+import { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import {
+  createStudentOrder,
+  uploadFile,
+  attachDocumentToOrder,
+} from "../../../services/studentService";
+import { startPayment } from "../Payments";
+import PrintStackLoader from "../skeletons/PrintStackLoader";
+import "./createOrderModal.css";
+
+const WalkInOrderPage = () => {
+  const { shopId } = useParams();
+  const navigate = useNavigate();
+
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [pageCount, setPageCount] = useState(1);
+  const [amount, setAmount] = useState("");
+  const [notes, setNotes] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [fileError, setFileError] = useState("");
+
+  const canSubmit = selectedFile && amount && Number(amount) > 0 && !loading;
+
+  const handleSubmit = async () => {
+  if (!canSubmit) return;
+
+  try {
+    setLoading(true);
+
+    const orderRes = await createStudentOrder({
+      shop_id: shopId,
+      order_type: "walk_in",
+      notes: notes?.trim() || null,
+    });
+
+    if (!orderRes.success) {
+      alert(orderRes.message);
+      setLoading(false);
+      return;
+    }
+
+    const order = orderRes.data;
+
+    const uploadRes = await uploadFile(selectedFile);
+    const fileKey = uploadRes.data.fileKey;
+
+    await attachDocumentToOrder(order.id, {
+      fileKey,
+      fileName: selectedFile.name,
+      page_count: pageCount,
+      manual_price: Number(amount),
+    });
+
+    startPayment(
+      order,
+      () => navigate("/student/orders"),
+      (reason) => {
+        alert(reason || "Payment failed");
+        setLoading(false);
+      }
+    );
+  } catch (err) {
+    console.error(err);
+    alert("Something went wrong");
+    setLoading(false);
+  }
+};
+
+  return (
+    <div className="create-order-page">
+      {loading && <PrintStackLoader />}
+
+      <div className="create-order-container">
+        <h1 className="container-header">Walk-In Order</h1>
+        <p>Upload file and enter amount told by shop owner.</p>
+
+        <div className="form-group full-width">
+          <label className="modal-label">Upload PDF *</label>
+
+          <label className="upload-box">
+            {selectedFile ? selectedFile.name : "Choose a PDF (max 10MB)"}
+
+            <input
+              type="file"
+              accept=".pdf"
+              onChange={(e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const MAX_SIZE = 10 * 1024 * 1024;
+                if (file.size > MAX_SIZE) {
+                  setFileError("PDF must be under 10MB.");
+                  return;
+                }
+
+                setFileError("");
+                setSelectedFile(file);
+              }}
+            />
+          </label>
+
+          {fileError && <p className="error-text">{fileError}</p>}
+        </div>
+
+        <div className="form-group">
+          <label className="modal-label">Amount (₹) *</label>
+          <input
+            type="number"
+            min="1"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            className="modal-input"
+          />
+        </div>
+
+        <div className="form-group">
+          <label className="modal-label">Notes (Optional)</label>
+          <textarea
+            rows={3}
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            className="modal-input"
+          />
+        </div>
+
+        <div className="create-footer-A">
+          <button className="secondary-btn" onClick={() => navigate(-1)}>
+            Cancel
+          </button>
+
+          <button
+            className="primary-btn-n"
+            disabled={!canSubmit}
+            onClick={handleSubmit}
+          >
+            Pay & Print
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default WalkInOrderPage;

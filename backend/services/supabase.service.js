@@ -118,29 +118,64 @@ async createOrder(orderData, token) {
     return { error: { message: "Invalid user" } };
   }
 
-  // 2️⃣ Fetch shop → organisation (trusted source)
+  // 2️⃣ Fetch shop (trusted source)
   const { data: shop, error: shopError } = await supabaseUser
-  .from("shops")
-  .select("organisation_id, is_active, is_accepting_orders")
-  .eq("id", orderData.shop_id)
-  .single();
+    .from("shops")
+    .select("organisation_id, is_active, is_accepting_orders")
+    .eq("id", orderData.shop_id)
+    .single();
+
   if (shopError || !shop) {
     return { error: { message: "Invalid shop" } };
   }
-  // 🚫 Shop not accepting orders at all
-  if (!shop.is_accepting_orders) {
-    return {
-      error: { message: "Shop is not accepting orders right now" },
-    };
+
+  // 3️⃣ Determine order type (default = online)
+  const orderType = orderData.order_type || "online";
+
+  // ===============================
+  // 🟣 WALK-IN ORDER RULES
+  // ===============================
+  if (orderType === "walk_in") {
+
+    // shop must be physically open
+    if (!shop.is_active) {
+      return {
+        error: { message: "Shop is currently closed for walk-in orders" },
+      };
+    }
+
+    // walk-in specific adjustments
+    orderData.pickup_at = null;
+    orderData.is_urgent = false;
   }
 
-  // 3️⃣ Insert order (RLS-safe)
+  // ===============================
+  // 🟢 ONLINE ORDER RULES
+  // ===============================
+  if (orderType === "online") {
+
+    // shop must accept online orders
+    if (!shop.is_accepting_orders) {
+      return {
+        error: { message: "Shop is not accepting online orders right now" },
+      };
+    }
+
+    if (!orderData.pickup_at) {
+      return {
+        error: { message: "Pickup time required for online orders" },
+      };
+    }
+  }
+
+  // 4️⃣ Insert order (secure values)
   return await supabaseUser
     .from("orders")
     .insert({
       ...orderData,
-      student_id: userData.user.id,           // 🔐 derived
-      organisation_id: shop.organisation_id,  // 🔐 derived
+      order_type: orderType,
+      student_id: userData.user.id,
+      organisation_id: shop.organisation_id,
     })
     .select()
     .single();
@@ -232,8 +267,49 @@ async updateOrderStatus(orderId, status, token) {
 async createDocument(documentData, token) {
   const supabaseUser = getUserSupabase(token);
 
+  // 1️⃣ Get order to check type
+  const { data: order, error: orderError } = await supabaseUser
+    .from("orders")
+    .select("order_type")
+    .eq("id", documentData.order_id)
+    .single();
+
+  if (orderError || !order) {
+    return { error: { message: "Invalid order" } };
+  }
+
+  // 🟣 WALK-IN VALIDATION
+  if (order.order_type === "walk_in") {
+    if (
+      !documentData.manual_price ||
+      Number(documentData.manual_price) <= 0
+    ) {
+      return { error: { message: "Valid manual amount required" } };
+    }
+
+    // Force null specs
+    documentData.paper_type_id = null;
+    documentData.color_mode_id = null;
+    documentData.finish_type_id = null;
+    documentData.copies = 1;
+  }
+
+  // 🟢 ONLINE VALIDATION
+  if (order.order_type === "online") {
+    if (
+      !documentData.paper_type_id ||
+      !documentData.color_mode_id ||
+      !documentData.finish_type_id
+    ) {
+      return { error: { message: "Print configuration required" } };
+    }
+
+    // Prevent manual price misuse
+    documentData.manual_price = null;
+  }
+
   return await supabaseUser
-    .from('documents')
+    .from("documents")
     .insert(documentData)
     .select()
     .single();
@@ -461,7 +537,7 @@ async markPaymentSuccess(orderId, paymentId, signature) {
 
 // supabase.service.js
 async getOrderForPayment(orderId) {
-  return await supabaseAnon
+  return await supabaseAdmin
     .from('orders')
     .select('*')
     .eq('id', orderId)
@@ -554,6 +630,7 @@ return await supabaseAdmin
     pickup_at,
     student_id,
     total_price,
+    order_type,
 
     student:users!fk_order_student (
       name

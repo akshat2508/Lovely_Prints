@@ -16,7 +16,7 @@ import ResetPassword from "../components/auth/ResetPassword";
 import AdminDashboard from "../components/admin/AdminDashboard";
 import { StudentDataProvider } from "../components/student/context/StudentDataContext";
 import CreateOrderPage from "../components/student/modals/CreateOrderPage";
-
+import WalkInOrderPage from "../components/student/modals/WalkInOrderPage";
 import NotFound from "../pages/NotFound";
 const AppRoutes = () => {
   return (
@@ -39,6 +39,7 @@ const AppRoutes = () => {
           <Route path="shop/:shopId" element={<ShopDetails />} />
           <Route path="orders" element={<StudentOrders />} />
           <Route path="shop/:shopId/create" element={<CreateOrderPage />} />
+          <Route path="shop/:shopId/walk-in" element={<WalkInOrderPage />} />
           <Route path="profile" element={<StudentProfile />} />
         </Route>
       </Route>

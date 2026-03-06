@@ -57,7 +57,9 @@ export default function ShopDashboard() {
   const [remainingTime, setRemainingTime] = useState(null);
   const notificationAudioRef = useRef(null);
   const [currentTime, setCurrentTime] = useState(new Date());
-
+useEffect(() => {
+  console.log("ORDERS RAW:", orders);
+}, [orders]);
 const generateTimeSlots = (openHour, closeHour) => {
   const slots = [];
 
@@ -316,7 +318,7 @@ useEffect(() => {
   }, [activeTab]);
 
   useEffect(() => {
-    const baseTitle = "Lovely Prints";
+    const baseTitle = "Docuvio";
 
     if (unseenOrderCount > 0) {
       document.title = `(${unseenOrderCount}) New Orders | ${baseTitle}`;
@@ -350,6 +352,13 @@ useEffect(() => {
 
     return true;
   });
+
+  const walkInOrders = orders.filter(
+  (order) =>
+    order.orderType === "walk_in" &&
+    order.isPaid === true &&
+    !order.isExpired
+);
 
   const handleStatusChange = async (orderId, newStatus) => {
     const prev = orders;
@@ -628,6 +637,29 @@ const discardedOrders = orders.filter(
         src="/notification.mp3"
         preload="auto"
       />
+      {activeTab === "walkin" && (
+  <div className="walkin-wrapper">
+    {walkInOrders.length === 0 ? (
+      <div className="empty-slot-message">
+        No walk-in orders
+      </div>
+    ) : (
+      <OrderList
+        orders={walkInOrders}
+        onStatusChange={handleStatusChange}
+        onSelectOrder={setSelectedOrder}
+        onRefresh={fetchOrders}
+      />
+    )}
+
+    {selectedOrder && (
+      <OrderPreview
+        order={selectedOrder}
+        onClose={() => setSelectedOrder(null)}
+      />
+    )}
+  </div>
+)}
       {activeTab === "discarded" && (
   <div className="discarded-wrapper">
     {discardedOrders.length === 0 ? (

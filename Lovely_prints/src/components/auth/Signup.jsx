@@ -52,7 +52,7 @@ export default function Signup() {
         <div className="su-left-content">
           <div className="su-logo-row">
             <img src={logo} alt="KaagaZ" className="su-logo-img" />
-            <span className="su-logo-text">KaagaZ</span>
+            <span className="su-logo-text">Docuvio</span>
           </div>
           <div className="su-badge">
             <span className="su-badge-dot" />
@@ -74,10 +74,8 @@ export default function Signup() {
           </div>
         
         </div>
-      </div>
 
       {/* RIGHT PANEL */}
-      <div className="su-right">
         <div className="su-card">
           <div className="su-form-badge">CREATE ACCOUNT</div>
           <h2 className="su-form-title">Sign Up</h2>

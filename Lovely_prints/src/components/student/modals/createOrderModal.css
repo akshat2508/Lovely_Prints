@@ -283,6 +283,7 @@
   font-size: 0.9rem;
   cursor: pointer;
   transition: 0.2s ease;
+  margin-top: 4px;
 }
 
 .secondary-btn:hover {
@@ -458,4 +459,15 @@
   background: #8AB62D;
   color: white;
   border-color: #8AB62D;
+}
+
+.container-header{
+      text-align: center;
+    font-weight: bold;
+    font-size: large;
+    border: 1px solid black;
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    background: #C4CE48;
 }

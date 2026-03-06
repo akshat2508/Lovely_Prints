@@ -8,8 +8,13 @@ import "./shopDetails.css";
 const ShopDetails = () => {
   const { shopId } = useParams();
   const navigate = useNavigate();
-  const { shops, fetchShops, fetchShopOptions, invalidateShopOptions , setFlowStage } =
-    useStudentData();
+  const {
+    shops,
+    fetchShops,
+    fetchShopOptions,
+    invalidateShopOptions,
+    setFlowStage,
+  } = useStudentData();
 
   const [shop, setShop] = useState(null);
   const [options, setOptions] = useState(null);
@@ -35,6 +40,7 @@ const ShopDetails = () => {
 
   if (loading) return <ShopDetailsSkeleton />;
   if (!shop) return <p style={{ padding: 24 }}>Shop not found</p>;
+  const walkInClosed = !shop.is_active;
 
   return (
     <div className="shop-details-B">
@@ -42,14 +48,19 @@ const ShopDetails = () => {
       <div className="shop-top-bar-B">
         <button
           className="secondary-btn-B back-btn-B"
-onClick={() => {
-  setFlowStage(1);  // back to Choose Shop
-  navigate("/student");
-}}
+          onClick={() => {
+            setFlowStage(1); // back to Choose Shop
+            navigate("/student");
+          }}
         >
           ← Back to Shops
         </button>
       </div>
+        {!shop.is_accepting_orders && (
+  <p className="online-disabled-msg">
+    This shop is not accepting online orders at the moment.
+  </p>
+)}
 
       {/* 🏪 Header */}
       <div className="shop-header-B">
@@ -63,22 +74,46 @@ onClick={() => {
 
           <div className="shop-meta-B">
             <span className="meta-label-B">Opens:</span>
-            <span className="meta-value-B">{shop.open_time.slice(0 , 5) || "9:00 AM"} AM </span>
+            <span className="meta-value-B">
+              {shop.open_time.slice(0, 5) || "9:00 AM"} AM{" "}
+            </span>
             <span className="meta-label-B">Closes:</span>
             <span className="meta-value-B">
-              {shop.close_time.slice(0 ,5) || "10:00 PM"} PM
+              {shop.close_time.slice(0, 5) || "10:00 PM"} PM
             </span>
           </div>
 
           {/* ➕ Create Order Button (Inside Header) */}
+         <button
+  className="primary-btn-B create-order-btn-B"
+  disabled={!shop.is_accepting_orders}
+  onClick={() => {
+    if (!shop.is_accepting_orders) {
+      alert("This shop is not accepting online orders right now.");
+      return;
+    }
+
+    setFlowStage(3);
+    navigate(`/student/shop/${shop.id}/create`);
+  }}
+>
+  {shop.is_accepting_orders
+    ? "Create Print Order"
+    : "Online Orders Closed"}
+</button>
           <button
-            className="primary-btn-B create-order-btn-B"
-onClick={() => {
-  setFlowStage(3);   // 🔥 Move sidebar to Review Order stage
-  navigate(`/student/shop/${shop.id}/create`);
-}}
+            className="secondary-btn"
+            disabled={walkInClosed}
+            onClick={() => {
+              if (walkInClosed) {
+                alert("Walk-in orders are currently closed for this shop.");
+                return;
+              }
+
+              navigate(`/student/shop/${shopId}/walk-in`);
+            }}
           >
-            Create Print Order
+            {walkInClosed ? "Walk-In Orders Closed" : "Order Now (In Shop)"}
           </button>
         </div>
 
@@ -142,12 +177,15 @@ onClick={() => {
           onClose={() => setShowCreateModal(false)}
           onSuccess={() => {
             invalidateShopOptions(shop.id);
-              setFlowStage(4);   // 🔥 Orders stage
+            setFlowStage(4); // 🔥 Orders stage
 
             navigate("/student/orders");
           }}
         />
       )}
+    
+      
+
     </div>
   );
 };

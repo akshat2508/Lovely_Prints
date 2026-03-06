@@ -161,3 +161,8 @@
     grid-template-columns: 1fr;
   }
 }
+.online-disabled-msg {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #c0392b;
+}

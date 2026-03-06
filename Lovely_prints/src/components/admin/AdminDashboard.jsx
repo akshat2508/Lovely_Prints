@@ -203,7 +203,7 @@ const handleRevenueCalculation = async () => {
     <div className="admin-topbar-A">
       <div className="admin-brand-A">
         <img src={logo} alt="" />
-        <h3 className="admin-brand-h3-A">KaagaZ Admin Portal</h3>
+        <h3 className="admin-brand-h3-A">Docuvio Admin Portal</h3>
       </div>
 
       <button

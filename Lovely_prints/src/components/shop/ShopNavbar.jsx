@@ -40,6 +40,12 @@ const ShopNavbar = ({
             )}
           </button>
           <button
+            className={activeTab === "walkin" ? "active" : ""}
+            onClick={() => setActiveTab("walkin")}
+          >
+            Walk-In
+          </button>
+          <button
             className={`${activeTab === "scheduled" ? "active" : ""}`}
             onClick={() => setActiveTab("scheduled")}
           >

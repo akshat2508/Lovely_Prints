@@ -56,7 +56,6 @@ const { data, error } =
 
 export const createOrder = async (req, res, next) => {
   try {
-    // 🔐 Auth context (already validated by middleware)
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
       return errorResponse(res, "Authorization token missing", 401);
@@ -68,61 +67,65 @@ export const createOrder = async (req, res, next) => {
       orientation,
       is_urgent,
       pickup_at,
+      order_type,
     } = req.body;
 
-    // ============================
-    // 🚨 PICKUP TIME VALIDATION
-    // ============================
+    const type = order_type || "online";
 
-    if (!pickup_at) {
-      return errorResponse(
-        res,
-        "Pickup date & time is required",
-        400
+    let normalizedPickup = null;
+
+    // 🟢 ONLINE ORDER VALIDATION
+    if (type === "online") {
+      if (!pickup_at) {
+        return errorResponse(
+          res,
+          "Pickup date & time is required",
+          400
+        );
+      }
+
+      const pickupTime = new Date(pickup_at);
+      const now = new Date();
+
+      if (isNaN(pickupTime.getTime())) {
+        return errorResponse(res, "Invalid pickup date & time", 400);
+      }
+
+      if (pickupTime < now) {
+        return errorResponse(
+          res,
+          "Pickup time cannot be in the past",
+          400
+        );
+      }
+
+      const maxAllowed = new Date(
+        now.getTime() + 24 * 60 * 60 * 1000
       );
+
+      if (pickupTime > maxAllowed) {
+        return errorResponse(
+          res,
+          "Pickup time must be within 24 hours",
+          400
+        );
+      }
+
+      normalizedPickup = pickupTime.toISOString();
     }
 
-    const pickupTime = new Date(pickup_at);
-    const now = new Date();
-
-    if (isNaN(pickupTime.getTime())) {
-      return errorResponse(
-        res,
-        "Invalid pickup date & time",
-        400
-      );
+    // 🟣 WALK-IN ORDER → NO PICKUP VALIDATION
+    if (type === "walk_in") {
+      normalizedPickup = null;
     }
-
-    if (pickupTime < now) {
-      return errorResponse(
-        res,
-        "Pickup time cannot be in the past",
-        400
-      );
-    }
-
-    const maxAllowed = new Date(
-      now.getTime() + 24 * 60 * 60 * 1000
-    );
-
-    if (pickupTime > maxAllowed) {
-      return errorResponse(
-        res,
-        "Pickup time must be within 24 hours of order creation",
-        400
-      );
-    }
-
-    // ============================
-    // 🧱 ORDER PAYLOAD (NO TRUST)
-    // ============================
 
     const orderData = {
       shop_id,
+      order_type: type,
       notes: description || null,
       orientation: orientation || "portrait",
-      is_urgent: Boolean(is_urgent),
-      pickup_at: pickupTime.toISOString(), // ✅ normalized
+      is_urgent: type === "online" ? Boolean(is_urgent) : false,
+      pickup_at: normalizedPickup,
     };
 
     const { data, error } =
@@ -143,7 +146,6 @@ export const createOrder = async (req, res, next) => {
   }
 };
 
-
 export const addDocumentToOrder = async (req, res, next) => {
   try {
     const { orderId } = req.params;
@@ -156,20 +158,53 @@ export const addDocumentToOrder = async (req, res, next) => {
       copies,
       paper_type_id,
       color_mode_id,
-      finish_type_id
+      finish_type_id,
+      manual_price
     } = req.body;
 
-    // validation
+    if (!fileKey || !fileName || !page_count) {
+      return errorResponse(res, 'File data missing', 400);
+    }
+
+    const { data: order } = await supabaseService.getOrderById(orderId, token);
+
+    if (!order) {
+      return errorResponse(res, "Order not found", 404);
+    }
+
+    // 🟣 WALK-IN
+    if (order.order_type === "walk_in") {
+      if (!manual_price || Number(manual_price) <= 0) {
+        return errorResponse(res, "Valid amount required", 400);
+      }
+
+      const { data, error } = await supabaseService.createDocument(
+        {
+          order_id: orderId,
+          file_url: fileKey,
+          file_name: fileName,
+          page_count,
+          copies: 1,
+          manual_price: Number(manual_price),
+        },
+        token
+      );
+
+      if (error) {
+        return errorResponse(res, error.message, 400);
+      }
+
+      return successResponse(res, data, 'Walk-in document added', 201);
+    }
+
+    // 🟢 ONLINE
     if (
-      !fileKey ||
-      !fileName ||
-      !page_count ||
       !copies ||
       !paper_type_id ||
       !color_mode_id ||
       !finish_type_id
     ) {
-      return errorResponse(res, 'All fields are required', 400);
+      return errorResponse(res, 'Print configuration required', 400);
     }
 
     const { data, error } = await supabaseService.createDocument(
