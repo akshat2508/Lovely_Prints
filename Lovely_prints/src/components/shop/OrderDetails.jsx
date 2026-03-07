@@ -165,7 +165,7 @@ export default function OrderDetails({
           </span>
         )}
 
-        {order.isUrgent && <span className="badge urgent">Urgent</span>}
+        {/* {order.isHandled && <span className="badge urgent">Scheduled</span>} */}
 
         <span className={`badge ${order.isPaid ? "paid" : "unpaid"}`}>
           {order.isPaid ? "Paid" : "Not Paid"}

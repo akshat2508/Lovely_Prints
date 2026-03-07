@@ -1,13 +1,15 @@
 import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-
+//global email toggle
+const EMAILS_ENABLED = process.env.ENABLE_EMAILS== "true";
 export const sendReadyForPickupEmail = async ({
   email,
   name,
   orderNo,
   shopName,
 }) => {
+  if(!EMAILS_ENABLED) return;
   await resend.emails.send({
     from: "Lovely Prints <no-reply@lovelyprints.co.in>",
     to: email,
@@ -28,6 +30,8 @@ export const sendOrderDeliveredEmail = async ({
   name,
   orderNo,
 }) => {
+
+  if(!EMAILS_ENABLED) return;
   await resend.emails.send({
     from: "Lovely Prints <no-reply@lovelyprints.co.in>",
     to: email,

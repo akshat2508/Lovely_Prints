@@ -31,7 +31,7 @@ export default function OrderList({ orders, onStatusChange, onSelectOrder , onRe
               onStatusChange={onStatusChange}
               onRefresh={onRefresh}
               onClick={() => onSelectOrder(order)}
-              className={order.isUrgent ? "urgent-order" : ""}
+              className={order.isHandled ? "urgent-order" : ""}
             />
           ))}
     </div>
