@@ -54,7 +54,17 @@ app.use(helmet());
 
 app.use(
   cors({
-    origin: config.frontendUrl,
+    origin: (origin, callback) => {
+      const allowedOrigins = [
+        config.frontendUrl
+      ];
+
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true
   })
 );
