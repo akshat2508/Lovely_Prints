@@ -1,7 +1,8 @@
 // services/supabase.service.js
 import { createClient } from '@supabase/supabase-js';
 import { config } from '../config/env.js';
-
+import logger from "../utils/logger.js"
+import { getUserIdFromToken } from '../utils/jwt.js';
 // Anon client (no user context)
 const supabaseAnon = createClient(
   config.supabase.url,
@@ -146,7 +147,7 @@ async createOrder(orderData, token) {
 
     // walk-in specific adjustments
     orderData.pickup_at = null;
-    orderData.is_urgent = false;
+    orderData.is_handled = false;
   }
 
   // ===============================
@@ -592,29 +593,26 @@ async markOrderPaidByRazorpayOrder(razorpayOrderId) {
 
 async getOrdersForOwner(token) {
   // 1️⃣ Get user from token
-  const { data: userData, error: userError } =
-    await this.getUserFromToken(token);
+ const userId = getUserIdFromToken(token);
 
-  if (userError || !userData?.user) {
-    return { error: userError || new Error('Invalid user') };
-  }
-
-  const userId = userData.user.id;
+if (!userId) {
+  return { error: new Error("Invalid token") };
+}
 
   // 2️⃣ Get shop owned by user
   const { data: shop, error: shopError } = await supabaseAnon
     .from('shops')
-    .select('id ,shop_name, is_active')
+    .select('id, shop_name, is_active')
     .eq('owner_id', userId)
     .single();
 
   if (shopError || !shop) {
     return { error: shopError || new Error('Shop not found for owner') };
   }
+  const start = Date.now(); // ⏱ start timer
 
-  // 3️⃣ Fetch orders + documents + print options
-  const supabaseUser = getUserSupabase(token);
-return await supabaseAdmin
+  // 3️⃣ Fetch orders
+  const result = await supabaseAdmin
   .from('orders')
   .select(`
     id,
@@ -651,9 +649,16 @@ return await supabaseAdmin
   `)
   .eq('shop_id', shop.id)
   .eq('is_paid',true)
-  .order('created_at', { ascending: false });
+  .order('created_at', { ascending: false })
+  .limit(50);
+  const duration = Date.now() - start; // ⏱ end timer
 
-    
+logger.info("SHOP_ORDERS_QUERY_TIME", {
+  shopId: shop.id,
+  duration: `${duration}ms`
+});
+
+  return result;
 }
 
 async getPaymentByRazorpayOrder(razorpayOrderId) {
