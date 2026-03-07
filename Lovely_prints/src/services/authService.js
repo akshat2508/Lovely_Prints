@@ -38,8 +38,11 @@ export const loginUser = async ({ email, password }) => {
    * Matches your response format:
    * data.session.access_token
    */
-  const token = response.data.data.session.access_token;
-  localStorage.setItem("access_token", token);
+const token = response.data.data.session.access_token;
+const role = response.data.data.user.user_metadata.role;
+
+localStorage.setItem("access_token", token);
+localStorage.setItem("role", role);
 
   return response.data;
 };
@@ -50,7 +53,8 @@ export const loginUser = async ({ email, password }) => {
  */
 export const logoutUser = async () => {
   await api.post("/auth/logout");
-  localStorage.removeItem("access_token");
+localStorage.removeItem("access_token");
+localStorage.removeItem("role");
   window.location.href="/login";
 };
 

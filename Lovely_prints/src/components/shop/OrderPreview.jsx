@@ -18,7 +18,7 @@ export default function OrderPreview({ order, onClose }) {
     <div className="order-preview-overlay-L" onClick={onClose}>
       <div
         className={`order-preview-L ${
-          order.isUrgent ? "urgent-preview-L" : ""
+          order.isHandled ? "urgent-preview-L" : ""
         }`}
         onClick={(e) => e.stopPropagation()}
       >

@@ -56,6 +56,19 @@ const { data, error } =
 
 export const createOrder = async (req, res, next) => {
   try {
+
+    // ⛔ Block orders between 12 AM and 6 AM
+    const now = new Date();
+    const currentHour = now.getHours();
+
+    if (currentHour >= 0 && currentHour < 6) {
+      return errorResponse(
+        res,
+        "Orders cannot be placed between 12 AM and 6 AM",
+        403
+      );
+    }
+
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
       return errorResponse(res, "Authorization token missing", 401);
@@ -65,7 +78,7 @@ export const createOrder = async (req, res, next) => {
       shop_id,
       description,
       orientation,
-      is_urgent,
+      is_handled,
       pickup_at,
       order_type,
     } = req.body;
@@ -76,6 +89,7 @@ export const createOrder = async (req, res, next) => {
 
     // 🟢 ONLINE ORDER VALIDATION
     if (type === "online") {
+
       if (!pickup_at) {
         return errorResponse(
           res,
@@ -85,7 +99,6 @@ export const createOrder = async (req, res, next) => {
       }
 
       const pickupTime = new Date(pickup_at);
-      const now = new Date();
 
       if (isNaN(pickupTime.getTime())) {
         return errorResponse(res, "Invalid pickup date & time", 400);
@@ -111,6 +124,45 @@ export const createOrder = async (req, res, next) => {
         );
       }
 
+      // 🔹 Fetch shop info
+      const { data: shop, error: shopError } =
+        await supabaseService.getShopById(shop_id);
+
+      if (shopError || !shop) {
+        return errorResponse(res, "Shop not found", 404);
+      }
+
+      // 🔹 Check if shop accepting orders
+      if (!shop.is_accepting_orders) {
+        return errorResponse(
+          res,
+          "Shop is not accepting orders right now",
+          403
+        );
+      }
+
+      // 🔹 Detect tomorrow order
+      const tomorrow = new Date();
+      tomorrow.setDate(now.getDate() + 1);
+
+      const isTomorrowOrder =
+        pickupTime.toDateString() === tomorrow.toDateString();
+
+      // 🔹 Get shop closing time
+      const [closeHour, closeMinute] = shop.close_time.split(":");
+
+      const shopClosingToday = new Date();
+      shopClosingToday.setHours(closeHour, closeMinute, 0, 0);
+
+      // ⛔ Block tomorrow orders before shop closes
+      if (isTomorrowOrder && now <= shopClosingToday) {
+        return errorResponse(
+          res,
+          "Tomorrow orders can only be placed after the shop closes today",
+          403
+        );
+      }
+
       normalizedPickup = pickupTime.toISOString();
     }
 
@@ -124,7 +176,7 @@ export const createOrder = async (req, res, next) => {
       order_type: type,
       notes: description || null,
       orientation: orientation || "portrait",
-      is_urgent: type === "online" ? Boolean(is_urgent) : false,
+      is_handled: type === "online" ? Boolean(is_handled) : false,
       pickup_at: normalizedPickup,
     };
 
@@ -141,10 +193,11 @@ export const createOrder = async (req, res, next) => {
       "Order created successfully",
       201
     );
+
   } catch (error) {
     next(error);
   }
-};
+};;
 
 export const addDocumentToOrder = async (req, res, next) => {
   try {

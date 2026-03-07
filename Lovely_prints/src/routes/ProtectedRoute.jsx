@@ -1,42 +1,32 @@
-// import { Navigate, Outlet } from "react-router-dom"
-
-// const ProtectedRoute = ({ role }) => {
-//   const token = localStorage.getItem("access_token")
-
-//   // Not logged in
-//   if (!token) {
-//     return <Navigate to="/login" replace />
-//   }
-
-//   /**
-//    * OPTIONAL (future):
-//    * If you later store role in localStorage or context,
-//    * you can check role here
-//    */
-
-//   return <Outlet />
-// }
-
-// export default ProtectedRoute
-
-
 import { Navigate, Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-const ProtectedRoute = () => {
+const ProtectedRoute = ({ role }) => {
   const [checked, setChecked] = useState(false);
-  const [isAuthed, setIsAuthed] = useState(false);
+  const [token, setToken] = useState(null);
+  const [userRole, setUserRole] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("access_token");
-    setIsAuthed(!!token);
+    const storedToken = localStorage.getItem("access_token");
+    const storedRole = localStorage.getItem("role");
+
+    setToken(storedToken);
+    setUserRole(storedRole);
     setChecked(true);
   }, []);
 
   if (!checked) return null;
 
-  if (!isAuthed) {
+  // not logged in
+  if (!token) {
     return <Navigate to="/login" replace />;
+  }
+
+  // if role not yet available, allow render
+  if (role && userRole && userRole !== role) {
+    if (userRole === "student") return <Navigate to="/student" replace />;
+    if (userRole === "shop") return <Navigate to="/shop" replace />;
+    if (userRole === "admin") return <Navigate to="/admin" replace />;
   }
 
   return <Outlet />;

@@ -13,7 +13,7 @@ import { startPayment } from "../Payments";
 import "./createOrderModal.css";
 import PrintStackLoader from "../skeletons/PrintStackLoader";
 
-const URGENCY_FEE = 10;
+const HANDLING_FEE = 10;
 
 const parseTimeToMinutes = (timeStr) => {
   if (!timeStr) return null;
@@ -64,7 +64,6 @@ const CreateOrderPage = () => {
   const [finishType, setFinishType] = useState("");
   const [orientation, setOrientation] = useState("portrait");
   const [copies, setCopies] = useState(1);
-  const [isUrgent, setIsUrgent] = useState(false);
   const [description, setDescription] = useState("");
 
   /* ====== File ====== */
@@ -84,6 +83,8 @@ const CreateOrderPage = () => {
 
   const [selectedDay, setSelectedDay] = useState("today");
 const [selectedTime, setSelectedTime] = useState(null);
+const isHandled = selectedDay === "tomorrow";
+const [dayError, setDayError] = useState("");
 
 
 
@@ -106,7 +107,7 @@ const [selectedTime, setSelectedTime] = useState(null);
 
     const subtotal =
       (basePrice + colorPrice + finishPrice) * pageCount * copies;
-    return isUrgent ? subtotal + URGENCY_FEE : subtotal;
+    return isHandled ? subtotal + HANDLING_FEE : subtotal;
   })();
 
   /* ✅ Step validation */
@@ -131,16 +132,30 @@ const [selectedTime, setSelectedTime] = useState(null);
   if (openMinutes === null || closeMinutes === null) return [];
 
   const slots = [];
-  const interval = 30; // 30 min intervals (professional standard)
+  const interval = 30;       // slot interval
+  const pickupBuffer = 30;   // must finish before closing
+
+  const roundToNextSlot = (minutes, interval) =>
+    Math.ceil(minutes / interval) * interval;
 
   let start = openMinutes;
+  let end = closeMinutes - pickupBuffer;
 
+  // TODAY logic
   if (selectedDay === "today") {
     const nowMinutes = getMinutesFromDate(new Date());
-    start = Math.max(openMinutes, nowMinutes + 15); 
+
+    const earliest = Math.max(openMinutes, nowMinutes + 15);
+
+    start = roundToNextSlot(earliest, interval);
   }
 
-  for (let mins = start; mins < closeMinutes; mins += interval) {
+  // TOMORROW logic
+  if (selectedDay === "tomorrow") {
+    start = openMinutes + 30;
+  }
+
+  for (let mins = start; mins <= end; mins += interval) {
     const hours = Math.floor(mins / 60);
     const minutes = mins % 60;
 
@@ -189,7 +204,7 @@ useEffect(() => {
         organisation_id: shop.organisation_id,
         description: description?.trim() || null,
         orientation,
-        is_urgent: isUrgent,
+        is_handled : selectedDay === "tomorrow",
         pickup_at: new Date(pickupAt).toISOString(),
       });
 
@@ -243,15 +258,15 @@ useEffect(() => {
   };
 
 
-const isUrgentDisabled = (() => {
-  if (!selectedTime) return true;
+// const isUrgentDisabled = (() => {
+//   if (!selectedTime) return true;
 
-  const pickup = new Date(pickupAt);
-  const pickupMinutes = getMinutesFromDate(pickup);
-  const closeMinutes = parseTimeToMinutes(shop.close_time);
+//   const pickup = new Date(pickupAt);
+//   const pickupMinutes = getMinutesFromDate(pickup);
+//   const closeMinutes = parseTimeToMinutes(shop.close_time);
 
-  return closeMinutes - pickupMinutes < 60;
-})();
+//   return closeMinutes - pickupMinutes < 60;
+// })();
 
   // const shopIsClosedNow = (() => {
   //   const openMinutes = parseTimeToMinutes(shop?.open_time);
@@ -264,7 +279,14 @@ const isUrgentDisabled = (() => {
   // })();
   
 const shopNotAcceptingOrders = shop?.is_accepting_orders === false;
+const hasShopClosedToday = () => {
+  if (!shop?.close_time) return false;
 
+  const closeMinutes = parseTimeToMinutes(shop.close_time);
+  const nowMinutes = getMinutesFromDate(new Date());
+
+  return nowMinutes > closeMinutes;
+};
 if (!shop || !shopOptions) {
   return (
     <div className="create-order-page">
@@ -449,16 +471,28 @@ if (!shop || !shopOptions) {
     </button>
 
     <button
-      type="button"
-      className={selectedDay === "tomorrow" ? "day-btn active" : "day-btn"}
-      onClick={() => {
-        setSelectedDay("tomorrow");
-        setSelectedTime(null);
-      }}
-    >
-      Tomorrow
-    </button>
+  type="button"
+  className={selectedDay === "tomorrow" ? "day-btn active" : "day-btn"}
+  onClick={() => {
+
+    if (!hasShopClosedToday()) {
+      setDayError(
+        `Tomorrow orders can be placed after ${shop.close_time.slice(0,5)}`
+      );
+      return;
+    }
+
+    setDayError("");
+    setSelectedDay("tomorrow");
+    setSelectedTime(null);
+  }}
+>
+  Tomorrow (+₹{HANDLING_FEE})
+</button>
   </div>
+  {dayError && (
+  <p className="error-text">{dayError}</p>
+)}
 </div>
 
 <div className="form-group full-width">
@@ -488,15 +522,12 @@ if (!shop || !shopOptions) {
 
 
                 <div className="form-group">
-                  <label className="urgent-toggle-A">
-                    <input
-                      type="checkbox"
-                      checked={isUrgent}
-                      disabled={isUrgentDisabled}
-                      onChange={(e) => setIsUrgent(e.target.checked)}
-                    />
-                    <span>Urgent (+₹{URGENCY_FEE})</span>
-                  </label>
+                 {isHandled && (
+  <div className="summary-row">
+    <span>Next-Day Handling Fee</span>
+    <span>+₹{HANDLING_FEE}</span>
+  </div>
+)}
                 </div>
 
                 <div className="form-group full-width">
@@ -558,10 +589,10 @@ if (!shop || !shopOptions) {
                   <span>{pageCount} × {copies}</span>
                 </div>
 
-                {isUrgent && (
+                {isHandled && (
                   <div className="summary-row">
-                    <span>Urgent</span>
-                    <span>+₹{URGENCY_FEE}</span>
+                    <span>Handling Fee</span>
+                    <span>+₹{HANDLING_FEE}</span>
                   </div>
                 )}
 

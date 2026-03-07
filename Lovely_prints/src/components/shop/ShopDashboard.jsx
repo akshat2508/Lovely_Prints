@@ -291,7 +291,7 @@ useEffect(() => {
         setUnseenOrderCount((count) => count + freshOrders.length); // TAB Notification
 
         // 🚨 urgent detection
-        if (freshOrders.some((o) => o.isUrgent)) {
+        if (freshOrders.some((o) => o.isHandled)) {
           setHasUrgentOrders(true);
         }
 
@@ -335,8 +335,8 @@ useEffect(() => {
     if (paymentFilter === "unpaid" && order.isPaid) return false;
 
     /* ---------- URGENT FILTER ---------- */
-    if (urgentFilter === "urgent" && !order.isUrgent) return false;
-    if (urgentFilter === "normal" && order.isUrgent) return false;
+    if (urgentFilter === "urgent" && !order.isHandled) return false;
+    if (urgentFilter === "normal" && order.isHandled) return false;
 
     /* ---------- SEARCH FILTER ---------- */
     if (searchQuery.trim()) {
