@@ -15,6 +15,7 @@ import { logoutUser } from "../../services/authService";
 import ShopAnalytics from "./analytics/ShopAnalytics";
 import ShopNavbar from "./ShopNavbar";
 import EmptyShopOrders from "./EmptyShopOrders";
+import { supabase } from "../../services/supabase";
 const SESSION_DURATION = 60 * 60 * 1000; // 1 hour
 const SESSION_KEY = "shop_session_start";
 
@@ -57,9 +58,7 @@ export default function ShopDashboard() {
   const [remainingTime, setRemainingTime] = useState(null);
   const notificationAudioRef = useRef(null);
   const [currentTime, setCurrentTime] = useState(new Date());
-useEffect(() => {
-  console.log("ORDERS RAW:", orders);
-}, [orders]);
+
 const generateTimeSlots = (openHour, closeHour) => {
   const slots = [];
 
@@ -186,6 +185,43 @@ useEffect(() => {
     return () => clearInterval(timer);
   }, []);
 
+useEffect(() => {
+  if (!shop?.id) return;
+
+  supabase.realtime.setAuth(localStorage.getItem("access_token"));
+
+  const channel = supabase
+    .channel("shop-orders-realtime")
+    .on(
+      "postgres_changes",
+      {
+        event: "UPDATE",
+        schema: "public",
+        table: "orders",
+        filter: `shop_id=eq.${shop.id}`,
+      },
+      (payload) => {
+        const oldOrder = payload.old;
+        const newOrder = payload.new;
+
+        // ONLY when payment becomes true
+        if (oldOrder?.is_paid === false && newOrder.is_paid === true) {
+          console.log("Order payment confirmed:", newOrder);
+
+          triggerNewOrderAlert();
+          fetchOrders();
+        }
+      }
+    )
+    .subscribe((status) => {
+      console.log("Realtime status:", status);
+    });
+
+  return () => {
+    supabase.removeChannel(channel);
+  };
+}, [shop]);
+
   /* ================= MANUAL SHOP TOGGLE ================= */
 
   const handleManualToggle = async () => {
@@ -260,18 +296,18 @@ useEffect(() => {
 };
 
   const triggerNewOrderAlert = () => {
-    setShowNewOrderToast(true);
+  setShowNewOrderToast(true);
 
-    // 🔔 play sound
-    if (voiceEnabled && notificationAudioRef.current) {
-      notificationAudioRef.current.currentTime = 0;
-      notificationAudioRef.current.play().catch(() => {});
-    }
+  // 🔔 play sound
+  if (notificationAudioRef.current) {
+    notificationAudioRef.current.currentTime = 0;
+    notificationAudioRef.current.play().catch(() => {});
+  }
 
-    speakNewOrder();
+  speakNewOrder();
 
-    setTimeout(() => setShowNewOrderToast(false), 4000);
-  };
+  setTimeout(() => setShowNewOrderToast(false), 4000);
+};
 
   /* ================= ORDERS ================= */
 
@@ -308,14 +344,6 @@ useEffect(() => {
   useEffect(() => {
     fetchOrders();
   }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (activeTab === "orders") fetchOrders();
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [activeTab]);
 
   useEffect(() => {
     const baseTitle = "Docuvio";

@@ -58,8 +58,14 @@ export const createOrder = async (req, res, next) => {
   try {
 
     // ⛔ Block orders between 12 AM and 6 AM
-    const now = new Date();
-    const currentHour = now.getHours();
+   const now = new Date();
+
+// convert to IST
+const istTime = new Date(
+  now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+);
+
+const currentHour = istTime.getHours();
 
     if (currentHour >= 0 && currentHour < 6) {
       return errorResponse(

@@ -8,7 +8,7 @@ import {
   Truck,
 } from "lucide-react";
 import { getStudentOrders } from "../../../services/studentService";
-
+import {supabase} from "../../../services/supabase"
 const STATUS_FLOW = ["pending", "confirmed", "printing", "ready", "completed"];
 
 const STATUS_LABELS = {
@@ -46,24 +46,36 @@ const TrackOrderModal = ({ order, onClose }) => {
     setLiveOrder(order);
   }, [order]);
 
-  // 🔁 polling (SAFE)
-  useEffect(() => {
-    const interval = setInterval(async () => {
-      try {
-        const res = await getStudentOrders();
-        if (res?.success) {
-          const updated = res.data.find((o) => o.id === liveOrder.id);
-          if (updated && updated.updated_at !== liveOrder.updated_at) {
-            setLiveOrder(updated);
-          }
-        }
-      } catch (e) {
-        console.error("Order polling failed", e);
-      }
-    }, 4000);
 
-    return () => clearInterval(interval);
-  }, [liveOrder.id, liveOrder.updated_at]);
+useEffect(() => {
+  if (!liveOrder?.id) return;
+
+  supabase.realtime.setAuth(localStorage.getItem("access_token"));
+
+  const channel = supabase
+    .channel("student-order-track")
+    .on(
+      "postgres_changes",
+      {
+        event: "UPDATE",
+        schema: "public",
+        table: "orders",
+        filter: `id=eq.${liveOrder.id}`,
+      },
+      (payload) => {
+        const updatedOrder = payload.new;
+
+        if (payload.old.status !== payload.new.status) {
+          setLiveOrder(updatedOrder);
+        }
+      }
+    )
+    .subscribe();
+
+  return () => {
+    supabase.removeChannel(channel);
+  };
+}, [liveOrder.id]);
 
   const currentIndex = STATUS_FLOW.indexOf(liveOrder.status);
 

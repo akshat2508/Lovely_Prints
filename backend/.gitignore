@@ -4,5 +4,5 @@
 .env.production
 .env.development
 !.env.example
-logs/
+/logs
 *.log

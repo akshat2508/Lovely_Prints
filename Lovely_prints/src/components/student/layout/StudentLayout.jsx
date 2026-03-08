@@ -3,8 +3,6 @@ import { useEffect, useState } from "react";
 import StudentNavbar from "./StudentNavbar";
 import StudentBottomNav from "./StudentBottomNav";
 import { logoutUser } from "../../../services/authService";
-import { StudentDataProvider } from "../context/StudentDataContext";
-import { getStudentOrders } from "../../../services/studentService";
 import "./studentLayout.css";
 import StudentSidebar from "./StudentSidebar";
 import StudentRightRail from "./StudentRightRail";
@@ -20,23 +18,26 @@ const location = useLocation();
 const { setFlowStage } = useStudentData();
 
 useEffect(() => {
-  if (location.pathname.startsWith("/student/shop")) {
+  const path = location.pathname;
+
+  if (path.startsWith("/student/shop")) {
     setFlowStage(2);
-  }
-
-  if (location.pathname === "/student/orders") {
+  } else if (path === "/student/orders") {
     setFlowStage(5);
-  }
-
-  if (location.pathname === "/student") {
+  } else if (path === "/student") {
     setFlowStage(1);
   }
-}, [location.pathname]);
+}, [location.pathname, setFlowStage]);
 
-  const handleLogout = async () => {
+ const handleLogout = async () => {
+  try {
     await logoutUser();
+  } catch (err) {
+    console.error("Logout failed", err);
+  } finally {
     navigate("/login");
-  };
+  }
+};
 
   const isToday = (dateString) => {
   const d = new Date(dateString);
@@ -49,40 +50,40 @@ useEffect(() => {
   );
 };
 
-  // 🔁 Poll for READY orders
-  useEffect(() => {
-  let interval;
+//   // 🔁 Poll for READY orders
+//   useEffect(() => {
+//   let interval;
 
-  const checkReadyOrders = async () => {
-    try {
-      const res = await getStudentOrders();
-      if (!res?.success) return;
+//   const checkReadyOrders = async () => {
+//     try {
+//       const res = await getStudentOrders();
+//       if (!res?.success) return;
 
-      const readyExists = res.data.some(
-        (o) =>
-          o.status === "ready" &&
-          !o.otp_verified &&
-          isToday(o.created_at)
-      );
+//       const readyExists = res.data.some(
+//         (o) =>
+//           o.status === "ready" &&
+//           !o.otp_verified &&
+//           isToday(o.created_at)
+//       );
 
-      if (readyExists && !acknowledged) {
-        setHasReadyOrders(true);
-      }
+//       if (readyExists && !acknowledged) {
+//         setHasReadyOrders(true);
+//       }
 
-      if (!readyExists) {
-        setHasReadyOrders(false);
-        setAcknowledged(false);
-      }
-    } catch (err) {
-      console.error("Ready order polling failed", err);
-    }
-  };
+//       if (!readyExists) {
+//         setHasReadyOrders(false);
+//         setAcknowledged(false);
+//       }
+//     } catch (err) {
+//       console.error("Ready order polling failed", err);
+//     }
+//   };
 
-  checkReadyOrders();
-  interval = setInterval(checkReadyOrders, 5000);
+//   checkReadyOrders();
+//   interval = setInterval(checkReadyOrders, 5000);
 
-  return () => clearInterval(interval);
-}, [acknowledged]);
+//   return () => clearInterval(interval);
+// }, [acknowledged]);
 
   const handleOrdersClick = () => {
     setHasReadyOrders(false);

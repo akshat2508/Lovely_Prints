@@ -35,7 +35,7 @@ const ShopNavbar = ({
                   hasUrgentOrders ? "urgent" : ""
                 }`}
               >
-                {hasUrgentOrders ? "URGENT" : "NEW"}
+                {hasUrgentOrders ? "Schedule" : "NEW"}
               </span>
             )}
           </button>
