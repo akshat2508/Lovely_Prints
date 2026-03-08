@@ -1,0 +1,296 @@
+/* ===== EMAIL VERIFIED — KaagaZ Vibe ===== */
+
+.ev-root {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f5f0e8;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.ev-grid {
+  position: absolute;
+  inset: -20px;
+  background-image:
+    linear-gradient(rgba(0,0,0,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.06) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+  transition: transform 0.1s ease-out;
+}
+
+/* Blobs */
+.ev-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.22;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ev-blob-1 {
+  width: 420px;
+  height: 420px;
+  background: #7cc832;
+  top: -120px;
+  left: -100px;
+  animation: ev-float 9s ease-in-out infinite;
+}
+
+.ev-blob-2 {
+  width: 320px;
+  height: 320px;
+  background: #b6e88a;
+  bottom: -100px;
+  right: -80px;
+  animation: ev-float 11s ease-in-out infinite reverse;
+}
+
+@keyframes ev-float {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50%       { transform: translateY(-28px) scale(1.04); }
+}
+
+/* Floating pills */
+.ev-float-pill {
+  position: absolute;
+  background: #fff;
+  border: 1.5px solid #ddd;
+  border-radius: 999px;
+  padding: 0.4rem 1rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #333;
+  pointer-events: none;
+  z-index: 1;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+.ev-pill-1 {
+  top: 14%;
+  left: 7%;
+  animation: ev-drift 6s ease-in-out infinite;
+}
+
+.ev-pill-2 {
+  top: 18%;
+  right: 9%;
+  animation: ev-drift 8s ease-in-out infinite 1s;
+}
+
+.ev-pill-3 {
+  bottom: 18%;
+  left: 9%;
+  animation: ev-drift 7s ease-in-out infinite 0.5s;
+}
+
+@keyframes ev-drift {
+  0%, 100% { transform: translateY(0px) rotate(-2deg); }
+  50%       { transform: translateY(-12px) rotate(2deg); }
+}
+
+/* ===== CENTER ===== */
+.ev-center {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 2rem 1.5rem;
+  max-width: 500px;
+}
+
+/* Badge */
+.ev-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #111;
+  color: #f5f0e8;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  margin-bottom: 1.75rem;
+  animation: ev-fade-down 0.6s ease both;
+}
+
+.ev-badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #7cc832;
+  flex-shrink: 0;
+  animation: ev-pulse 2s ease-in-out infinite;
+}
+
+@keyframes ev-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* Checkmark icon */
+.ev-icon-wrap {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  animation: ev-fade-up 0.7s ease 0.1s both;
+}
+
+.ev-icon-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2.5px solid #7cc832;
+  animation: ev-ring-expand 2.5s ease-out infinite;
+}
+
+.ev-ring-2 {
+  animation-delay: 1.25s;
+}
+
+@keyframes ev-ring-expand {
+  0%   { transform: scale(1);   opacity: 0.8; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+
+.ev-checkmark {
+  font-size: 2.5rem;
+  color: #7cc832;
+  font-weight: 900;
+  animation: ev-pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.4s both;
+  z-index: 1;
+}
+
+@keyframes ev-pop {
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+/* Headline */
+.ev-headline {
+  line-height: 1;
+  margin-bottom: 1rem;
+  animation: ev-fade-up 0.7s ease 0.2s both;
+}
+
+.ev-h-solid {
+  font-size: clamp(2.6rem, 7vw, 4.5rem);
+  font-weight: 900;
+  color: #111;
+  letter-spacing: -0.04em;
+}
+
+.ev-h-green {
+  font-size: clamp(2.6rem, 7vw, 4.5rem);
+  font-weight: 900;
+  color: #7cc832;
+  letter-spacing: -0.04em;
+}
+
+.ev-h-outline {
+  font-size: clamp(2.6rem, 7vw, 4.5rem);
+  font-weight: 900;
+  color: transparent;
+  -webkit-text-stroke: 2px #111;
+  letter-spacing: -0.04em;
+}
+
+.ev-sub {
+  font-size: 0.9rem;
+  color: #777;
+  line-height: 1.65;
+  margin-bottom: 1.75rem;
+  animation: ev-fade-up 0.7s ease 0.25s both;
+}
+
+/* Card */
+.ev-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 0.9rem 1.25rem;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.09);
+  margin-bottom: 2rem;
+  min-width: 230px;
+  animation: ev-fade-up 0.7s ease 0.3s both, ev-wobble 5s ease-in-out 1s infinite;
+}
+
+@keyframes ev-wobble {
+  0%, 100% { transform: rotate(-1deg) translateY(0px); }
+  50%       { transform: rotate(1deg) translateY(-5px); }
+}
+
+.ev-card-top {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.ev-card-icon { font-size: 1.4rem; }
+
+.ev-card-name {
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: #111;
+}
+
+.ev-card-meta { font-size: 0.75rem; color: #aaa; }
+
+.ev-card-status {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #7cc832;
+  letter-spacing: 0.05em;
+}
+
+/* Button */
+.ev-btn {
+  background-color: #7cc832;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 0.9rem 2.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  transition: background 0.2s, transform 0.15s;
+  font-family: inherit;
+  animation: ev-fade-up 0.7s ease 0.4s both;
+}
+
+.ev-btn:hover { background-color: #6ab527; transform: translateY(-2px); }
+.ev-btn:active { transform: translateY(0); }
+
+/* ===== KEYFRAMES ===== */
+@keyframes ev-fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ev-fade-down {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 480px) {
+  .ev-pill-1, .ev-pill-2, .ev-pill-3 { display: none; }
+  .ev-h-solid, .ev-h-green, .ev-h-outline { font-size: clamp(2.2rem, 12vw, 3rem); }
+  .ev-btn { width: 100%; text-align: center; }
+}
