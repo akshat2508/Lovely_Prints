@@ -436,9 +436,10 @@ if (!shop || !shopOptions) {
 
                         const MAX_SIZE = 10 * 1024 * 1024;
                         if (file.size > MAX_SIZE) {
-                          setFileError("PDF must be under 10MB.");
+                         setFileError("PDF must be under 10MB.");
+                          setSelectedFile(null);
                           return;
-                        }
+                          }
 
                         setFileError("");
                         setSelectedFile(file);

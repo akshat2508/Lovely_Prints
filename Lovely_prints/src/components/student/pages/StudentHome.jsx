@@ -172,12 +172,12 @@ const getShopBanner = (shop) => {
 
               <div className="shop-details-box-A">
                 <span className="shop-time-A">
-                  <strong>Opens at:</strong> {shop.open_time.slice(0, 5)} AM
+                  <strong>Opens at:</strong> {shop.open_time?.slice(0, 5)} AM
                 </span>
               </div>
               <div className="shop-details-box-A">
                 <span className="shop-time-A">
-                  <strong>Closes at:</strong> {shop.close_time.slice(0, 5)} PM
+                  <strong>Closes at:</strong> {shop.close_time?.slice(0, 5)} PM
                 </span>
               </div>
             </div>

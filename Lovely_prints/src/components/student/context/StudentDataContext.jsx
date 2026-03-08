@@ -3,7 +3,7 @@ import {
   getAllShops,
   getShopPrintOptions,
 } from "../../../services/studentService";
-
+import { supabase } from "../../../services/supabase";
 const StudentDataContext = createContext(null);
 
 export const StudentDataProvider = ({ children }) => {
@@ -72,15 +72,45 @@ export const StudentDataProvider = ({ children }) => {
     }
   };
 
-  useEffect(() => {
-    fetchShops(false);
+ useEffect(() => {
+  // initial load
+  fetchShops(false);
 
-    const interval = setInterval(() => {
-      fetchShops(true);
-    }, 15000);
+  supabase.realtime.setAuth(localStorage.getItem("access_token"));
 
-    return () => clearInterval(interval);
-  }, []);
+  const channel = supabase
+    .channel("shops-realtime")
+    .on(
+      "postgres_changes",
+      {
+        event: "UPDATE",
+        schema: "public",
+        table: "shops",
+      },
+      (payload) => {
+        const updatedShop = payload.new;
+
+        setShops((prevShops) => {
+          if (!prevShops) return prevShops;
+
+          return prevShops.map((shop) =>
+            shop.id === updatedShop.id
+              ? {
+                  ...shop,
+                  is_active: updatedShop.is_active,
+                  is_accepting_orders: updatedShop.is_accepting_orders,
+                }
+              : shop
+          );
+        });
+      }
+    )
+    .subscribe();
+
+  return () => {
+    supabase.removeChannel(channel);
+  };
+}, []);
 
   /* ================= SHOP OPTIONS ================= */
 

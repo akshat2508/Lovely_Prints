@@ -41,6 +41,17 @@ const ShopDetails = () => {
   if (loading) return <ShopDetailsSkeleton />;
   if (!shop) return <p style={{ padding: 24 }}>Shop not found</p>;
   const walkInClosed = !shop.is_active;
+  const isOrderTimeBlocked = () => {
+    const now = new Date();
+
+    const ist = new Date(
+      now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }),
+    );
+
+    const hour = ist.getHours();
+
+    return hour >= 0 && hour < 6;
+  };
 
   return (
     <div className="shop-details-B">
@@ -56,11 +67,11 @@ const ShopDetails = () => {
           ← Back to Shops
         </button>
       </div>
-        {!shop.is_accepting_orders && (
-  <p className="online-disabled-msg">
-    This shop is not accepting online orders at the moment.
-  </p>
-)}
+      {!shop.is_accepting_orders && (
+        <p className="online-disabled-msg">
+          This shop is not accepting online orders at the moment.
+        </p>
+      )}
 
       {/* 🏪 Header */}
       <div className="shop-header-B">
@@ -84,23 +95,28 @@ const ShopDetails = () => {
           </div>
 
           {/* ➕ Create Order Button (Inside Header) */}
-         <button
-  className="primary-btn-B create-order-btn-B"
-  disabled={!shop.is_accepting_orders}
-  onClick={() => {
-    if (!shop.is_accepting_orders) {
-      alert("This shop is not accepting online orders right now.");
-      return;
-    }
+          <button
+            className="primary-btn-B create-order-btn-B"
+            disabled={!shop.is_accepting_orders}
+            onClick={() => {
+              if (!shop.is_accepting_orders) {
+                alert("This shop is not accepting online orders right now.");
+                return;
+              }
 
-    setFlowStage(3);
-    navigate(`/student/shop/${shop.id}/create`);
-  }}
->
-  {shop.is_accepting_orders
-    ? "Create Print Order"
-    : "Online Orders Closed"}
-</button>
+              if (isOrderTimeBlocked()) {
+                alert("Orders cannot be placed between 12 AM and 6 AM.");
+                return;
+              }
+
+              setFlowStage(3);
+              navigate(`/student/shop/${shop.id}/create`);
+            }}
+          >
+            {shop.is_accepting_orders
+              ? "Create Print Order"
+              : "Online Orders Closed"}
+          </button>
           <button
             className="secondary-btn"
             disabled={walkInClosed}
@@ -183,9 +199,6 @@ const ShopDetails = () => {
           }}
         />
       )}
-    
-      
-
     </div>
   );
 };

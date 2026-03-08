@@ -118,6 +118,12 @@ export default function OrderPreview({ order, onClose }) {
                 {order.status}
               </span>
             </div>
+            <div className="preview-row-L">
+              <span className="preview-label-L">Amount</span>
+              <span className={`order-no-highlight-L`}>
+                {order.totalPrice}
+              </span>
+            </div>
 
             <div className="preview-row-L">
               <span className="preview-label-L">Placed At</span>
