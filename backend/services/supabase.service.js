@@ -38,7 +38,9 @@ async signUp(email, password, metadata) {
   return await supabaseAnon.auth.signUp({
     email,
     password,
-    options: { data: metadata },
+    options: { 
+      emailRedirectTo: process.env.FRONTEND_URL + "/email-verified",
+      data: metadata },
   });
 }
 
