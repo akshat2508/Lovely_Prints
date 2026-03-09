@@ -18,7 +18,7 @@ import { StudentDataProvider } from "../components/student/context/StudentDataCo
 import CreateOrderPage from "../components/student/modals/CreateOrderPage";
 import WalkInOrderPage from "../components/student/modals/WalkInOrderPage";
 import NotFound from "../pages/NotFound";
-import EmailVerified from "../components/auth/email_verified";
+import EmailVerified from "../components/auth/EmailVerified";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -53,8 +53,8 @@ const AppRoutes = () => {
       <Route element={<ProtectedRoute role="admin" />}>
         <Route path="/admin" element={<AdminDashboard />} />
       </Route>
+      <Route path="/email-verified" element={<EmailVerified />} />
       <Route path="*" element={<NotFound />} />
-      <Route path="/email_verified" element={<EmailVerified />} />
     </Routes>
   );
 };
