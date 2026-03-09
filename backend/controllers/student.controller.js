@@ -57,16 +57,14 @@ const { data, error } =
 export const createOrder = async (req, res, next) => {
   try {
 
+    // 🔹 Current time in IST
+    const now = new Date(
+      new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+    );
+
+    const currentHour = now.getHours();
+
     // ⛔ Block orders between 12 AM and 6 AM
-   const now = new Date();
-
-// convert to IST
-const istTime = new Date(
-  now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
-);
-
-const currentHour = istTime.getHours();
-
     if (currentHour >= 0 && currentHour < 6) {
       return errorResponse(
         res,
@@ -104,7 +102,12 @@ const currentHour = istTime.getHours();
         );
       }
 
-      const pickupTime = new Date(pickup_at);
+      // 🔹 Parse pickup time safely
+      const pickupTime = new Date(
+        new Date(pickup_at).toLocaleString("en-US", {
+          timeZone: "Asia/Kolkata",
+        })
+      );
 
       if (isNaN(pickupTime.getTime())) {
         return errorResponse(res, "Invalid pickup date & time", 400);
@@ -118,9 +121,9 @@ const currentHour = istTime.getHours();
         );
       }
 
-      const maxAllowed = new Date(
-        now.getTime() + 24 * 60 * 60 * 1000
-      );
+      // 🔹 Max 24 hours rule
+      const maxAllowed = new Date(now);
+      maxAllowed.setHours(maxAllowed.getHours() + 24);
 
       if (pickupTime > maxAllowed) {
         return errorResponse(
@@ -148,8 +151,8 @@ const currentHour = istTime.getHours();
       }
 
       // 🔹 Detect tomorrow order
-      const tomorrow = new Date();
-      tomorrow.setDate(now.getDate() + 1);
+      const tomorrow = new Date(now);
+      tomorrow.setDate(tomorrow.getDate() + 1);
 
       const isTomorrowOrder =
         pickupTime.toDateString() === tomorrow.toDateString();
@@ -157,7 +160,7 @@ const currentHour = istTime.getHours();
       // 🔹 Get shop closing time
       const [closeHour, closeMinute] = shop.close_time.split(":");
 
-      const shopClosingToday = new Date();
+      const shopClosingToday = new Date(now);
       shopClosingToday.setHours(closeHour, closeMinute, 0, 0);
 
       // ⛔ Block tomorrow orders before shop closes
@@ -203,7 +206,7 @@ const currentHour = istTime.getHours();
   } catch (error) {
     next(error);
   }
-};;
+};
 
 export const addDocumentToOrder = async (req, res, next) => {
   try {
