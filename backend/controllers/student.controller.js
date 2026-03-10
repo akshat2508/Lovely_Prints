@@ -58,9 +58,7 @@ export const createOrder = async (req, res, next) => {
   try {
 
     // 🔹 Current time in IST
-    const now = new Date(
-      new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
-    );
+    const now = new Date();
 
     const currentHour = now.getHours();
 
@@ -103,11 +101,7 @@ export const createOrder = async (req, res, next) => {
       }
 
       // 🔹 Parse pickup time safely
-      const pickupTime = new Date(
-        new Date(pickup_at).toLocaleString("en-US", {
-          timeZone: "Asia/Kolkata",
-        })
-      );
+      const pickupTime = new Date(pickup_at);
 
       if (isNaN(pickupTime.getTime())) {
         return errorResponse(res, "Invalid pickup date & time", 400);
@@ -151,17 +145,14 @@ export const createOrder = async (req, res, next) => {
       }
 
       // 🔹 Detect tomorrow order
-      const tomorrow = new Date(now);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-
       const isTomorrowOrder =
-        pickupTime.toDateString() === tomorrow.toDateString();
+  pickupTime.getDate() !== now.getDate();
 
       // 🔹 Get shop closing time
-      const [closeHour, closeMinute] = shop.close_time.split(":");
+      const [closeHour, closeMinute] = shop.close_time.split(":").map(Number);
 
-      const shopClosingToday = new Date(now);
-      shopClosingToday.setHours(closeHour, closeMinute, 0, 0);
+const shopClosingToday = new Date(now);
+shopClosingToday.setHours(closeHour, closeMinute, 0, 0);
 
       // ⛔ Block tomorrow orders before shop closes
       if (isTomorrowOrder && now <= shopClosingToday) {
