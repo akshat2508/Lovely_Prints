@@ -205,7 +205,7 @@ useEffect(() => {
         description: description?.trim() || null,
         orientation,
         is_handled : selectedDay === "tomorrow",
-        pickup_at: new Date(pickupAt).toISOString(),
+        pickup_at: pickupAt,  
       });
 
       const order = orderRes.data;
@@ -285,7 +285,7 @@ const hasShopClosedToday = () => {
   const closeMinutes = parseTimeToMinutes(shop.close_time);
   const nowMinutes = getMinutesFromDate(new Date());
 
-  return nowMinutes > closeMinutes;
+  return nowMinutes >= closeMinutes;
 };
 if (!shop || !shopOptions) {
   return (
