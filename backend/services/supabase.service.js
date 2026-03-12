@@ -784,7 +784,7 @@ async sendPasswordResetEmail(email) {
   }
 
   return await supabaseAnon.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.FRONTEND_URL}/update-password`,
+    redirectTo: `${process.env.FRONTEND_URL1}/update-password`,
   });
 }
 
