@@ -56,7 +56,8 @@ app.use(
   cors({
     origin: (origin, callback) => {
       const allowedOrigins = [
-        config.frontendUrl
+        config.frontendUrl,
+        config.frontendUrl1
       ];
 
       if (!origin || allowedOrigins.includes(origin)) {
