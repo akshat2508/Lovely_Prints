@@ -71,6 +71,7 @@ export const config = {
   },
 
   frontendUrl: process.env.FRONTEND_URL,
+  frontendUrl1: process.env.FRONTEND_URL1,
 
   enableEmails: process.env.ENABLE_EMAILS === "true",
 };
