@@ -179,9 +179,7 @@ useEffect(() => {
     baseDate.setDate(baseDate.getDate() + 1);
   }
 
-  baseDate.setHours(selectedTime.hours);
-  baseDate.setMinutes(selectedTime.minutes);
-  baseDate.setSeconds(0);
+  baseDate.setHours(selectedTime.hours, selectedTime.minutes, 0, 0);
 
   setPickupAt(baseDate.toISOString());
   setPickupError("");

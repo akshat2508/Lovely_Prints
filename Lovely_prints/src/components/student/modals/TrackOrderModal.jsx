@@ -105,7 +105,7 @@ useEffect(() => {
 
         {liveOrder.otp_verified && (
           <div className="otp-success">
-            ✅ Order has been successfully picked Up
+             Order has been successfully picked Up
           </div>
         )}
 

@@ -146,7 +146,7 @@ export const createOrder = async (req, res, next) => {
 
       // 🔹 Detect tomorrow order
       const isTomorrowOrder =
-  pickupTime.getDate() !== now.getDate();
+  pickupTime.toDateString() !== now.toDateString();
 
       // 🔹 Get shop closing time
       const [closeHour, closeMinute] = shop.close_time.split(":").map(Number);
