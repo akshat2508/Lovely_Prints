@@ -1,4 +1,22 @@
 {
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [
+        { "type": "host", "value": "lovelyprints.co.in" }
+      ],
+      "destination": "https://docuvio.co.in/$1",
+      "permanent": true
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        { "type": "host", "value": "www.lovelyprints.co.in" }
+      ],
+      "destination": "https://docuvio.co.in/$1",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/(.*)",
