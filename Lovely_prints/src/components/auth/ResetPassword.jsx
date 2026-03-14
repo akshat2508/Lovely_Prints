@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../services/supabase";
 import { useNavigate } from "react-router-dom";
-import "./f.css"
+import "./resetPassword.css"
 import { Eye, EyeOff } from "lucide-react";
 
 export default function ResetPassword() {
