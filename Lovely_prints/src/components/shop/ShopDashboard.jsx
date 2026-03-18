@@ -59,6 +59,9 @@ export default function ShopDashboard() {
   const notificationAudioRef = useRef(null);
   const [currentTime, setCurrentTime] = useState(new Date());
 
+  const [hasNewWalkin, setHasNewWalkin] = useState(false);
+const [hasNewScheduled, setHasNewScheduled] = useState(false);
+
 const generateTimeSlots = (openHour, closeHour) => {
   const slots = [];
 
@@ -205,10 +208,33 @@ useEffect(() => {
         const newOrder = payload.new;
 
         // ONLY when payment becomes true
-        if (oldOrder?.is_paid === false && newOrder.is_paid === true) {
-          console.log("Order payment confirmed:", newOrder);
+        const isNewPayment =
+          oldOrder?.is_paid === false && newOrder.is_paid === true;
 
-          triggerNewOrderAlert();
+        const isStatusChanged =
+          oldOrder?.status !== newOrder.status;
+
+        if (isNewPayment || isStatusChanged) {
+          console.log("Realtime update:", newOrder);
+
+          // 🟢 If payment → trigger alert
+          if (isNewPayment) {
+            triggerNewOrderAlert();
+
+            if (newOrder.order_type === "walk_in") {
+              setHasNewWalkin(true);
+            } 
+            else if (newOrder.pickup_at && isFutureDay(new Date(newOrder.pickup_at))) {
+              setHasNewScheduled(true);
+            } 
+            else {
+              setHasNewOrders(true);
+            }
+
+            setUnseenOrderCount((count) => count + 1);
+          }
+
+          // 🔁 ALWAYS refresh orders for sync
           fetchOrders();
         }
       }
@@ -322,17 +348,45 @@ useEffect(() => {
       // 🆕 detect truly new orders
       const freshOrders = newOrders.filter((o) => !prevIds.has(o.id));
 
-      if (prevIds.size > 0 && freshOrders.length > 0) {
-        setHasNewOrders(true);
-        setUnseenOrderCount((count) => count + freshOrders.length); // TAB Notification
+            if (prevIds.size > 0 && freshOrders.length > 0) {
 
-        // 🚨 urgent detection
-        if (freshOrders.some((o) => o.isHandled)) {
-          setHasUrgentOrders(true);
+          let normal = false;
+          let walkin = false;
+          let scheduled = false;
+
+          freshOrders.forEach((order) => {
+          const pickup = order.pickup_at ? new Date(order.pickup_at) : null;
+
+          // 🟢 WALK-IN (highest priority)
+          if (order.order_type === "walk_in") {
+            walkin = true;
+            return;
+          }
+
+          // 🟡 SCHEDULED (future pickup)
+          if (pickup && isFutureDay(pickup)) {
+            scheduled = true;
+            return;
+          }
+
+          // 🔵 TODAY / NORMAL (only ONLINE orders)
+          if (order.order_type === "online") {
+            normal = true;
+          }
+        });
+          if (normal) setHasNewOrders(true);
+          if (walkin) setHasNewWalkin(true);
+          if (scheduled) setHasNewScheduled(true);
+
+          setUnseenOrderCount((count) => count + freshOrders.length);
+
+          // 🚨 urgent logic (keep yours)
+          if (freshOrders.some((o) => o.isHandled)) {
+            setHasUrgentOrders(true);
+          }
+
+          triggerNewOrderAlert();
         }
-
-        triggerNewOrderAlert(); // your existing voice + toast
-      }
 
       prevOrderIdsRef.current = newIds;
       setOrders(newOrders);
@@ -521,15 +575,25 @@ const discardedOrders = orders.filter(
         setActiveTab={(tab) => {
           setActiveTab(tab);
 
-          // 🔔 clear notification ONLY when orders tab clicked
           if (tab === "orders") {
             setHasNewOrders(false);
             setHasUrgentOrders(false);
-            setUnseenOrderCount(0); // 🔔 reset title badge
           }
+
+          if (tab === "walkin") {
+            setHasNewWalkin(false);
+          }
+
+          if (tab === "scheduled") {
+            setHasNewScheduled(false);
+          }
+
+          setUnseenOrderCount(0);
         }}
-        hasNewOrders={hasNewOrders}
-        hasUrgentOrders={hasUrgentOrders}
+          hasNewOrders={hasNewOrders}
+  hasUrgentOrders={hasUrgentOrders}
+  hasNewWalkin={hasNewWalkin}
+  hasNewScheduled={hasNewScheduled}
         sessionTimeLeft={
           remainingTime !== null ? formatTime(remainingTime) : null
         }

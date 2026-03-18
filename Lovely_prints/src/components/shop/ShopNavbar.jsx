@@ -11,6 +11,8 @@ const ShopNavbar = ({
   setActiveTab,
   hasNewOrders,
   hasUrgentOrders,
+  hasNewWalkin,
+  hasNewScheduled,
   sessionTimeLeft,
 }) => {
   return (
@@ -31,26 +33,28 @@ const ShopNavbar = ({
             Orders
             {hasNewOrders && (
               <span
-                className={`nav-notification ${
-                  hasUrgentOrders ? "urgent" : ""
-                }`}
-              >
-                {hasUrgentOrders ? "Schedule" : "NEW"}
-              </span>
+                className={`nav-notification `}
+              >      NEW        </span>
             )}
           </button>
           <button
-            className={activeTab === "walkin" ? "active" : ""}
-            onClick={() => setActiveTab("walkin")}
-          >
-            Walk-In
-          </button>
+  className={activeTab === "walkin" ? "active" : ""}
+  onClick={() => setActiveTab("walkin")}
+>
+  Walk-In
+  {hasNewWalkin && (
+    <span className="nav-notification">NEW</span>
+  )}
+</button>
           <button
-            className={`${activeTab === "scheduled" ? "active" : ""}`}
-            onClick={() => setActiveTab("scheduled")}
-          >
-            Scheduled
-          </button>
+  className={`${activeTab === "scheduled" ? "active" : ""}`}
+  onClick={() => setActiveTab("scheduled")}
+>
+  Scheduled
+  {hasNewScheduled && (
+    <span className="nav-notification urgent">NEW</span>
+  )}
+</button>
           <button
             className={`${activeTab === "discarded" ? "active" : ""}`}
             onClick={() => setActiveTab("discarded")}
