@@ -145,7 +145,7 @@ const [dayError, setDayError] = useState("");
   if (selectedDay === "today") {
     const nowMinutes = getMinutesFromDate(new Date());
 
-    const earliest = Math.max(openMinutes, nowMinutes + 15);
+    const earliest = Math.max(openMinutes, nowMinutes + 30);
 
     start = roundToNextSlot(earliest, interval);
   }
