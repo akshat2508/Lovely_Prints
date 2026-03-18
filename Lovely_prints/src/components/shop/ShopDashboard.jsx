@@ -208,26 +208,34 @@ useEffect(() => {
         const newOrder = payload.new;
 
         // ONLY when payment becomes true
-        if (oldOrder?.is_paid === false && newOrder.is_paid === true) {
-          console.log("Order payment confirmed:", newOrder);
+        const isNewPayment =
+          oldOrder?.is_paid === false && newOrder.is_paid === true;
 
-          // 🔔 sound + toast
-          triggerNewOrderAlert();
+        const isStatusChanged =
+          oldOrder?.status !== newOrder.status;
 
-          // 🧠 DIRECTLY set correct tab notification
-          if (newOrder.order_type === "walk_in") {
-            setHasNewWalkin(true);
-          } 
-          else if (newOrder.pickup_at && isFutureDay(new Date(newOrder.pickup_at))) {
-            setHasNewScheduled(true);
-          } 
-          else {
-            setHasNewOrders(true);
+        if (isNewPayment || isStatusChanged) {
+          console.log("Realtime update:", newOrder);
+
+          // 🟢 If payment → trigger alert
+          if (isNewPayment) {
+            triggerNewOrderAlert();
+
+            if (newOrder.order_type === "walk_in") {
+              setHasNewWalkin(true);
+            } 
+            else if (newOrder.pickup_at && isFutureDay(new Date(newOrder.pickup_at))) {
+              setHasNewScheduled(true);
+            } 
+            else {
+              setHasNewOrders(true);
+            }
+
+            setUnseenOrderCount((count) => count + 1);
           }
 
-          setUnseenOrderCount((count) => count + 1);
-
-          fetchOrders(); // keep this
+          // 🔁 ALWAYS refresh orders for sync
+          fetchOrders();
         }
       }
     )
