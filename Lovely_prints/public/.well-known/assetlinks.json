@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.docuvio.app",
+      "sha256_cert_fingerprints": [
+        "8F:2B:16:08:6D:56:BF:9D:31:EC:18:71:68:F5:D0:10:3D:CE:DB:AB:68:9B:B6:92:46:CC:EF:0D:BD:A3:F0:75"
+      ]
+    }
+  }
+]

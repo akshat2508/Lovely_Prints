@@ -8,6 +8,7 @@ import StudentSidebar from "./StudentSidebar";
 import StudentRightRail from "./StudentRightRail";
 import { useLocation } from "react-router-dom";
 import { useStudentData } from "../context/StudentDataContext";
+import LoggingOutOverlay from "../../common/LoggingOutOverlay";
 
 const StudentLayout = () => {
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ const StudentLayout = () => {
   const [acknowledged, setAcknowledged] = useState(false);
 const location = useLocation();
 const { setFlowStage } = useStudentData();
-
+const [isLoggingOut, setIsLoggingOut] = useState(false);
 useEffect(() => {
   const path = location.pathname;
 
@@ -29,13 +30,17 @@ useEffect(() => {
   }
 }, [location.pathname, setFlowStage]);
 
- const handleLogout = async () => {
+const handleLogout = async () => {
+  if (isLoggingOut) return;
+
+  setIsLoggingOut(true); // 🔥 trigger overlay
+
   try {
     await logoutUser();
+    navigate("/login");
   } catch (err) {
     console.error("Logout failed", err);
-  } finally {
-    navigate("/login");
+    setIsLoggingOut(false); // fallback only
   }
 };
 
@@ -93,10 +98,14 @@ useEffect(() => {
    return (
     // <StudentDataProvider>
       <div className="student-layout-root">
+        {isLoggingOut && (
+  <LoggingOutOverlay message="Logging you out..." />
+)}
         {/* Top Navbar */}
         <StudentNavbar onLogout={handleLogout}
         hasReadyOrders={hasReadyOrders}
-        onOrdersClick={handleOrdersClick}/>
+        onOrdersClick={handleOrdersClick}
+        isLoggingOut={isLoggingOut}/>
 
         {/* Main Dashboard Body */}
         <div className="student-layout-body">
