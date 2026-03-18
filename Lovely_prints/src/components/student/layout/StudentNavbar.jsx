@@ -6,8 +6,10 @@ const StudentNavbar = ({
   onLogout,
   hasReadyOrders,
   onOrdersClick,
+  isLoggingOut
 }) => {
   return (
+    
     <header className="student-navbar-glass">
       {/* LEFT */}
       <div className="navbar-left">

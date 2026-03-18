@@ -8,7 +8,7 @@ const OpenPoliciesModal = ({ onAccept }) => {
 
         <div className="policy-content">
           <ul>
-  <li>✔ Orders once paid are final and cannot be cancelled or refunded</li>
+  <li>✔ Refunds shall be issued solely in the event of verified technical failures attributable to our system.</li>
 
   <li>
     ✔ All uploaded files are automatically scanned for inappropriate or
@@ -17,27 +17,41 @@ const OpenPoliciesModal = ({ onAccept }) => {
   </li>
 
   <li>
-    ✔ Customers must carry the pickup OTP to collect their prints
+    ✔ All uploaded files are subject to automated content screening. Uploading prohibited or inappropriate content may result in immediate account suspension or permanent termination.
   </li>
 
   <li>
-    ✔ Orders must be collected on the same day they are printed; uncollected
-    orders will be discarded after the same day
+    ✔ Customers must present the valid pickup OTP at the time of collection.
+
   </li>
 
   <li>
-    ✔ Neither the print shop nor Lovely Prints will be responsible for any
-    loss, damage, or claims related to uncollected or discarded orders
+    ✔ Orders must be collected within the selected time slot. Failure to do so may result in delays or cancellation of service.
+
   </li>
 
   <li>
-    ✔ Print shops are not responsible for errors caused by incorrect or
-    low-quality files uploaded by users
+    ✔ Scheduled orders for the next day cannot be placed via the app between 12:00 AM and 6:00 AM. Additional charges will be applied for scheduled orders.
+
   </li>
 
   <li>
-    ✔ Misuse of the platform, including policy violations or abusive behavior,
-    may lead to account suspension or permanent termination
+    ✔ All orders must be collected on the same day of printing before the closing time of the shop. Uncollected orders will be discarded after the end of the day without prior notice.
+
+  </li>
+  <li>
+    ✔ Neither the print shop nor Docuvio shall be liable for any loss, damage, or claims arising from uncollected or discarded orders.
+
+
+  </li>
+  <li>
+    ✔ Print shops are not responsible for errors resulting from incorrect, incomplete, or low-quality files submitted by users.
+
+
+  </li>
+  <li>
+    ✔ Any misuse of the platform, including policy violations or abusive behavior, may lead to suspension or permanent termination of the account.
+
   </li>
 </ul>
 

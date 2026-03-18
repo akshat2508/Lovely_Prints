@@ -16,6 +16,7 @@ import ShopAnalytics from "./analytics/ShopAnalytics";
 import ShopNavbar from "./ShopNavbar";
 import EmptyShopOrders from "./EmptyShopOrders";
 import { supabase } from "../../services/supabase";
+import LoggingOutOverlay from "../common/LoggingOutOverlay";
 const SESSION_DURATION = 60 * 60 * 1000; // 1 hour
 const SESSION_KEY = "shop_session_start";
 
@@ -61,6 +62,7 @@ export default function ShopDashboard() {
 
   const [hasNewWalkin, setHasNewWalkin] = useState(false);
 const [hasNewScheduled, setHasNewScheduled] = useState(false);
+const [isLoggingOut, setIsLoggingOut] = useState(false);
 
 const generateTimeSlots = (openHour, closeHour) => {
   const slots = [];
@@ -297,18 +299,24 @@ useEffect(() => {
   /* ================= LOGOUT ================= */
 
   const handleLogout = async () => {
-    try {
-      localStorage.removeItem(SESSION_KEY);
-      if (shop?.id && shop?.is_active) {
-        await setShopStatusManual(shop.id, false);
-      }
+  if (isLoggingOut) return; // prevent double click
 
-      await logoutUser();
-      navigate("/login");
-    } catch (err) {
-      console.error("Logout failed", err);
+  setIsLoggingOut(true); // 🔥 THIS WAS MISSING
+
+  try {
+    localStorage.removeItem(SESSION_KEY);
+
+    if (shop?.id && shop?.is_active) {
+      await setShopStatusManual(shop.id, false);
     }
-  };
+
+    await logoutUser();
+    navigate("/login");
+  } catch (err) {
+    console.error("Logout failed", err);
+    setIsLoggingOut(false); // fallback if error
+  }
+};
 
   /* ================= VOICE ALERT ================= */
 
@@ -565,6 +573,7 @@ const discardedOrders = orders.filter(
 
   return (
     <div className="shop-dashboard">
+      {isLoggingOut && <LoggingOutOverlay />}
       <ShopNavbar
         shop={shop}
         isUpdating={shopStatusLoading}
