@@ -827,6 +827,14 @@ async getUserDeviceTokens(userId) {
     .eq("user_id", userId);
 }
 
+// Remove device token
+async unregisterDeviceToken(userId, token) {
+  return await supabaseAdmin
+    .from("user_device_tokens")
+    .delete()
+    .eq("user_id", userId)
+    .eq("fcm_token", token);
+}
 
 }
 export { supabaseAdmin};
