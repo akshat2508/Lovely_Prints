@@ -166,7 +166,7 @@ const getShopBanner = (shop) => {
 
               <div className="shop-details-box-A">
                 <span className="shop-block-A">
-                  <strong>Block:</strong> {shop.block}
+                  <strong>Level:</strong> {shop.block}
                 </span>
               </div>
 
