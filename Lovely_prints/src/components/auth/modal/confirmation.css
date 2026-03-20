@@ -42,7 +42,7 @@
   margin: 10px 0;
   font-size: 0.95rem;
   font-weight: 700;
-  color: #f58220;
+  color: #8BAF29;
   word-break: break-all;
 }
 
@@ -61,8 +61,8 @@
   font-size: 0.95rem;
   font-weight: 600;
   color: #ffffff;
-  background: linear-gradient(135deg, #f58220, #ff7a00);
-  box-shadow: 0 8px 22px rgba(245, 130, 32, 0.45);
+  background: #8BAF29;
+  box-shadow: 0 8px 22px rgba(204, 255, 154, 0.45);
 }
 
 .confirm-btn:hover {

@@ -8,6 +8,7 @@ import {
 import { startPayment } from "../Payments";
 import PrintStackLoader from "../skeletons/PrintStackLoader";
 import "./createOrderModal.css";
+import { PDFDocument } from "pdf-lib";
 
 const WalkInOrderPage = () => {
   const { shopId } = useParams();
@@ -20,52 +21,58 @@ const WalkInOrderPage = () => {
   const [loading, setLoading] = useState(false);
   const [fileError, setFileError] = useState("");
 
+  const getPdfPageCount = async (file) => {
+    const buffer = await file.arrayBuffer();
+    const pdf = await PDFDocument.load(buffer);
+    return pdf.getPageCount();
+  };
+
   const canSubmit = selectedFile && amount && Number(amount) > 0 && !loading;
 
   const handleSubmit = async () => {
-  if (!canSubmit) return;
+    if (!canSubmit) return;
 
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    const orderRes = await createStudentOrder({
-      shop_id: shopId,
-      order_type: "walk_in",
-      notes: notes?.trim() || null,
-    });
+      const orderRes = await createStudentOrder({
+        shop_id: shopId,
+        order_type: "walk_in",
+        notes: notes?.trim() || null,
+      });
 
-    if (!orderRes.success) {
-      alert(orderRes.message);
-      setLoading(false);
-      return;
-    }
-
-    const order = orderRes.data;
-
-    const uploadRes = await uploadFile(selectedFile);
-    const fileKey = uploadRes.data.fileKey;
-
-    await attachDocumentToOrder(order.id, {
-      fileKey,
-      fileName: selectedFile.name,
-      page_count: pageCount,
-      manual_price: Number(amount),
-    });
-
-    startPayment(
-      order,
-      () => navigate("/student/orders"),
-      (reason) => {
-        alert(reason || "Payment failed");
+      if (!orderRes.success) {
+        alert(orderRes.message);
         setLoading(false);
+        return;
       }
-    );
-  } catch (err) {
-    console.error(err);
-    alert("Something went wrong");
-    setLoading(false);
-  }
-};
+
+      const order = orderRes.data;
+
+      const uploadRes = await uploadFile(selectedFile);
+      const fileKey = uploadRes.data.fileKey;
+
+      await attachDocumentToOrder(order.id, {
+        fileKey,
+        fileName: selectedFile.name,
+        page_count: pageCount,
+        manual_price: Number(amount),
+      });
+
+      startPayment(
+        order,
+        () => navigate("/student/orders"),
+        (reason) => {
+          alert(reason || "Payment failed");
+          setLoading(false);
+        },
+      );
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong");
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="create-order-page">
@@ -84,21 +91,36 @@ const WalkInOrderPage = () => {
             <input
               type="file"
               accept=".pdf"
-              onChange={(e) => {
+              onChange={async (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
 
                 const MAX_SIZE = 10 * 1024 * 1024;
+
                 if (file.size > MAX_SIZE) {
                   setFileError("PDF must be under 10MB.");
+                  setSelectedFile(null);
                   return;
                 }
 
                 setFileError("");
                 setSelectedFile(file);
+
+                try {
+                  const pages = await getPdfPageCount(file);
+                  setPageCount(pages);
+                } catch {
+                  setFileError("Invalid PDF file.");
+                  setSelectedFile(null);
+                }
               }}
             />
           </label>
+          {selectedFile && !fileError && (
+            <span className="pdf-info">
+              📄 {pageCount} page{pageCount > 1 ? "s" : ""}
+            </span>
+          )}
 
           {fileError && <p className="error-text">{fileError}</p>}
         </div>
@@ -134,7 +156,7 @@ const WalkInOrderPage = () => {
             disabled={!canSubmit}
             onClick={handleSubmit}
           >
-            Pay & Print
+            Print
           </button>
         </div>
       </div>

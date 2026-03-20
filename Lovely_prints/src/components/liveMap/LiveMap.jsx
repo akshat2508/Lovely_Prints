@@ -3,7 +3,7 @@ import { MapContainer, TileLayer } from "react-leaflet";
 const LiveMap = () => {
   return (
     <MapContainer
-      center={[28.6139, 77.2090]} // temporary center (Delhi example)
+      center={[31.2533614,75.7035391]} // temporary center (Delhi example)
       zoom={15}
       scrollWheelZoom={false}
       style={{

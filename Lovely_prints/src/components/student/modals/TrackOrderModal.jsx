@@ -1,5 +1,6 @@
 import "./trackOrderModal-G.css";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom"
 import {
   Clock,
   CheckCircle2,
@@ -79,7 +80,7 @@ useEffect(() => {
 
   const currentIndex = STATUS_FLOW.indexOf(liveOrder.status);
 
-  return (
+  return createPortal(
     <div className="modal-overlay">
       <div className="modal-card large">
         {/* Header */}
@@ -153,7 +154,7 @@ useEffect(() => {
           </button>
         </div>
       </div>
-    </div>
+    </div>,document.getElementById("modal-root")
   );
 };
 

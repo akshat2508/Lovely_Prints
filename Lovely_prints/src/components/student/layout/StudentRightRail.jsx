@@ -18,20 +18,24 @@ const StudentRightRail = () => {
 
       {/* SUPPORT CARD */}
       <div className="rail-card support-card">
-        <div className="support-avatar">
+  <div className="support-avatar">
     <Headset size={22} strokeWidth={2} />
-        </div>
+  </div>
 
-        <div className="support-text">
-          <strong>Need help?</strong>
-          <p>We’re here to assist you</p>
-        </div>
+  <div className="support-text">
+    <strong>Need help?</strong>
+    <p>We’re here to assist you</p>
+  </div>
 
-        <button className="support-btn">
-          Contact Support
-        </button>
-      </div>
-
+  <button
+    className="support-btn"
+    onClick={() =>
+      window.location.href = "mailto:support.docuvio@gmail.com"
+    }
+  >
+    Contact Support
+  </button>
+</div>
     </div>
   );
 };

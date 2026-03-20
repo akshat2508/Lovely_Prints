@@ -1,11 +1,12 @@
 import { useState } from "react"
 import "./orderDetailsModal-H.css"
+import { createPortal } from "react-dom";
 
 const OrderDetailsModal = ({ order, onClose }) => {
 
   const doc = order.documents?.[0];
 
-  return (
+  return createPortal(
     <>
       <div className="modal-overlay-H">
         <div className="modal-card-H large-H">
@@ -61,7 +62,7 @@ const OrderDetailsModal = ({ order, onClose }) => {
           </div>
         </div>
       </div>
-    </>
+    </>,document.getElementById('modal-root')
   )
 }
 
