@@ -94,6 +94,7 @@ useEffect(() => {
 const [selectedTime, setSelectedTime] = useState(null);
 const isHandled = selectedDay === "tomorrow";
 const [dayError, setDayError] = useState("");
+const [isCVMode, setIsCVMode] = useState(false);
 
 
 
@@ -265,6 +266,50 @@ useEffect(() => {
     }
   };
 
+  const handleAutoFillCV = () => {
+  if (!shopOptions) return;
+
+ const newState = !isCVMode;
+  setIsCVMode(newState);
+
+  // ❌ If turning OFF → reset
+  if (!newState) {
+    setPaperType("");
+    setColorMode("");
+    setFinishType("");
+    setOrientation("portrait");
+    setCopies(1);
+    return;
+  }
+  const bondPaper = shopOptions.paper_types.find((p) =>
+    p.name.toLowerCase().includes("bond")
+  );
+
+  // ✅ fallback (if bond not found)
+  const defaultPaper = bondPaper || shopOptions.paper_types[0];
+
+  // ✅ default color (prefer bw)
+  const bwColor = shopOptions.color_modes.find((c) =>
+    c.name.toLowerCase().includes("bond") ||
+    c.name.toLowerCase().includes("bond")
+  );
+
+  const defaultColor = bwColor || shopOptions.color_modes[0];
+
+  // ✅ default finish (normal)
+  const normalFinish = shopOptions.finish_types.find((f) =>
+    f.name.toLowerCase().includes("normal")
+  );
+
+  const defaultFinish = normalFinish || shopOptions.finish_types[0];
+
+  // 🔥 APPLY VALUES
+  setPaperType(defaultPaper?.id || "");
+  setColorMode(defaultColor?.id || "");
+  setFinishType(defaultFinish?.id || "");
+  setOrientation("portrait");
+  setCopies(1);
+};
 
 // const isUrgentDisabled = (() => {
 //   if (!selectedTime) return true;
@@ -364,6 +409,16 @@ if (!shop || !shopOptions) {
             {currentStep === 1 && (
               <div className="step-form">
                 <h3 className="step-title">Configure Print Settings</h3>
+               <div
+  className={`cv-checkbox ${isCVMode ? "checked" : ""}`}
+  onClick={handleAutoFillCV}
+>
+  <div className="checkbox-box">
+    {isCVMode && <div className="checkbox-tick">✓</div>}
+  </div>
+
+  <span>CV (Recommended)</span>
+</div>
 
                 <div className="form-group">
                   <label className="modal-label">Paper Type *</label>
