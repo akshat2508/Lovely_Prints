@@ -14,15 +14,12 @@ const StudentHome = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredShops, setFilteredShops] = useState([]);
-  const [showPolicies, setShowPolicies] = useState(true);
+
 
   useEffect(() => {
     fetchShops();
   }, []);
-  const handleAcceptPolicies = () => {
-    setShowPolicies(false);
-  };
-
+ 
   useEffect(() => {
     if (!shops) return;
 
@@ -86,7 +83,6 @@ const getShopBanner = (shop) => {
 };
   return (
     <div className="student-home">
-      {showPolicies && <OpenPoliciesModal onAccept={handleAcceptPolicies} />}
 
       <h1 className="student-home-title">Choose a Print Shop</h1>
 

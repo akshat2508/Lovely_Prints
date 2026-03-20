@@ -12,6 +12,7 @@ import { useStudentData } from "../context/StudentDataContext";
 import { startPayment } from "../Payments";
 import "./createOrderModal.css";
 import PrintStackLoader from "../skeletons/PrintStackLoader";
+import OpenPoliciesModal from "./OpenPoliciesModal";
 
 const HANDLING_FEE = 10;
 
@@ -38,6 +39,14 @@ const CreateOrderPage = () => {
   const { shops, fetchShops, fetchShopOptions, setFlowStage } = useStudentData();
   const [shop, setShop] = useState(null);
   const [shopOptions, setShopOptions] = useState(null);
+  const [agreedPolicies, setAgreedPolicies] = useState(false);
+const [showPoliciesModal, setShowPoliciesModal] = useState(false);
+
+useEffect(() => {
+  if (currentStep === 3) {
+    setAgreedPolicies(false);
+  }
+}, [currentStep]);
   
   useEffect(() => {
     const loadData = async () => {
@@ -118,7 +127,8 @@ const [dayError, setDayError] = useState("");
     selectedFile && !fileError && pickupAt && !pickupError;
 
   const canSubmit =
-    canProceedStep1 && canProceedStep2 && !submitting && !disableSubmit;
+    canProceedStep1 && canProceedStep2 && agreedPolicies
+    && !submitting && !disableSubmit;
 
   const getPdfPageCount = async (file) => {
     const buffer = await file.arrayBuffer();
@@ -297,6 +307,14 @@ if (!shop || !shopOptions) {
   return (
   <div className="create-order-page">
     {showLoader && <PrintStackLoader />}
+    {showPoliciesModal && (
+  <OpenPoliciesModal
+    onAccept={() => {
+      setAgreedPolicies(true);
+      setShowPoliciesModal(false);
+    }}
+  />
+)}
 
     <div className="create-order-container">
 
@@ -566,6 +584,25 @@ if (!shop || !shopOptions) {
                     <span>{new Date(pickupAt).toLocaleString()}</span>
                   </div>
                 </div>
+                <div className="policy-agreement-box">
+  <label className="policy-checkbox-inline">
+    <input
+      type="checkbox"
+      checked={agreedPolicies}
+      onChange={(e) => setAgreedPolicies(e.target.checked)}
+    />
+    <span>
+      I agree to the{" "}
+      <button
+        type="button"
+        className="policy-link-btn"
+        onClick={() => setShowPoliciesModal(true)}
+      >
+        terms & conditions
+      </button>
+    </span>
+  </label>
+</div>
               </div>
             )}
           </div>
@@ -631,12 +668,12 @@ if (!shop || !shopOptions) {
           </button>
         ) : (
           <button
-            className="primary-btn-n"
-            disabled={!canSubmit || shopNotAcceptingOrders}
-            onClick={handleSubmitAndPay}
-          >
-            Submit & Pay
-          </button>
+          className={`primary-btn-n ${!canSubmit ? "disabled" : ""}`}
+          disabled={!canSubmit || shopNotAcceptingOrders}
+          onClick={handleSubmitAndPay}
+        >
+          Submit & Pay
+        </button>
         )}
 
         <button
