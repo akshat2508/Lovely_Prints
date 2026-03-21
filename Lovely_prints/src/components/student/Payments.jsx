@@ -10,7 +10,7 @@ export const startPayment = async (order, onSuccess, onFailure) => {
       key: import.meta.env.VITE_RAZORPAY_KEY_ID,
       amount: razorpayOrder.amount,
       currency: "INR",
-      name: "Lovely Prints",
+      name: "Docuvio",
       description: `Order #${order.order_no}`,
       order_id: razorpayOrder.id,
 
@@ -36,7 +36,7 @@ export const startPayment = async (order, onSuccess, onFailure) => {
       },
 
       theme: {
-        color: "#F58220",
+        color: "#8BAF29",
       },
     };
 

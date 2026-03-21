@@ -476,3 +476,69 @@
     margin-bottom: 10px;
     background: #C4CE48;
 }
+
+.policy-agreement-box
+{
+      margin-top: 20px;
+    font-weight: bold;
+    margin-left: 20px;
+}
+
+.pdf-info {
+  margin-top: 8px;
+  font-size: 15px;
+  color: #000000;
+  border: 1px solid;
+  padding: 6px 10px;
+  border-radius: 8px;
+  display: inline-block;
+
+}
+.cv-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  cursor: pointer;
+  background: white;
+  color: #111827;
+  transition: all 0.2s ease;
+  width: fit-content;
+}
+
+/* Hover */
+.cv-checkbox:hover {
+  border-color: #9ca3af;
+}
+
+/* Checked state */
+.cv-checkbox.checked {
+  border-color: #8BAF29;
+  background: #ecfdf5;
+  color: #065f46;
+}
+
+/* Box */
+.checkbox-box {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #9ca3af;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Checked box */
+.cv-checkbox.checked .checkbox-box {
+  border-color: #8BAF29;
+  background: #8BAF29;
+}
+
+/* Tick */
+.checkbox-tick {
+  font-size: 12px;
+  color: white;
+}

@@ -12,6 +12,7 @@ import { useStudentData } from "../context/StudentDataContext";
 import { startPayment } from "../Payments";
 import "./createOrderModal.css";
 import PrintStackLoader from "../skeletons/PrintStackLoader";
+import OpenPoliciesModal from "./OpenPoliciesModal";
 
 const HANDLING_FEE = 10;
 
@@ -38,6 +39,14 @@ const CreateOrderPage = () => {
   const { shops, fetchShops, fetchShopOptions, setFlowStage } = useStudentData();
   const [shop, setShop] = useState(null);
   const [shopOptions, setShopOptions] = useState(null);
+  const [agreedPolicies, setAgreedPolicies] = useState(false);
+const [showPoliciesModal, setShowPoliciesModal] = useState(false);
+
+useEffect(() => {
+  if (currentStep === 3) {
+    setAgreedPolicies(false);
+  }
+}, [currentStep]);
   
   useEffect(() => {
     const loadData = async () => {
@@ -85,6 +94,7 @@ const CreateOrderPage = () => {
 const [selectedTime, setSelectedTime] = useState(null);
 const isHandled = selectedDay === "tomorrow";
 const [dayError, setDayError] = useState("");
+const [isCVMode, setIsCVMode] = useState(false);
 
 
 
@@ -118,7 +128,8 @@ const [dayError, setDayError] = useState("");
     selectedFile && !fileError && pickupAt && !pickupError;
 
   const canSubmit =
-    canProceedStep1 && canProceedStep2 && !submitting && !disableSubmit;
+    canProceedStep1 && canProceedStep2 && agreedPolicies
+    && !submitting && !disableSubmit;
 
   const getPdfPageCount = async (file) => {
     const buffer = await file.arrayBuffer();
@@ -255,6 +266,50 @@ useEffect(() => {
     }
   };
 
+  const handleAutoFillCV = () => {
+  if (!shopOptions) return;
+
+ const newState = !isCVMode;
+  setIsCVMode(newState);
+
+  // ❌ If turning OFF → reset
+  if (!newState) {
+    setPaperType("");
+    setColorMode("");
+    setFinishType("");
+    setOrientation("portrait");
+    setCopies(1);
+    return;
+  }
+  const bondPaper = shopOptions.paper_types.find((p) =>
+    p.name.toLowerCase().includes("bond")
+  );
+
+  // ✅ fallback (if bond not found)
+  const defaultPaper = bondPaper || shopOptions.paper_types[0];
+
+  // ✅ default color (prefer bw)
+  const bwColor = shopOptions.color_modes.find((c) =>
+    c.name.toLowerCase().includes("bond") ||
+    c.name.toLowerCase().includes("bond")
+  );
+
+  const defaultColor = bwColor || shopOptions.color_modes[0];
+
+  // ✅ default finish (normal)
+  const normalFinish = shopOptions.finish_types.find((f) =>
+    f.name.toLowerCase().includes("normal")
+  );
+
+  const defaultFinish = normalFinish || shopOptions.finish_types[0];
+
+  // 🔥 APPLY VALUES
+  setPaperType(defaultPaper?.id || "");
+  setColorMode(defaultColor?.id || "");
+  setFinishType(defaultFinish?.id || "");
+  setOrientation("portrait");
+  setCopies(1);
+};
 
 // const isUrgentDisabled = (() => {
 //   if (!selectedTime) return true;
@@ -297,6 +352,14 @@ if (!shop || !shopOptions) {
   return (
   <div className="create-order-page">
     {showLoader && <PrintStackLoader />}
+    {showPoliciesModal && (
+  <OpenPoliciesModal
+    onAccept={() => {
+      setAgreedPolicies(true);
+      setShowPoliciesModal(false);
+    }}
+  />
+)}
 
     <div className="create-order-container">
 
@@ -346,6 +409,16 @@ if (!shop || !shopOptions) {
             {currentStep === 1 && (
               <div className="step-form">
                 <h3 className="step-title">Configure Print Settings</h3>
+               <div
+  className={`cv-checkbox ${isCVMode ? "checked" : ""}`}
+  onClick={handleAutoFillCV}
+>
+  <div className="checkbox-box">
+    {isCVMode && <div className="checkbox-tick">✓</div>}
+  </div>
+
+  <span>CV (Recommended)</span>
+</div>
 
                 <div className="form-group">
                   <label className="modal-label">Paper Type *</label>
@@ -420,14 +493,14 @@ if (!shop || !shopOptions) {
                 <h3 className="step-title">Upload & Pickup</h3>
 
                 <div className="form-group full-width">
-                  <label className="modal-label">Upload PDF *</label>
+                  <label className="modal-label">Upload File *</label>
                   <label className="upload-box">
                     {selectedFile
                       ? selectedFile.name
-                      : "Choose a PDF (max 10MB)"}
+                      : "Choose a File (max 10MB)"}
                     <input
                       type="file"
-                      accept=".pdf"
+                      accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
                       onChange={async (e) => {
                         const file = e.target.files[0];
                         if (!file) return;
@@ -443,8 +516,17 @@ if (!shop || !shopOptions) {
                         setSelectedFile(file);
 
                         try {
-                          const pages = await getPdfPageCount(file);
-                          setPageCount(pages);
+                          if (file.type === "application/pdf") {
+                                try {
+                                  const pages = await getPdfPageCount(file);
+                                  setPageCount(pages);
+                                } catch {
+                                  setFileError("Invalid PDF file.");
+                                }
+                              } else {
+                                // For images/docs → assume 1 page or ask user
+                                setPageCount(1);
+                              }
                         } catch {
                           setFileError("Invalid PDF file.");
                         }
@@ -566,6 +648,25 @@ if (!shop || !shopOptions) {
                     <span>{new Date(pickupAt).toLocaleString()}</span>
                   </div>
                 </div>
+                <div className="policy-agreement-box">
+  <label className="policy-checkbox-inline">
+    <input
+      type="checkbox"
+      checked={agreedPolicies}
+      onChange={(e) => setAgreedPolicies(e.target.checked)}
+    />
+    <span>
+      I agree to the{" "}
+      <button
+        type="button"
+        className="policy-link-btn"
+        onClick={() => setShowPoliciesModal(true)}
+      >
+        terms & conditions
+      </button>
+    </span>
+  </label>
+</div>
               </div>
             )}
           </div>
@@ -631,12 +732,12 @@ if (!shop || !shopOptions) {
           </button>
         ) : (
           <button
-            className="primary-btn-n"
-            disabled={!canSubmit || shopNotAcceptingOrders}
-            onClick={handleSubmitAndPay}
-          >
-            Submit & Pay
-          </button>
+          className={`primary-btn-n ${!canSubmit ? "disabled" : ""}`}
+          disabled={!canSubmit || shopNotAcceptingOrders}
+          onClick={handleSubmitAndPay}
+        >
+          Submit & Pay
+        </button>
         )}
 
         <button
