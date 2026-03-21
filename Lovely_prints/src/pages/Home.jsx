@@ -20,6 +20,94 @@ function Reveal({ children, delay = 0, y = 28, className = "" }) {
   );
 }
 
+const MODAL_CONTENT = {
+  Privacy: {
+    title: "Privacy Policy",
+    body: `1. Docuvio collects only the data necessary to provide its services, including your email, uploaded documents, and order details.
+
+2. Your documents are private and are only accessible to you and the selected print shop for the purpose of fulfilling your order. Documents are securely stored and automatically deleted within 24 hours after successful order completion.
+
+3. We do not sell or share your personal data with third parties. Payment information is processed securely by third-party payment providers and is never stored on our servers.
+
+4. While we implement reasonable security measures, no system is completely secure. By using Docuvio, you acknowledge this risk.`,
+  },
+
+  Terms: {
+    title: "Terms of Service",
+    body: `1. By using Docuvio, you agree to use the platform only for lawful purposes.
+
+2. Docuvio acts solely as an intermediary between users and print shops. We do not provide printing services and are not responsible for print quality, delays, or errors made by print shops.
+
+3. You are fully responsible for the content you upload. You must not upload illegal, harmful, or copyrighted material without proper authorization.
+
+4. Orders, once placed, may not be cancelled or refunded unless explicitly stated by the print shop. Misuse of the platform may result in account suspension or termination.
+
+5. We reserve the right to update these terms at any time with reasonable notice.`,
+  },
+
+  Contact: {
+    title: "Contact Us",
+    body: `Have a question or need support ?
+    Contact us right away !!!
+
+📧 support.docuvio@gmail.com
+📍 Jalandhar, India
+📞 +91 84930 12280 (primary)
+
+Need specific help?
+
+• Orders : +91 70510 45131  
+• Tech : +91 95965 71744 `,
+  },
+};
+
+function MacWindow({ modal, onClose }) {
+  return (
+    <AnimatePresence>
+      {modal && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            key="backdrop"
+            className="mac-backdrop_z"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={onClose}
+          />
+          {/* Window */}
+          <div className="mac-center_z">
+            <motion.div
+              key="window"
+              className="mac-window_z"
+              initial={{ opacity: 0, scale: 0.82, y: 32 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.82, y: 32 }}
+              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            >
+            {/* Traffic lights */}
+            <div className="mac-titlebar_z">
+              <div className="mac-lights_z">
+                <button className="mac-btn_z mac-close_z" onClick={onClose} title="Close" />
+                <button className="mac-btn_z mac-min_z" title="Minimize" />
+                <button className="mac-btn_z mac-max_z" title="Maximize" />
+              </div>
+              <span className="mac-win-title_z">{MODAL_CONTENT[modal]?.title}</span>
+            </div>
+            {/* Body */}
+            <div className="mac-body_z">
+              <h3 className="mac-h3_z">{MODAL_CONTENT[modal]?.title}</h3>
+              <p className="mac-p_z">{MODAL_CONTENT[modal]?.body}</p>
+            </div>
+          </motion.div>
+          </div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+}
+
 function Tag({ color, children }) {
   return (
     <div className="tag_z" style={{ color }}>
@@ -175,6 +263,8 @@ function DashboardMock() {
 
 export default function Home() {
   const [scrolled, setScrolled] = useState(false);
+  const [modal, setModal] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   // Track scroll for nav_z background
   useEffect(() => {
@@ -206,11 +296,10 @@ export default function Home() {
       <nav
         className="nav_z"
         style={{
-          background: scrolled ? "rgba(245, 240, 232, 0.97)" : "rgba(245, 240, 232, 0)",
-          backdropFilter: scrolled ? "blur(20px)" : "none",
-          WebkitBackdropFilter: scrolled ? "blur(20px)" : "none",
-          boxShadow: scrolled ? "0 1px 0 rgba(32,29,30,0.10), 0 4px 24px rgba(32,29,30,0.07)" : "none",
-          transition: "background 0.3s ease, box-shadow 0.3s ease, backdrop-filter 0.3s ease",
+          background: "rgba(245, 240, 232, 0.85)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          boxShadow: "0 1px 0 rgba(32,29,30,0.10), 0 4px 24px rgba(32,29,30,0.07)",
         }}
       >
         <a className="nav-brand_z" href="/">
@@ -227,7 +316,82 @@ export default function Home() {
           <div className="nav-divider_z" />
           <a href="/signup" className="btn-nav-register_z">Register →</a>
         </div>
+        <button
+          className="nav-hamburger_z"
+          onClick={() => setMenuOpen(o => !o)}
+          aria-label="Toggle menu"
+        >
+          <motion.span
+            className="ham-line_z"
+            animate={menuOpen ? { rotate: 45, y: 7 } : { rotate: 0, y: 0 }}
+            transition={{ duration: 0.25 }}
+          />
+          <motion.span
+            className="ham-line_z"
+            animate={menuOpen ? { opacity: 0, scaleX: 0 } : { opacity: 1, scaleX: 1 }}
+            transition={{ duration: 0.2 }}
+          />
+          <motion.span
+            className="ham-line_z"
+            animate={menuOpen ? { rotate: -45, y: -7 } : { rotate: 0, y: 0 }}
+            transition={{ duration: 0.25 }}
+          />
+        </button>
       </nav>
+
+      {/* ── MOBILE OVERLAY ── */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            className="mob-overlay_z"
+            initial={{ opacity: 0, clipPath: "inset(0 0 100% 0)" }}
+            animate={{ opacity: 1, clipPath: "inset(0 0 0% 0)" }}
+            exit={{ opacity: 0, clipPath: "inset(0 0 100% 0)" }}
+            transition={{ duration: 0.4, ease: EXPO }}
+          >
+            <nav className="mob-nav_z">
+              {[
+                { label: "How it Works", href: "#how-it-works" },
+                { label: "Features", href: "#features" },
+                { label: "For Shops", href: "#for-shops" },
+              ].map((l, i) => (
+                <motion.a
+                  key={l.label}
+                  href={l.href}
+                  className="mob-link_z"
+                  onClick={() => setMenuOpen(false)}
+                  initial={{ opacity: 0, x: -24 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1 + i * 0.07, ease: EXPO, duration: 0.4 }}
+                >
+                  {l.label}
+                </motion.a>
+              ))}
+              <div className="mob-rule_z" />
+              <motion.a
+                href="/login"
+                className="mob-link_z"
+                onClick={() => setMenuOpen(false)}
+                initial={{ opacity: 0, x: -24 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.34, ease: EXPO, duration: 0.4 }}
+              >
+                Log In
+              </motion.a>
+              <motion.a
+                href="/signup"
+                className="mob-cta_z"
+                onClick={() => setMenuOpen(false)}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.42, ease: EXPO, duration: 0.4 }}
+              >
+                Register →
+              </motion.a>
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ── HERO ── */}
       <section className="hero_z">
@@ -548,12 +712,20 @@ export default function Home() {
           <span className="footer-copy_z">© 2026. All rights reserved.</span>
         </div>
         <ul className="footer-links_z">
-          <li><a href="#">Privacy</a></li>
-          <li><a href="#">Terms</a></li>
-          <li><a href="#">Contact</a></li>
-          <li><a href="#">Investors</a></li>
+          {["Privacy", "Terms", "Contact"].map((item) => (
+            <li key={item}>
+              <button
+                className="footer-modal-btn_z"
+                onClick={() => setModal(item)}
+              >
+                {item}
+              </button>
+            </li>
+          ))}
         </ul>
       </footer>
+
+      <MacWindow modal={modal} onClose={() => setModal(null)} />
     </div>
   );
 }
