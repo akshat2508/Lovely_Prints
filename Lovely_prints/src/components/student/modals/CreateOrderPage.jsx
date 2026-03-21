@@ -493,14 +493,14 @@ if (!shop || !shopOptions) {
                 <h3 className="step-title">Upload & Pickup</h3>
 
                 <div className="form-group full-width">
-                  <label className="modal-label">Upload PDF *</label>
+                  <label className="modal-label">Upload File *</label>
                   <label className="upload-box">
                     {selectedFile
                       ? selectedFile.name
-                      : "Choose a PDF (max 10MB)"}
+                      : "Choose a File (max 10MB)"}
                     <input
                       type="file"
-                      accept=".pdf"
+                      accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
                       onChange={async (e) => {
                         const file = e.target.files[0];
                         if (!file) return;
@@ -516,8 +516,17 @@ if (!shop || !shopOptions) {
                         setSelectedFile(file);
 
                         try {
-                          const pages = await getPdfPageCount(file);
-                          setPageCount(pages);
+                          if (file.type === "application/pdf") {
+                                try {
+                                  const pages = await getPdfPageCount(file);
+                                  setPageCount(pages);
+                                } catch {
+                                  setFileError("Invalid PDF file.");
+                                }
+                              } else {
+                                // For images/docs → assume 1 page or ask user
+                                setPageCount(1);
+                              }
                         } catch {
                           setFileError("Invalid PDF file.");
                         }
