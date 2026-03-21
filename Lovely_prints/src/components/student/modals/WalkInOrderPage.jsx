@@ -97,29 +97,53 @@ const WalkInOrderPage = () => {
 
                 const MAX_SIZE = 10 * 1024 * 1024;
 
+                const ext = file.name.split(".").pop().toLowerCase();
+
+                const extToMime = {
+                  jpg: "image/jpeg",
+                  jpeg: "image/jpeg",
+                  png: "image/png",
+                  pdf: "application/pdf",
+                  doc: "application/msword",
+                  docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                };
+
+                let finalType = file.type;
+
+                // 🔥 Fix wrong/empty MIME
+                if (!finalType || finalType === "application/octet-stream") {
+                  finalType = extToMime[ext];
+                }
+
+                // ❌ Unsupported
+                if (!finalType) {
+                  setFileError("Unsupported file type.");
+                  setSelectedFile(null);
+                  return;
+                }
+
+                // ❌ Size check
                 if (file.size > MAX_SIZE) {
                   setFileError("File must be under 10MB.");
                   setSelectedFile(null);
                   return;
                 }
 
+                // 🔥 FORCE correct MIME (MAIN FIX)
+                const fixedFile = new File([file], file.name, { type: finalType });
+
                 setFileError("");
-                setSelectedFile(file);
+                setSelectedFile(fixedFile);
 
                 try {
-                   if (file.type === "application/pdf") {
-                                try {
-                                  const pages = await getPdfPageCount(file);
-                                  setPageCount(pages);
-                                } catch {
-                                  setFileError("Invalid PDF file.");
-                                }
-                              } else {
-                                // For images/docs → assume 1 page or ask user
-                                setPageCount(1);
-                              }
+                  if (finalType === "application/pdf") {
+                    const pages = await getPdfPageCount(fixedFile);
+                    setPageCount(pages);
+                  } else {
+                    setPageCount(1);
+                  }
                 } catch {
-                  setFileError("Invalid PDF file.");
+                  setFileError("Invalid file.");
                   setSelectedFile(null);
                 }
               }}

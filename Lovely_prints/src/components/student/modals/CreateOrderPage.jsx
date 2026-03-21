@@ -502,35 +502,66 @@ if (!shop || !shopOptions) {
                       type="file"
                       accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
                       onChange={async (e) => {
-                        const file = e.target.files[0];
-                        if (!file) return;
+                      const file = e.target.files[0];
+                      if (!file) return;
 
-                        const MAX_SIZE = 10 * 1024 * 1024;
-                        if (file.size > MAX_SIZE) {
-                         setFileError("PDF must be under 10MB.");
-                          setSelectedFile(null);
-                          return;
-                          }
+                      const MAX_SIZE = 10 * 1024 * 1024;
 
-                        setFileError("");
-                        setSelectedFile(file);
+                      const validTypes = [
+                        "application/pdf",
+                        "image/jpeg",
+                        "image/png",
+                        "application/msword",
+                        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                      ];
 
-                        try {
-                          if (file.type === "application/pdf") {
-                                try {
-                                  const pages = await getPdfPageCount(file);
-                                  setPageCount(pages);
-                                } catch {
-                                  setFileError("Invalid PDF file.");
-                                }
-                              } else {
-                                // For images/docs → assume 1 page or ask user
-                                setPageCount(1);
-                              }
-                        } catch {
-                          setFileError("Invalid PDF file.");
+                      // 🔥 FIX: fallback using extension
+                      const ext = file.name.split(".").pop().toLowerCase();
+
+                      const extToMime = {
+                        jpg: "image/jpeg",
+                        jpeg: "image/jpeg",
+                        png: "image/png",
+                        pdf: "application/pdf",
+                        doc: "application/msword",
+                        docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                      };
+
+                      let finalType = file.type;
+
+                      if (!validTypes.includes(file.type)) {
+                        finalType = extToMime[ext];
+                      }
+
+                      if (!finalType) {
+                        setFileError("Unsupported file type.");
+                        setSelectedFile(null);
+                        return;
+                      }
+
+                      // 🔥 OVERRIDE FILE TYPE (CRITICAL FIX)
+                      const fixedFile = new File([file], file.name, { type: finalType });
+
+                      if (fixedFile.size > MAX_SIZE) {
+                        setFileError("File must be under 10MB.");
+                        setSelectedFile(null);
+                        return;
+                      }
+
+                      setFileError("");
+                      setSelectedFile(fixedFile);
+
+                      try {
+                        if (finalType === "application/pdf") {
+                          const pages = await getPdfPageCount(fixedFile);
+                          setPageCount(pages);
+                        } else {
+                          setPageCount(1);
                         }
-                      }}
+                      } catch {
+                        setFileError("Invalid file.");
+                      }
+                    }}
                     />
                   </label>
                   {fileError && <p className="error-text">{fileError}</p>}
