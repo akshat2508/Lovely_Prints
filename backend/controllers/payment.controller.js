@@ -27,16 +27,43 @@ export const createPaymentOrder = async (req, res) => {
       return errorResponse(res, 'Invalid order amount', 400);
     }
 
-    const razorpayOrder = await paymentService.createOrder(
-      order.total_price,
-      orderId
-    );
+    // 🔹 Get shop
+const { data: shop } = await supabaseService.getShopById(order.shop_id);
+
+if (!shop) {
+  return errorResponse(res, "Shop not found", 404);
+}
+
+if (!shop.razorpay_account_id) {
+  return errorResponse(res, "Shop not onboarded for payments", 400);
+}
+
+// 🔹 Commission logic (10%)
+const totalAmount = Number(order.total_price);
+const totalInPaise = Math.round(totalAmount * 100);
+
+const platformFee = Math.round(totalInPaise * 0.1); // 10%
+const shopAmount = totalInPaise - platformFee;
+
+// 🔹 Create Razorpay order with transfer
+const razorpayOrder = await paymentService.createOrderWithTransfer({
+  amount: totalAmount,
+  receipt: orderId,
+  transfers: [
+    {
+      account: shop.razorpay_account_id,
+      amount: shopAmount,
+      currency: "INR",
+    },
+  ],
+});
 
 await supabaseService.createPayment(
   {
     order_id: orderId,
     student_id: studentId,
     amount: order.total_price,
+    platform_fee: platformFee / 100, // convert back to rupees
     razorpay_order_id: razorpayOrder.id,
     status: 'created',
   },
