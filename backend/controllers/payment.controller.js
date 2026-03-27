@@ -27,16 +27,83 @@ export const createPaymentOrder = async (req, res) => {
       return errorResponse(res, 'Invalid order amount', 400);
     }
 
-    const razorpayOrder = await paymentService.createOrder(
-      order.total_price,
-      orderId
-    );
+    // 🔹 Get shop
+const { data: shop } = await supabaseService.getShopById(order.shop_id);
+
+if (!shop) {
+  return errorResponse(res, "Shop not found", 404);
+}
+
+if (!shop.razorpay_account_id) {
+  return errorResponse(res, "Shop not onboarded for payments", 400);
+}
+
+// 🔹 1. Get document prices
+const { data: docs, error: docError } =
+  await supabaseService.getDocumentTotal(orderId);
+
+if (docError || !docs || docs.length === 0) {
+  return errorResponse(res, "No documents found", 400);
+}
+
+// 🔹 2. Calculate document total
+const documentPrice = docs.reduce(
+  (sum, doc) => sum + Number(doc.total_price || 0),
+  0
+);
+
+// 🔹 3. Handling fee
+const handlingFee = Number(order.handling_fee || 0);
+
+// 🔹 4. Platform fee slab
+function calculatePlatformFee(amount, orderType) {
+  if (orderType === "walk_in") {
+    return amount < 100 ? 1 : 2;
+  }
+
+  // online orders
+  if (amount < 20) return 2;
+  if (amount <= 50) return 4;
+  if (amount <= 80) return 6;
+  if (amount <= 100) return 9;
+  if (amount <= 200) return 13;
+  return 16;
+}
+
+const platformFee = calculatePlatformFee(
+  documentPrice,
+  order.order_type
+);
+// 🔹 5. Final payable amount
+const finalAmount = order.total_price;
+
+// 🔹 6. Convert to paise
+const finalAmountPaise = Math.round(finalAmount * 100);
+const shopAmount = Math.round(documentPrice * 100);
+
+// 🔒 Safety
+if (shopAmount <= 0 || finalAmountPaise <= 0) {
+  return errorResponse(res, "Invalid payment calculation", 400);
+}
+// 🔹 Create Razorpay order with transfer
+const razorpayOrder = await paymentService.createOrderWithTransfer({
+  amount: finalAmount,
+  receipt: orderId,
+  transfers: [
+    {
+      account: shop.razorpay_account_id,
+      amount: shopAmount,
+      currency: "INR",
+    },
+  ],
+});
 
 await supabaseService.createPayment(
   {
     order_id: orderId,
     student_id: studentId,
     amount: order.total_price,
+    platform_fee: platformFee, // convert back to rupees
     razorpay_order_id: razorpayOrder.id,
     status: 'created',
   },

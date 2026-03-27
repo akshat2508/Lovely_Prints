@@ -8,9 +8,18 @@ const razorpay = new Razorpay({
 class PaymentService {
   async createOrder(amount, receipt) {
     return await razorpay.orders.create({
-      amount: amount * 100, // rupees → paise
+      amount: amount * 100,
       currency: 'INR',
       receipt,
+    });
+  }
+
+  async createOrderWithTransfer({ amount, receipt, transfers }) {
+    return await razorpay.orders.create({
+      amount: amount * 100,
+      currency: "INR",
+      receipt,
+      transfers,
     });
   }
 }
