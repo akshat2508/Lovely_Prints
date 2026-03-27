@@ -28,6 +28,13 @@ const WalkInOrderPage = () => {
   };
 
   const canSubmit = selectedFile && amount && Number(amount) > 0 && !loading;
+  const calculatePlatformFee = (amount) => {
+  return amount < 100 ? 1 : 2;
+};
+
+const documentPrice = Number(amount) || 0;
+const platformFee = calculatePlatformFee(documentPrice);
+const totalPrice = documentPrice + platformFee;
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
@@ -60,13 +67,13 @@ const WalkInOrderPage = () => {
       });
 
       startPayment(
-        order,
-        () => navigate("/student/orders"),
-        (reason) => {
-          alert(reason || "Payment failed");
-          setLoading(false);
-        },
-      );
+  { ...order, total_price: totalPrice },
+  () => navigate("/student/orders"),
+  (reason) => {
+    alert(reason || "Payment failed");
+    setLoading(false);
+  }
+);
     } catch (err) {
       console.error(err);
       alert("Something went wrong");
@@ -178,6 +185,36 @@ const WalkInOrderPage = () => {
             className="modal-input"
           />
         </div>
+        {documentPrice > 0 && (
+  <div className="summary-card" style={{ marginTop: "20px" }}>
+    <h3>Order Summary</h3>
+
+    <div className="summary-row">
+      <span>Document Price</span>
+      <span>₹{documentPrice}</span>
+    </div>
+
+    <div className="summary-row">
+      <span>
+        Platform Fee
+        <span
+          title="Below ₹100 → ₹1 | ₹100 and above → ₹2"
+          style={{ marginLeft: "6px", cursor: "pointer" }}
+        >
+          ⓘ
+        </span>
+      </span>
+      <span>+₹{platformFee}</span>
+    </div>
+
+    <div className="summary-divider" />
+
+    <div className="summary-total">
+      <span>Total</span>
+      <span>₹{totalPrice}</span>
+    </div>
+  </div>
+)}
 
         <div className="create-footer-A">
           <button className="secondary-btn" onClick={() => navigate(-1)}>

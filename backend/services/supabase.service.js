@@ -835,6 +835,12 @@ async unregisterDeviceToken(userId, token) {
     .eq("user_id", userId)
     .eq("fcm_token", token);
 }
+async getDocumentTotal(orderId) {
+  return await supabaseAnon
+    .from("documents")
+    .select("total_price")
+    .eq("order_id", orderId);
+}
 
 }
 export { supabaseAdmin};

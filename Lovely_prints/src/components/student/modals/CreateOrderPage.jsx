@@ -109,16 +109,32 @@ const [isCVMode, setIsCVMode] = useState(false);
     (f) => f.id === finishType,
   );
 
-  const totalPrice = (() => {
-    if (!selectedPaper) return 0;
-    const basePrice = Number(selectedPaper.base_price || 0);
-    const colorPrice = Number(selectedColor?.extra_price || 0);
-    const finishPrice = Number(selectedFinish?.extra_price || 0);
+const calculatePlatformFee = (amount, orderType) => {
+  if (orderType === "walk_in") {
+    return amount < 100 ? 1 : 2;
+  }
 
-    const subtotal =
-      (basePrice + colorPrice + finishPrice) * pageCount * copies;
-    return isHandled ? subtotal + HANDLING_FEE : subtotal;
-  })();
+  // online
+  if (amount < 20) return 2;
+  if (amount <= 50) return 4;
+  if (amount <= 80) return 6;
+  if (amount <= 100) return 9;
+  if (amount <= 200) return 13;
+  return 16;
+};
+
+const documentPrice = (() => {
+  if (!selectedPaper) return 0;
+
+  const basePrice = Number(selectedPaper.base_price || 0);
+  const colorPrice = Number(selectedColor?.extra_price || 0);
+  const finishPrice = Number(selectedFinish?.extra_price || 0);
+
+  return (basePrice + colorPrice + finishPrice) * pageCount * copies;
+})();
+const orderType = "online"; // since frontend flow is online
+const platformFee = calculatePlatformFee(documentPrice, orderType);
+ const totalPrice = documentPrice + platformFee + (isHandled ? HANDLING_FEE : 0);
 
   /* ✅ Step validation */
   const canProceedStep1 =
@@ -709,32 +725,37 @@ if (!shop || !shopOptions) {
             <h3>Order Summary</h3>
 
             {selectedPaper && (
-              <>
-                <div className="summary-row">
-                  <span>Paper</span>
-                  <span>{selectedPaper.name}</span>
-                </div>
+  <>
+    <div className="summary-row">
+      <span>Document Price</span>
+      <span>₹{documentPrice}</span>
+    </div>
 
-                <div className="summary-row">
-                  <span>Pages × Copies</span>
-                  <span>{pageCount} × {copies}</span>
-                </div>
+    {isHandled && (
+      <div className="summary-row">
+        <span>Handling Fee</span>
+        <span>+₹{HANDLING_FEE}</span>
+      </div>
+    )}
 
-                {isHandled && (
-                  <div className="summary-row">
-                    <span>Handling Fee</span>
-                    <span>+₹{HANDLING_FEE}</span>
-                  </div>
-                )}
+    <div className="summary-row">
+      <span>Platform Fee</span>
+      <span>+₹{platformFee}</span>
+    </div>
 
-                <div className="summary-divider" />
+    {/* Optional: slab hint (VERY GOOD UX) */}
+    <div style={{ fontSize: "0.75rem", color: "#6F6F6F", marginTop: "4px" }}>
+      Applied based on document price slab
+    </div>
 
-                <div className="summary-total">
-                  <span>Total</span>
-                  <span>₹{totalPrice}</span>
-                </div>
-              </>
-            )}
+    <div className="summary-divider" />
+
+    <div className="summary-total">
+      <span>Total</span>
+      <span>₹{totalPrice}</span>
+    </div>
+  </>
+)}
           </div>
         </div>
       </div>
