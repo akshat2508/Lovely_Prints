@@ -1,0 +1,149 @@
+/* WRAPPER */
+.print-wrapper-j {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #FBF5E7; /* matches your theme */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 25px;
+  z-index: 9999;
+}
+
+/* PRINTER */
+.printer-j {
+  position: relative;
+  width: 200px;
+  height: 180px;
+}
+
+/* TOP SLOT */
+.printer-top-j {
+  position: absolute;
+  top: 0;
+  left: 25%;
+  width: 50%;
+  height: 20px;
+  background: #201D1E;
+  border-radius: 6px;
+}
+
+/* PAPER IN */
+.paper-in-j {
+  position: absolute;
+  top: -40px;
+  left: 30%;
+  width: 80px;
+  height: 50px;
+  background: #3B82F6;
+  color: white;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  animation: paperIn-j 2s infinite;
+}
+
+/* PRINTER BODY */
+.printer-body-j {
+  position: absolute;
+  top: 20px;
+  width: 100%;
+  height: 90px;
+  background: #201D1E;
+  border-radius: 12px;
+}
+
+/* LIGHT */
+.printer-light-j {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 10px;
+  height: 10px;
+  background: #C4CE48;
+  border-radius: 50%;
+  animation: blink-j 1s infinite;
+}
+
+/* PAPER OUT */
+.paper-out-j {
+  position: absolute;
+  bottom: -50px;
+  left: 30%;
+  width: 80px;
+  height: 50px;
+  background: #EF4444;
+  color: white;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  animation: paperOut-j 2s infinite;
+}
+
+/* ANIMATIONS */
+
+/* PAPER GOING IN */
+@keyframes paperIn-j {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  40% {
+    transform: translateY(50px);
+    opacity: 0.6;
+  }
+  60% {
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+}
+
+/* PAPER COMING OUT */
+@keyframes paperOut-j {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  40% {
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(-70px);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(-15px);
+    opacity: 1;
+  }
+}
+
+/* LIGHT BLINK */
+@keyframes blink-j {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+/* TEXT */
+.print-text-j {
+  font-size: 14px;
+  font-weight: 600;
+  color: #201D1E;
+  animation: fade-j 1.5s infinite;
+  margin-top: 20px;
+}
+
+@keyframes fade-j {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
