@@ -13,7 +13,8 @@ import { startPayment } from "../Payments";
 import "./createOrderModal.css";
 import PrintStackLoader from "../skeletons/PrintStackLoader";
 import OpenPoliciesModal from "./OpenPoliciesModal";
-
+import Convertor from "../skeletons/Converter";
+import InstructionsModal from "./InstructionsModal";
 const HANDLING_FEE = 10;
 
 const parseTimeToMinutes = (timeStr) => {
@@ -31,6 +32,30 @@ const parseTimeToMinutes = (timeStr) => {
 };
 
 const getMinutesFromDate = (date) => date.getHours() * 60 + date.getMinutes();
+
+const convertToPDF = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await fetch(`${import.meta.env.VITE_CONVERTER_URL}/convert`, {
+    method: "POST",
+    headers: {
+      "x-api-key": import.meta.env.VITE_CONVERTER_API_KEY,
+    },
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(text);
+  }
+
+  const blob = await res.blob();
+
+  return new File([blob], file.name.replace(/\.\w+$/, ".pdf"), {
+    type: "application/pdf",
+  });
+};
 
 const CreateOrderPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -83,6 +108,7 @@ useEffect(() => {
   const [submitting, setSubmitting] = useState(false);
   const [disableSubmit, setDisableSubmit] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
+  const [showConverter , setShowConverter] = useState(false);
   const [loaderText, setLoaderText] = useState("Preparing your documents…");
   const [fileError, setFileError] = useState("");
 
@@ -95,6 +121,7 @@ const [selectedTime, setSelectedTime] = useState(null);
 const isHandled = selectedDay === "tomorrow";
 const [dayError, setDayError] = useState("");
 const [isCVMode, setIsCVMode] = useState(false);
+const [showInstructions, setShowInstructions] = useState(false);
 
 
 
@@ -314,7 +341,7 @@ useEffect(() => {
 
   // ✅ default finish (normal)
   const normalFinish = shopOptions.finish_types.find((f) =>
-    f.name.toLowerCase().includes("normal")
+    f.name.toLowerCase().includes("standard")
   );
 
   const defaultFinish = normalFinish || shopOptions.finish_types[0];
@@ -368,6 +395,10 @@ if (!shop || !shopOptions) {
   return (
   <div className="create-order-page">
     {showLoader && <PrintStackLoader />}
+    {showConverter && <Convertor />}
+    {showInstructions && (
+      <InstructionsModal onClose={() => setShowInstructions(false)} />
+    )}
     {showPoliciesModal && (
   <OpenPoliciesModal
     onAccept={() => {
@@ -381,14 +412,22 @@ if (!shop || !shopOptions) {
 
       {/* HEADER */}
       <div className="create-header">
-        <div>
-          <h1>Create Print Order</h1>
-          <p>
-            {shop.shop_name} • {shop.open_time.slice(0, 5)}–
-            {shop.close_time.slice(0, 5)}
-          </p>
-        </div>
+      <div>
+        <h1>Create Print Order</h1>
+        <p>
+          {shop.shop_name} • {shop.open_time.slice(0, 5)}–
+          {shop.close_time.slice(0, 5)}
+        </p>
       </div>
+
+      {/* 🔥 INFO BUTTON */}
+      <button
+        className="info-btn-j"
+        onClick={() => setShowInstructions(true)}
+      >
+        ⓘ
+      </button>
+    </div>
 
       {/* PROGRESS */}
       <div className="modal-progress">
@@ -517,21 +556,11 @@ if (!shop || !shopOptions) {
                     <input
                       type="file"
                       accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                      onChange={async (e) => {
+                     onChange={async (e) => {
                       const file = e.target.files[0];
                       if (!file) return;
 
                       const MAX_SIZE = 10 * 1024 * 1024;
-
-                      const validTypes = [
-                        "application/pdf",
-                        "image/jpeg",
-                        "image/png",
-                        "application/msword",
-                        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                      ];
-
-                      // 🔥 FIX: fallback using extension
                       const ext = file.name.split(".").pop().toLowerCase();
 
                       const extToMime = {
@@ -545,7 +574,7 @@ if (!shop || !shopOptions) {
 
                       let finalType = file.type;
 
-                      if (!validTypes.includes(file.type)) {
+                      if (!finalType || finalType === "application/octet-stream") {
                         finalType = extToMime[ext];
                       }
 
@@ -555,27 +584,37 @@ if (!shop || !shopOptions) {
                         return;
                       }
 
-                      // 🔥 OVERRIDE FILE TYPE (CRITICAL FIX)
-                      const fixedFile = new File([file], file.name, { type: finalType });
-
-                      if (fixedFile.size > MAX_SIZE) {
+                      if (file.size > MAX_SIZE) {
                         setFileError("File must be under 10MB.");
                         setSelectedFile(null);
                         return;
                       }
 
                       setFileError("");
-                      setSelectedFile(fixedFile);
 
                       try {
-                        if (finalType === "application/pdf") {
-                          const pages = await getPdfPageCount(fixedFile);
-                          setPageCount(pages);
-                        } else {
-                          setPageCount(1);
+                        let processedFile = new File([file], file.name, { type: finalType });
+
+                        // ✅ ONLY place where conversion happens
+                        if (finalType.includes("wordprocessingml")) {
+                          setShowConverter(true);
+                          setSelectedFile(null);
+                          setLoaderText("Converting DOCX to PDF…");
+
+                          processedFile = await convertToPDF(processedFile);
                         }
-                      } catch {
-                        setFileError("Invalid file.");
+
+                        setSelectedFile(processedFile);
+
+                        const pages = await getPdfPageCount(processedFile);
+                        setPageCount(pages);
+
+                      } catch (err) {
+                        console.error(err);
+                        setFileError("File processing failed");
+                        setSelectedFile(null);
+                      } finally {
+                        setShowConverter(false);
                       }
                     }}
                     />
@@ -741,6 +780,10 @@ if (!shop || !shopOptions) {
     <div className="summary-row">
       <span>Platform Fee</span>
       <span>+₹{platformFee}</span>
+    </div>
+    <div className="summary-row">
+      <span>Page Count</span>
+      <span>{pageCount}</span>
     </div>
 
     {/* Optional: slab hint (VERY GOOD UX) */}
