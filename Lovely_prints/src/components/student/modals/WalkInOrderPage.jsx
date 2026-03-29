@@ -9,6 +9,7 @@ import { startPayment } from "../Payments";
 import PrintStackLoader from "../skeletons/PrintStackLoader";
 import "./createOrderModal.css";
 import { PDFDocument } from "pdf-lib";
+import FilePreviewModal from "./FilePreviewModal";
 
 const WalkInOrderPage = () => {
   const { shopId } = useParams();
@@ -20,6 +21,7 @@ const WalkInOrderPage = () => {
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
   const [fileError, setFileError] = useState("");
+  const [showPreview, setShowPreview] = useState(false);
 
   const getPdfPageCount = async (file) => {
     const buffer = await file.arrayBuffer();
@@ -84,6 +86,12 @@ const totalPrice = documentPrice + platformFee;
   return (
     <div className="create-order-page">
       {loading && <PrintStackLoader />}
+      {showPreview && (
+  <FilePreviewModal
+    file={selectedFile}
+    onClose={() => setShowPreview(false)}
+  />
+)}
 
       <div className="create-order-container">
         <h1 className="container-header">Walk-In Order</h1>
@@ -93,7 +101,12 @@ const totalPrice = documentPrice + platformFee;
           <label className="modal-label">Upload File *</label>
 
           <label className="upload-box">
-            {selectedFile ? selectedFile.name : "Choose a File (max 10MB)"}
+            <span
+  onClick={() => selectedFile && setShowPreview(true)}
+  style={{ cursor: selectedFile ? "pointer" : "default" }}
+>
+  {selectedFile ? selectedFile.name : "Choose a File"}
+</span>
 
             <input
               type="file"
@@ -156,11 +169,16 @@ const totalPrice = documentPrice + platformFee;
               }}
             />
           </label>
-          {selectedFile && !fileError && (
-            <span className="pdf-info">
-              📄 {pageCount} page{pageCount > 1 ? "s" : ""}
-            </span>
-          )}
+         {selectedFile && !fileError && (
+  <button
+    type="button"
+    className="secondary-btn"
+    style={{ marginTop: "10px" }}
+    onClick={() => setShowPreview(true)}
+  >
+    Preview File
+  </button>
+)}
 
           {fileError && <p className="error-text">{fileError}</p>}
         </div>
