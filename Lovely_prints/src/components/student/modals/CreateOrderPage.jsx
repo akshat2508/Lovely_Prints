@@ -15,6 +15,7 @@ import PrintStackLoader from "../skeletons/PrintStackLoader";
 import OpenPoliciesModal from "./OpenPoliciesModal";
 import Convertor from "../skeletons/Converter";
 import InstructionsModal from "./InstructionsModal";
+import FilePreviewModal from "./FilePreviewModal";
 const HANDLING_FEE = 10;
 
 const parseTimeToMinutes = (timeStr) => {
@@ -123,6 +124,7 @@ const [dayError, setDayError] = useState("");
 const [isCVMode, setIsCVMode] = useState(false);
 const [showInstructions, setShowInstructions] = useState(false);
 const [printSide, setPrintSide] = useState("single");
+const [showPreview, setShowPreview] = useState(false);
 
 
 
@@ -418,6 +420,12 @@ if (!shop || !shopOptions) {
 }
   return (
   <div className="create-order-page">
+      {showPreview && (
+        <FilePreviewModal
+          file={selectedFile}
+          onClose={() => setShowPreview(false)}
+        />
+      )}
     {showLoader && <PrintStackLoader />}
     {showConverter && <Convertor />}
     {showInstructions && (
@@ -595,9 +603,9 @@ if (!shop || !shopOptions) {
                 <div className="form-group full-width">
                   <label className="modal-label">Upload File *</label>
                   <label className="upload-box">
-                    {selectedFile
-                      ? selectedFile.name
-                      : "Choose a File (max 10MB)"}
+                    <span onClick={() => selectedFile && setShowPreview(true)}>
+                      {selectedFile ? selectedFile.name : "Choose a File"}
+                    </span>
                     <input
                       type="file"
                       accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
@@ -641,7 +649,7 @@ if (!shop || !shopOptions) {
                         let processedFile = new File([file], file.name, { type: finalType });
 
                         // ✅ ONLY place where conversion happens
-                        if (finalType.includes("wordprocessingml")) {
+                        if (finalType.includes("wordprocessingml") || finalType === "application/msword") {
                           setShowConverter(true);
                           setSelectedFile(null);
                           setLoaderText("Converting DOCX to PDF…");
@@ -651,7 +659,15 @@ if (!shop || !shopOptions) {
 
                         setSelectedFile(processedFile);
 
-                        const pages = await getPdfPageCount(processedFile);
+                        let pages = 1;
+
+                        if (processedFile.type === "application/pdf") {
+                          pages = await getPdfPageCount(processedFile);
+                        } else if (processedFile.type.startsWith("image/")) {
+                          // Images = 1 page by default
+                          pages = 1;
+                        }
+
                         setPageCount(pages);
 
                       } catch (err) {
@@ -664,6 +680,18 @@ if (!shop || !shopOptions) {
                     }}
                     />
                   </label>
+                  {selectedFile && (
+                    <button
+                      type="button"
+                      className="secondary-btn"
+                      onClick={() => setShowPreview(true)}
+                    >
+                      Preview File
+                    </button>
+                  )}
+                  {selectedFile?.type.startsWith("image/") && (
+                    <p className="muted">This file will be printed as 1 page.</p>
+                  )}
                   {fileError && <p className="error-text">{fileError}</p>}
                 </div>
 

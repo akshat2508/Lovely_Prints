@@ -153,7 +153,7 @@ const ShopDetails = () => {
               {options.paper_types.map((item) => (
                 <div key={item.id} className="option-item-B">
                   <span>{item.name}</span>
-                  <span>₹{item.base_price || 0}</span>
+                  {/* <span>₹{item.base_price || 0}</span> */}
                 </div>
               ))}
             </div>
@@ -165,7 +165,7 @@ const ShopDetails = () => {
               {options.color_modes.map((item) => (
                 <div key={item.id} className="option-item-B">
                   <span>{item.name}</span>
-                  {item.extra_price && <span>₹{item.extra_price}</span>}
+                  {/* {item.extra_price && <span>₹{item.extra_price}</span>} */}
                 </div>
               ))}
             </div>
@@ -177,7 +177,7 @@ const ShopDetails = () => {
               {options.finish_types.map((item) => (
                 <div key={item.id} className="option-item-B">
                   <span>{item.name}</span>
-                  {item.extra_price && <span>₹{item.extra_price}</span>}
+                  {/* {item.extra_price && <span>₹{item.extra_price}</span>} */}
                 </div>
               ))}
             </div>
