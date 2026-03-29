@@ -266,7 +266,6 @@ async updateOrderStatus(orderId, status, token) {
       .delete()
       .eq('id', orderId);
   }
-
 async createDocument(documentData, token) {
   const supabaseUser = getUserSupabase(token);
 
@@ -281,7 +280,9 @@ async createDocument(documentData, token) {
     return { error: { message: "Invalid order" } };
   }
 
-  // 🟣 WALK-IN VALIDATION
+  // ===============================
+  // 🟣 WALK-IN ORDER LOGIC
+  // ===============================
   if (order.order_type === "walk_in") {
     if (
       !documentData.manual_price ||
@@ -295,9 +296,17 @@ async createDocument(documentData, token) {
     documentData.color_mode_id = null;
     documentData.finish_type_id = null;
     documentData.copies = 1;
+
+    // 🔹 Final price = manual price
+    documentData.total_price = Number(documentData.manual_price);
+
+    // 🔹 Default print side
+    documentData.print_side = "single";
   }
 
-  // 🟢 ONLINE VALIDATION
+  // ===============================
+  // 🟢 ONLINE ORDER LOGIC
+  // ===============================
   if (order.order_type === "online") {
     if (
       !documentData.paper_type_id ||
@@ -309,15 +318,88 @@ async createDocument(documentData, token) {
 
     // Prevent manual price misuse
     documentData.manual_price = null;
+
+    // 🔹 Default print side
+documentData.print_side =
+  documentData.print_side?.trim().toLowerCase() === "double"
+    ? "double"
+    : "single";
+    // 🔹 Fetch pricing
+    const { data: paper } = await supabaseAnon
+      .from("paper_types")
+      .select("base_price, double_side_price")
+      .eq("id", documentData.paper_type_id)
+      .single();
+
+    const { data: color } = await supabaseAnon
+      .from("color_modes")
+      .select("extra_price")
+      .eq("id", documentData.color_mode_id)
+      .single();
+
+    const { data: finish } = await supabaseAnon
+      .from("finish_types")
+      .select("extra_price")
+      .eq("id", documentData.finish_type_id)
+      .single();
+
+    // 🚨 Safety check
+    if (!paper || !color || !finish) {
+      return { error: { message: "Invalid pricing configuration" } };
+    }
+
+    const base = Number(paper.base_price || 0);
+    const doublePrice = Number(paper.double_side_price || base); // fallback
+    const colorExtra = Number(color.extra_price || 0);
+    const finishExtra = Number(finish.extra_price || 0);
+console.log("PRICING:", {
+  base,
+  doublePrice,
+  colorExtra,
+  finishExtra
+});
+    const pages = Number(documentData.page_count);
+    const copies = Number(documentData.copies);
+
+    // 🚨 Input validation
+    if (!pages || pages <= 0 || !copies || copies <= 0) {
+      return { error: { message: "Invalid page or copy count" } };
+    }
+
+    // 🔹 Sheet calculation
+    const sheets =
+      documentData.print_side === "double"
+        ? Math.ceil(pages / 2)
+        : pages;
+      
+        console.log("DEBUG:", {
+  pages,
+  printSide: documentData.print_side,
+  sheets
+});
+
+    // 🔹 Price per sheet
+    const pricePerSheet =
+      documentData.print_side === "double"
+        ? doublePrice
+        : base;
+
+    // 🔹 Final price
+    const totalPrice =
+      sheets * copies * (pricePerSheet + colorExtra + finishExtra);
+
+    documentData.total_price = totalPrice;
   }
 
+  // ===============================
+  // 💾 INSERT DOCUMENT
+  // ===============================
   return await supabaseUser
     .from("documents")
     .insert(documentData)
     .select()
     .single();
 }
-
   async getDocumentsByOrderId(orderId) {
     return await supabase
       .from('documents')
