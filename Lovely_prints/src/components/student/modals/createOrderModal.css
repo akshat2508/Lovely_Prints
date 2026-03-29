@@ -308,6 +308,7 @@
   cursor: pointer;
   padding: 10px 16px;
   transition: 0.2s ease;
+  border: 1px solid black;
 }
 
 .cancel-btn1:hover {
@@ -543,4 +544,84 @@
 .checkbox-tick {
   font-size: 12px;
   color: white;
+}
+
+.print-side-toggle
+{
+      display: flex;
+    justify-content: space-between;
+    gap: 26px;
+
+}
+
+/* Container */
+.policy-checkbox-inline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #333;
+}
+
+/* Hide native checkbox */
+.policy-checkbox-inline input {
+  display: none;
+}
+
+/* Custom checkbox */
+.custom-checkbox {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #cbd5e1;
+  border-radius: 5px;
+  background-color: white;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+/* Hover effect */
+.policy-checkbox-inline:hover .custom-checkbox {
+  border-color: #6366f1;
+}
+
+/* Checked state */
+.policy-checkbox-inline input:checked + .custom-checkbox {
+  background-color: #6366f1;
+  border-color: #6366f1;
+}
+
+/* Tick mark */
+.policy-checkbox-inline input:checked + .custom-checkbox::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  width: 4px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* Text */
+.label-text {
+  display: inline;
+}
+
+/* Link-style button */
+.policy-link-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #6366f1;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Hover effect for link */
+.policy-link-btn:hover {
+  color: #4f46e5;
 }

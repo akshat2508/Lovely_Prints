@@ -212,7 +212,8 @@ export const addDocumentToOrder = async (req, res, next) => {
       paper_type_id,
       color_mode_id,
       finish_type_id,
-      manual_price
+      manual_price,
+      print_side
     } = req.body;
 
     if (!fileKey || !fileName || !page_count) {
@@ -239,6 +240,7 @@ export const addDocumentToOrder = async (req, res, next) => {
           page_count,
           copies: 1,
           manual_price: Number(manual_price),
+          print_side: print_side || "single"
         },
         token
       );
@@ -269,7 +271,8 @@ export const addDocumentToOrder = async (req, res, next) => {
         copies,
         paper_type_id,
         color_mode_id,
-        finish_type_id
+        finish_type_id,
+        print_side: print_side || "single"
       },
       token
     );

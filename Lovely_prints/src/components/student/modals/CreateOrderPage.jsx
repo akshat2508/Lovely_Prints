@@ -122,6 +122,7 @@ const isHandled = selectedDay === "tomorrow";
 const [dayError, setDayError] = useState("");
 const [isCVMode, setIsCVMode] = useState(false);
 const [showInstructions, setShowInstructions] = useState(false);
+const [printSide, setPrintSide] = useState("single");
 
 
 
@@ -153,12 +154,34 @@ const calculatePlatformFee = (amount, orderType) => {
 const documentPrice = (() => {
   if (!selectedPaper) return 0;
 
-  const basePrice = Number(selectedPaper.base_price || 0);
-  const colorPrice = Number(selectedColor?.extra_price || 0);
-  const finishPrice = Number(selectedFinish?.extra_price || 0);
+  const base = Number(selectedPaper.base_price || 0);
+  const doublePrice = Number(
+    selectedPaper.double_side_price || base
+  );
 
-  return (basePrice + colorPrice + finishPrice) * pageCount * copies;
+  const colorExtra = Number(selectedColor?.extra_price || 0);
+  const finishExtra = Number(selectedFinish?.extra_price || 0);
+
+  const pages = Number(pageCount);
+  const c = Number(copies);
+
+  if (!pages || !c) return 0;
+
+  // 🔥 Sheet logic (MATCHES BACKEND)
+  const sheets =
+    printSide === "double"
+      ? Math.ceil(pages / 2)
+      : pages;
+
+  // 🔥 Price per sheet
+  const pricePerSheet =
+    printSide === "double"
+      ? doublePrice
+      : base;
+
+  return sheets * c * (pricePerSheet + colorExtra + finishExtra);
 })();
+
 const orderType = "online"; // since frontend flow is online
 const platformFee = calculatePlatformFee(documentPrice, orderType);
  const totalPrice = documentPrice + platformFee + (isHandled ? HANDLING_FEE : 0);
@@ -273,6 +296,7 @@ useEffect(() => {
         paper_type_id: paperType,
         color_mode_id: colorMode,
         finish_type_id: finishType,
+        print_side: printSide
       });
 
       setLoaderText("Redirecting to payment gateway…");
@@ -539,6 +563,27 @@ if (!shop || !shopOptions) {
                     onChange={(e) => setCopies(Number(e.target.value))}
                   />
                 </div>
+                <div className="form-group">
+  <label className="modal-label">Print Side *</label>
+
+  <div className="print-side-toggle">
+    <button
+      type="button"
+      className={printSide === "single" ? "primary-btn-n" : "cancel-btn1"}
+      onClick={() => setPrintSide("single")}
+    >
+      Single Side
+    </button>
+
+    <button
+      type="button"
+      className={printSide === "double" ? "primary-btn-n" : "cancel-btn1"}
+      onClick={() => setPrintSide("double")}
+    >
+      Double Side
+    </button>
+  </div>
+</div>
               </div>
             )}
 
@@ -694,6 +739,7 @@ if (!shop || !shopOptions) {
     <span>Next-Day Handling Fee</span>
     <span>+₹{HANDLING_FEE}</span>
   </div>
+  
 )}
                 </div>
 
@@ -735,23 +781,25 @@ if (!shop || !shopOptions) {
                   </div>
                 </div>
                 <div className="policy-agreement-box">
-  <label className="policy-checkbox-inline">
-    <input
-      type="checkbox"
-      checked={agreedPolicies}
-      onChange={(e) => setAgreedPolicies(e.target.checked)}
-    />
-    <span>
-      I agree to the{" "}
-      <button
-        type="button"
-        className="policy-link-btn"
-        onClick={() => setShowPoliciesModal(true)}
-      >
-        terms & conditions
-      </button>
-    </span>
-  </label>
+ <label className="policy-checkbox-inline">
+  <input
+    type="checkbox"
+    checked={agreedPolicies}
+    onChange={(e) => setAgreedPolicies(e.target.checked)}
+  />
+  <span className="custom-checkbox"></span>
+
+  <span className="label-text">
+    I agree to the{" "}
+    <button
+      type="button"
+      className="policy-link-btn"
+      onClick={() => setShowPoliciesModal(true)}
+    >
+      terms & conditions
+    </button>
+  </span>
+</label>
 </div>
               </div>
             )}
@@ -784,6 +832,10 @@ if (!shop || !shopOptions) {
     <div className="summary-row">
       <span>Page Count</span>
       <span>{pageCount}</span>
+    </div>
+    <div className="summary-row">
+  <span>Print Type</span>
+  <span>{printSide === "double" ? "Double Side" : "Single Side"}</span>
     </div>
 
     {/* Optional: slab hint (VERY GOOD UX) */}
