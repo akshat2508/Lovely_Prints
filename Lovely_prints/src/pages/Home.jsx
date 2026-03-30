@@ -3,6 +3,20 @@ import {
   motion, useScroll, useSpring, useTransform,
   useInView, AnimatePresence,
 } from "framer-motion";
+import {
+  CreditCard,
+  FolderOpen,
+  Settings,
+  Upload,
+  Package,
+  Zap,
+  Map,
+  Bell,
+  BarChart3,
+  Shield,
+  MapPin,
+  KeyRound,
+} from "lucide-react";
 import "./Home.css";
 import LOGO from "../assets/logo.png"
 const EXPO = [0.16, 1, 0.3, 1];
@@ -511,10 +525,10 @@ export default function Home() {
         </div>
         <div className="hiw-grid_z">
           {[
-            { num: "01", numCol: "#BACDED", iconBg: "rgba(186,205,237,0.3)", icon: "📂", title: "Choose a Print Shop", desc: "Browse all campus shops filtered by open status, block location, and rating. See real-time availability before placing an order.", chips: ["All · Open · Closed", "Map View", "Block Filter"] },
-            { num: "02", numCol: "#FEC345", iconBg: "rgba(254,195,69,0.25)", icon: "⚙", title: "Configure Print Settings", desc: "Select paper type, color mode, finish, orientation, copies, and page range. Your preferences saved for next time.", chips: ["A4 · Bond", "B&W · Color · CV", "Normal Finish"] },
-            { num: "03", numCol: "#8BAF29", iconBg: "rgba(139,175,41,0.15)", icon: "⬆", title: "Upload & Schedule Pickup", desc: "Upload your file and pick a timeslot — Today or Tomorrow, in 30-min windows. Add urgent flag (+₹10) for priority.", chips: ["PDF · DOCX · Any", "Today / Tomorrow", "Urgent +₹10"] },
-            { num: "04", numCol: "#E57373", iconBg: "rgba(229,115,115,0.15)", icon: "📦", title: "Review, Pay & Collect", desc: "Confirm your order summary, pay securely in-app, and get an OTP. Walk in at your timeslot, show OTP, walk out.", chips: ["Order Summary", "Secure Pay", "OTP Pickup"] },
+            { num: "01", numCol: "#BACDED", iconBg: "rgba(186,205,237,0.3)", icon: <FolderOpen size={18} />, title: "Choose a Print Shop", desc: "Browse all campus shops filtered by open status, block location, and rating. See real-time availability before placing an order.", chips: ["All · Open · Closed", "Map View", "Block Filter"] },
+            { num: "02", numCol: "#FEC345", iconBg: "rgba(254,195,69,0.25)", icon: <Settings size={18} />, title: "Configure Print Settings", desc: "Select paper type, color mode, finish, orientation, copies, and page range. Your preferences saved for next time.", chips: ["A4 · Bond", "B&W · Color · CV", "Normal Finish"] },
+            { num: "03", numCol: "#8BAF29", iconBg: "rgba(139,175,41,0.15)", icon: <Upload size={18} />, title: "Upload & Schedule Pickup", desc: "Upload your file and pick a timeslot — Today or Tomorrow, in 30-min windows. Add urgent flag (+₹10) for priority.", chips: ["PDF · DOCX · Any", "Today / Tomorrow", "Urgent +₹10"] },
+            { num: "04", numCol: "#E57373", iconBg: "rgba(229,115,115,0.15)", icon: <Package size={18} />, title: "Review, Pay & Collect", desc: "Confirm your order summary, pay securely in-app, and get an OTP. Walk in at your timeslot, show OTP, walk out.", chips: ["Order Summary", "Secure Pay", "OTP Pickup"] },
           ].map((s, i) => (
             <Reveal key={s.num} delay={i * 0.08}>
               <div className="hiw-step_z">
@@ -544,12 +558,12 @@ export default function Home() {
             </p>
             <div style={{ marginTop: 36, display: "flex", flexDirection: "column", gap: 16 }}>
               {[
-                { icon: "📍", text: "Block 38, 6th Floor — Open until 17:00" },
-                { icon: "🔔", text: "Push & SMS notifications at every stage" },
-                { icon: "🔑", text: "4-digit OTP for secure, no-queue pickup" },
+                { icon: <MapPin size={18} strokeWidth={1.5} />, text: "Block 38, 6th Floor — Open until 17:00" },
+                { icon: <Bell size={18} strokeWidth={1.5} />, text: "Push & SMS notifications at every stage" },
+                { icon: <KeyRound size={18} strokeWidth={1.5} />, text: "4-digit OTP for secure, no-queue pickup" },
               ].map(f => (
                 <div key={f.icon} style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                  <span style={{ fontSize: 20 }}>{f.icon}</span>
+                  <div className="status-icon_z">{f.icon}</div>
                   <span style={{ fontSize: 14, fontWeight: 300, color: "var(--ink-70)" }}>{f.text}</span>
                 </div>
               ))}
@@ -619,12 +633,12 @@ export default function Home() {
           </Reveal>
           <div className="feat-grid_z">
             {[
-              { icon: "⚡", bg: "rgba(254,195,69,0.2)", title: "Instant Uploads", desc: "Files are processed and queued to your chosen shop in seconds. PDF, DOCX, PPT — any format handled." },
-              { icon: "🗺", bg: "rgba(186,205,237,0.3)", title: "Campus Map View", desc: "See every print shop on campus with live open/closed status. Filter by block, rating, and service type." },
-              { icon: "🔔", bg: "rgba(139,175,41,0.15)", title: "Live Order Tracking", desc: "Real-time SMS and in-app push notifications at every status change — Uploading → Printing → Ready." },
-              { icon: "💳", bg: "rgba(229,115,115,0.15)", title: "Secure Payments", desc: "End-to-end encrypted in-app payment. Supports UPI, cards, and wallets. No cash exchange at the counter." },
-              { icon: "📊", bg: "rgba(254,195,69,0.15)", title: "Shop Analytics", desc: "Owners get demand forecasts, peak-hour insights, top products, and daily revenue summaries in one dashboard." },
-              { icon: "🔒", bg: "rgba(32,29,30,0.06)", title: "Privacy-First", desc: "Your documents are encrypted at rest and automatically deleted 24 hours after successful pickup." },
+              { icon: <Zap size={30} />, title: "Instant Uploads" },
+              { icon: <Map size={30} />, title: "Campus Map View" },
+              { icon: <Bell size={30} />, title: "Live Order Tracking" },
+              { icon: <CreditCard size={30} />, title: "Secure Payments" },
+              { icon: <BarChart3 size={30} />, title: "Shop Analytics" },
+              { icon: <Shield size={30} />, title: "Privacy-First" },
             ].map((f, i) => (
               <Reveal key={f.title} delay={i * 0.07}>
                 <div className="f-cell_z">

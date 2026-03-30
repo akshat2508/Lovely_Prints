@@ -271,6 +271,20 @@ body { font-family: var(--font-body); background: var(--parchment); color: var(-
 .s-name_z { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--ink); letter-spacing: -0.01em; }
 .s-sub_z { font-size: 11px; color: var(--ink-40); font-family: var(--font-mono); margin-top: 2px; }
 .s-badge_z { font-family: var(--font-mono); font-size: 9px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 9px; border-radius: 4px; white-space: nowrap; }
+.status-icon_z {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+
+  background: rgba(139,175,41,0.12); /* subtle sage */
+  border: 1px solid rgba(139,175,41,0.2);
+
+  color: var(--sage);
+}
 .prog-labels_z { display: flex; justify-content: space-between; margin-bottom: 8px; }
 .prog-labels_z span { font-family: var(--font-mono); font-size: 11px; color: var(--ink-40); }
 .prog-track_z { height: 6px; background: var(--parchment-dark); border-radius: 3px; overflow: hidden; }
@@ -318,7 +332,9 @@ body { font-family: var(--font-body); background: var(--parchment); color: var(-
 }
 .f-cell_z { background: var(--parchment-dark); padding: 52px 40px; display: flex; flex-direction: column; gap: 16px; transition: background 0.25s; cursor: default; height: 100%; }
 .f-cell_z:hover { background: var(--parchment-light); }
-.f-icon_z { width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; }
+.f-icon_z svg {
+  opacity: 0.8;
+}
 .f-title_z { font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--ink); letter-spacing: -0.02em; }
 .f-desc_z { font-size: 14px; font-weight: 300; color: var(--ink-70); line-height: 1.65; }
 
