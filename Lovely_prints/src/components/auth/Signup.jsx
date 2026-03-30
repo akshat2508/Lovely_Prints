@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import { User, Mail, Building2, Lock, Eye, EyeOff } from "lucide-react";
+import { User, Mail, Building2, Lock, Eye, EyeOff, GraduationCap, FileText, CreditCard } from "lucide-react";
 import { registerUser, getOrganisations } from "../../services/authService";
 import EmailConfirmationModal from "./modal/EmailConfirmationModal";
 import "./signup.css";
@@ -11,9 +11,9 @@ const LOGO = "/src/assets/logo.png";
 const EXPO = [0.16, 1, 0.3, 1];
 
 const PERKS = [
-  { icon: "🎓", text: "Student-only access — campus verified" },
-  { icon: "📁", text: "Upload PDF, DOCX, PPT — any format" },
-  { icon: "💳", text: "Secure in-app payments, no cash needed" },
+  { icon: <GraduationCap size={18} strokeWidth={1.5} />, text: "Student-only access — campus verified" },
+  { icon: <FileText size={18} strokeWidth={1.5} />, text: "Upload PDF, DOCX, PPT — any format" },
+  { icon: <CreditCard size={18} strokeWidth={1.5} />, text: "Secure in-app payments, no cash needed" },
 ];
 
 function FloatingBlob({ style, delay = 0 }) {
@@ -152,7 +152,9 @@ export default function Signup() {
             animate={{opacity:1,y:0}}
             transition={{duration:0.6,ease:EXPO}}
           >
-            <img src={logo} alt="Docuvio" className="auth-logo_z" />
+            <div className="logo-badge_z">
+              <img src={logo} alt="Docuvio" className="auth-logo_z" />
+            </div>
             <span className="su-brand-name_z">Docuvio</span>
           </motion.a>
 
