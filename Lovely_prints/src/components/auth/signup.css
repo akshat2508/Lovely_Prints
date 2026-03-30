@@ -87,7 +87,22 @@ body { font-family: var(--font-body); background: var(--parchment); color: var(-
 /* Features */
 .su-features_z { display: flex; flex-direction: column; gap: 13px; margin-bottom: 52px; }
 .su-feat-row_z { display: flex; align-items: center; gap: 12px; }
-.su-feat-icon_z { font-size: 17px; flex-shrink: 0; }
+.su-feat-icon_z {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  color: #FEC345; /* gold accent */
+  
+  backdrop-filter: blur(6px);
+}
 .su-feat-text_z { font-size: 14px; font-weight: 400; color: rgba(245,240,232,0.65); line-height: 1.4; }
 
 /* Step indicator */
@@ -260,6 +275,28 @@ body { font-family: var(--font-body); background: var(--parchment); color: var(-
     color: #c62828;
     overflow: hidden;
 }
+
+.logo-badge_z {
+  background: rgba(255,255,255,0.92);
+  padding: 6px 10px;
+  border-radius: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.auth-logo_z {
+  width: 36px;
+  height: 36px;
+}
+
+.mobile-header_z {
+  display: none;
+}
+
 @keyframes su-spin { to { transform: rotate(360deg); } }
 
 /* Success */
@@ -297,10 +334,30 @@ body { font-family: var(--font-body); background: var(--parchment); color: var(-
   .su-right_z {
     min-height: 100vh;
     padding: 36px 20px 56px;
+    flex-direction: column;
+    align-items: center;
   }
 
   .su-card_z {
     padding: 32px 24px 28px;
+  }
+
+  .mobile-header_z {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 20px;
+  }
+
+  .mobile-brand-name_z {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 20px;
+    color: var(--ink);
+    letter-spacing: -0.03em;
+    margin-top: 6px;
   }
 
 }

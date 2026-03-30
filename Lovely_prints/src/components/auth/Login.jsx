@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, Zap, Map, KeyRound } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../../services/authService";
 import LoginLoader from "./LoginLoader";
@@ -10,9 +10,9 @@ import logo from "../../assets/logo.png";
 const EXPO = [0.16, 1, 0.3, 1];
 
 const FEATURES = [
-  { icon: "⚡", text: "Upload & print in under 2 minutes" },
-  { icon: "🗺", text: "Browse every campus shop in real time" },
-  { icon: "🔑", text: "OTP pickup — zero queues, zero stress" },
+  { icon: <Zap size={18} strokeWidth={1.5} />, text: "Upload & print in under 2 minutes" },
+  { icon: <Map size={18} strokeWidth={1.5} />, text: "Browse every campus shop in real time" },
+  { icon: <KeyRound size={18} strokeWidth={1.5} />, text: "OTP pickup — zero queues, zero stress" },
 ];
 
 function FloatingBlob({ style, delay = 0 }) {
@@ -116,7 +116,9 @@ export default function Login() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: EXPO }}
           >
-            <img src={logo} alt="Docuvio" className="auth-logo_z" />
+            <div className="logo-badge_z">
+              <img src={logo} alt="Docuvio" className="auth-logo_z" />
+            </div>
             <span className="auth-brand-name_z">Docuvio</span>
           </motion.a>
 
@@ -171,6 +173,12 @@ export default function Login() {
       {/* RIGHT LOGIN PANEL */}
 
       <div className="auth-right_z">
+        <div className="mobile-header_z">
+          <div className="logo-badge_z">
+            <img src={logo} alt="Docuvio" className="auth-logo_z" />
+          </div>
+          <span className="mobile-brand-name_z">Docuvio</span>
+        </div>
 
         <motion.div
           className="auth-card_z"
