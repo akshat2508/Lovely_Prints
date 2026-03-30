@@ -173,6 +173,12 @@ export default function Login() {
       {/* RIGHT LOGIN PANEL */}
 
       <div className="auth-right_z">
+        <div className="mobile-header_z">
+          <div className="logo-badge_z">
+            <img src={logo} alt="Docuvio" className="auth-logo_z" />
+          </div>
+          <span className="mobile-brand-name_z">Docuvio</span>
+        </div>
 
         <motion.div
           className="auth-card_z"

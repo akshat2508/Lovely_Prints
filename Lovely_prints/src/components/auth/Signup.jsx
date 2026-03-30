@@ -215,7 +215,12 @@ export default function Signup() {
       {/* RIGHT PANEL */}
 
       <div className="su-right_z">
-
+        <div className="mobile-header_z">
+          <div className="logo-badge_z">
+            <img src={logo} alt="Docuvio" className="auth-logo_z" />
+          </div>
+          <span className="mobile-brand-name_z">Docuvio</span>
+        </div>
         <div className="su-right-bg_z"/>
 
         <motion.div

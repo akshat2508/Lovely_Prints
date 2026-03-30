@@ -293,6 +293,10 @@ body { font-family: var(--font-body); background: var(--parchment); color: var(-
   height: 36px;
 }
 
+.mobile-header_z {
+  display: none;
+}
+
 @keyframes su-spin { to { transform: rotate(360deg); } }
 
 /* Success */
@@ -330,10 +334,30 @@ body { font-family: var(--font-body); background: var(--parchment); color: var(-
   .su-right_z {
     min-height: 100vh;
     padding: 36px 20px 56px;
+    flex-direction: column;
+    align-items: center;
   }
 
   .su-card_z {
     padding: 32px 24px 28px;
+  }
+
+  .mobile-header_z {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 20px;
+  }
+
+  .mobile-brand-name_z {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 20px;
+    color: var(--ink);
+    letter-spacing: -0.03em;
+    margin-top: 6px;
   }
 
 }
