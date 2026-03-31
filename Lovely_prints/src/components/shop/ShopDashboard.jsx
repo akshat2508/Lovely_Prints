@@ -63,7 +63,11 @@ export default function ShopDashboard() {
   const [hasNewWalkin, setHasNewWalkin] = useState(false);
 const [hasNewScheduled, setHasNewScheduled] = useState(false);
 const [isLoggingOut, setIsLoggingOut] = useState(false);
-
+const formatHour = (hour) => {
+  const ampm = hour >= 12 ? "PM" : "AM";
+  const h = hour % 12 || 12; // convert 0 → 12
+  return `${h}:00 ${ampm}`;
+};
 const generateTimeSlots = (openHour, closeHour) => {
   const slots = [];
 
@@ -72,8 +76,7 @@ const generateTimeSlots = (openHour, closeHour) => {
     const end = hour + 1;
 
     slots.push({
-      label: `${String(start).padStart(2, "0")}:00 - ${String(end).padStart(2, "0")}:00`,
-      start,
+     label: `${formatHour(start)} - ${formatHour(end)}`, start,
       end,
     });
   }

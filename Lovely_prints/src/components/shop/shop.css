@@ -1133,10 +1133,7 @@ body {
   color: #111827;   /* bold & dark */
 }
 .urgent-order {
-  border: 2px solid #ef4444 !important;
-  box-shadow:
-    0 0 0 3px rgba(239, 68, 68, 0.12),
-    0 10px 24px rgba(239, 68, 68, 0.25);
+  border: 2px solid #00541c !important;
 }
 
 /* Label styling */
@@ -1227,25 +1224,4 @@ body {
 .active-slot .slot-label {
   font-weight: 700;
   color: #f58220;
-}
-.download-group {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-  justify-content: space-between;
-}
-
-.ready-button {
-  background: #C4CE48;
-  color: #063B3A;
-  border: 1px solid black;
-  padding: 6px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s ease;
-}
-
-.ready-button:hover {
-  background: #6ad954;
 }

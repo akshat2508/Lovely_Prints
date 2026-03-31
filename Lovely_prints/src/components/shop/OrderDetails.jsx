@@ -3,7 +3,7 @@ import {
   getDocumentDownloadUrl,
   verifyOrderOtp,
 } from "../../services/shopService";
-
+import "./orderDetails-sd.css"
 export default function OrderDetails({
   order,
   onStatusChange,
@@ -152,7 +152,8 @@ export default function OrderDetails({
   /* ---------------- UI ---------------- */
 
   return (
-    <div className={`order-card ${className}`} onClick={onClick}>
+    <>
+    <div className={`order-card order-card-sd hover-card-sd ${className}`} onClick={onClick}>
       {/* HEADER */}
       <div className="order-header">
         <div className="order-id">#{order.orderNo}</div>
@@ -170,24 +171,30 @@ export default function OrderDetails({
         <span className={`badge ${order.isPaid ? "paid" : "unpaid"}`}>
           {order.isPaid ? "Paid" : "Not Paid"}
         </span>
-      </div>
-
-      {/* BODY */}
-      <div className="order-body">
         <div className="student-info">
           <h3>{order.studentName}</h3>
           <p>Order ID : {order.id.slice(-6)}</p>
         </div>
+          <p>Copies: <b>{order.copies}</b></p>
+
+      </div>
+
+      {/* BODY */}
+      <div className="order-body hover-content-sd">
+
+          {/* PRINT DETAILS */}
+        <div className="print-details">
+          <span>Paper: <b>{order.paperType}</b></span>
+          <span><b>{order.colorMode}</b></span>
+          <span>Finish: <b>{order.finishType}</b></span>
+          <span>Copies: <b>{order.copies}</b></span>
+          <span>Side: <b>{order.printSide}</b></span>
+          <span>Orient : 
+            <b> {order.orientation === "landscape" ? "Landscape" : "Portrait"}</b>
+          </span>
+        </div>
 
         <div className="order-meta order-header">
-          <span className="pickup-date">
-            📅{" "}
-            {createdDate.toLocaleDateString("en-IN", {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-            })}
-          </span>
           <span className="pickup-date">
             ⏰{" "}
             {pickUpDate
@@ -246,16 +253,7 @@ export default function OrderDetails({
           )}
         </div>
 
-        {/* PRINT DETAILS */}
-        <div className="print-details">
-          <span>Paper: {order.paperType}</span>
-          <span>{order.colorMode}</span>
-          <span>Finish: {order.finishType}</span>
-          <span>Copies: {order.copies}</span>
-          <span>
-            {order.orientation === "landscape" ? "Landscape" : "Portrait"}
-          </span>
-        </div>
+      
 
         {/* ACTION BUTTON (HIDDEN WHEN READY) */}
         {/* CONFIRM / START PRINTING */}
@@ -286,32 +284,35 @@ export default function OrderDetails({
         )}
       </div>
 
+    </div>
       {/* OTP MODAL */}
       {showOtpModal && (
-        <div className="modal-overlay" onClick={() => setShowOtpModal(false)}>
-          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-overlay-sd" onClick={() => setShowOtpModal(false)}>
+          <div className="modal-card-sd" onClick={(e) => e.stopPropagation()}>
             <h3>Enter Delivery OTP</h3>
 
             <input
               type="text"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
-              placeholder="6-digit OTP"
-              className="modal-input1"
+              placeholder="4-digit OTP"
+              className="modal-input1-sd"
               maxLength={6}
+              autoFocus
+              onKeyDown={(e) => e.key === "Enter" && handleVerifyOtp()}
             />
 
-            <div className="modal-actions">
+            <div className="modal-actions-sd">
               <button
-                className="submit-btn1"
+                className="submit-btn1-sd"
                 disabled={verifyingOtp}
                 onClick={handleVerifyOtp}
               >
-                {verifyingOtp ? "Verifying..." : "Verify & Complete"}
+                {verifyingOtp ? "Verifying..." : "Verify"}
               </button>
 
               <button
-                className="cancel-btn1"
+                className="cancel-btn1-sd"
                 onClick={() => setShowOtpModal(false)}
               >
                 Cancel
@@ -320,6 +321,6 @@ export default function OrderDetails({
           </div>
         </div>
       )}
-    </div>
+      </>
   );
 }

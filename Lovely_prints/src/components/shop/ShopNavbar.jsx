@@ -55,12 +55,12 @@ const ShopNavbar = ({
     <span className="nav-notification urgent">NEW</span>
   )}
 </button>
-          <button
+          {/* <button
             className={`${activeTab === "discarded" ? "active" : ""}`}
             onClick={() => setActiveTab("discarded")}
           >
             Discarded
-          </button>
+          </button> */}
 
           <button
             className={activeTab === "settings" ? "active" : ""}
@@ -97,7 +97,7 @@ const ShopNavbar = ({
           {/* Accepting Orders Toggle */}
           <div className="shop-toggle accepting-toggle">
             <span className={!shop?.is_accepting_orders ? "muted" : ""}>
-              Not Accepting
+              Offline
             </span>
 
             <label className="switch">
@@ -111,7 +111,7 @@ const ShopNavbar = ({
             </label>
 
             <span className={shop?.is_accepting_orders ? "active" : "muted"}>
-              Accepting Orders
+              Online
             </span>
           </div>
 

@@ -1,0 +1,270 @@
+/* ROOT */
+.order-card-sd {
+  background: #f4f4f4;
+  border-radius: 16px;
+  padding: 16px;
+  width: 320px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* HEADER */
+.order-card-sd .order-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.order-card-sd .order-id {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+/* STATUS BADGE */
+.order-card-sd .status-badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* STATUS COLORS */
+.order-card-sd .status-badge.pending {
+  background: #ffe0b2;
+  color: #ef6c00;
+}
+
+.order-card-sd .status-badge.confirmed {
+  background: #bbdefb;
+  color: #1565c0;
+}
+
+.order-card-sd .status-badge.printing {
+  background: #b3e5fc;
+  color: #0277bd;
+}
+
+.order-card-sd .status-badge.ready {
+  background: #4caf50;
+  color: white;
+}
+
+.order-card-sd .status-badge.completed {
+  background: #e0e0e0;
+  color: #616161;
+}
+
+/* BADGES */
+.order-card-sd .badge {
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 999px;
+}
+
+.order-card-sd .badge.paid {
+  background: #c8e6c9;
+  color: #2e7d32;
+}
+
+.order-card-sd .badge.unpaid {
+  background: #ffcdd2;
+  color: #c62828;
+}
+
+.order-card-sd .badge.today {
+  background: #fff9c4;
+}
+
+.order-card-sd .badge.scheduled {
+  background: #e1bee7;
+}
+
+/* BODY */
+.order-card-sd .order-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* STUDENT */
+.order-card-sd .student-info h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.order-card-sd .student-info p {
+  margin: 0;
+  font-size: 13px;
+  color: #666;
+}
+
+/* DATE PILLS */
+.order-card-sd .order-meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.order-card-sd .pickup-date {
+  border: 2px solid #555;
+  border-radius: 14px;
+  text-align: center;
+  font-size: 12px;
+  background: #fafafa;
+  width: 100%;
+}
+
+/* DOCUMENT */
+.order-card-sd .document-info p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+/* DOWNLOAD GROUP */
+.order-card-sd .download-group {
+  display: flex;
+  gap: 10px;
+}
+
+/* BUTTON BASE */
+.order-card-sd button {
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+/* DOWNLOAD */
+.order-card-sd .download-button {
+  flex: 1;
+  background: #9fa8da;
+  color: #1a237e;
+}
+
+.order-card-sd .download-button:hover {
+  background: #7986cb;
+}
+
+/* READY */
+.order-card-sd .ready-button {
+  flex: 1;
+  background: #558b2f;
+  color: white;
+}
+
+.order-card-sd .ready-button:hover {
+  background: #33691e;
+}
+
+/* PRINT DETAILS */
+.order-card-sd .print-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 8px;
+  border-top: 1px solid #ddd;
+  font-size: 13px;
+}
+
+/* ACTION BUTTON */
+.order-card-sd .action-button {
+  width: 100%;
+  background: #90caf9;
+}
+
+.order-card-sd .action-button:hover {
+  background: #64b5f6;
+}
+
+/* OTP BUTTON */
+.order-card-sd .action-button:last-of-type {
+  background: #c0ca33;
+  font-weight: 600;
+}
+
+.order-card-sd .action-button:last-of-type:hover {
+  background: #afb42b;
+}
+
+/* MODAL */
+.modal-overlay-sd {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-card-sd {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  width: 300px;
+}
+
+.modal-input1-sd {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin: 10px 0;
+}
+
+.modal-actions-sd {
+  display: flex;
+  gap: 10px;
+}
+
+.submit-btn1-sd {
+  flex: 1;
+  background: #4caf50;
+  color: white;
+  padding: 6px;
+  border: 0.5px solid black;
+  border-radius: 12px;
+}
+
+.cancel-btn1-sd {
+  flex: 1;
+  background: #e0e0e0;
+   padding: 6px;
+  border: 0.5px solid black;
+  border-radius: 12px;
+}
+
+
+/* COLLAPSED STATE */
+.hover-card-sd {
+  overflow: hidden;
+  max-height: 120px;
+  transition: all 0.35s ease;
+  cursor: pointer;
+}
+
+/* EXPANDED ON HOVER */
+.hover-card-sd:hover {
+  max-height: 600px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  transform: translateY(-4px);
+}
+
+/* HIDE CONTENT INITIALLY */
+.hover-content-sd {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.25s ease;
+}
+
+/* SHOW CONTENT ON HOVER */
+.hover-card-sd:hover .hover-content-sd {
+  opacity: 1;
+  transform: translateY(0);
+}
