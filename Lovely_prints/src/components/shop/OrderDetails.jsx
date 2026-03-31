@@ -152,7 +152,8 @@ export default function OrderDetails({
   /* ---------------- UI ---------------- */
 
   return (
-    <div className={`order-card order-card-sd ${className}`} onClick={onClick}>
+    <>
+    <div className={`order-card order-card-sd hover-card-sd ${className}`} onClick={onClick}>
       {/* HEADER */}
       <div className="order-header">
         <div className="order-id">#{order.orderNo}</div>
@@ -170,14 +171,16 @@ export default function OrderDetails({
         <span className={`badge ${order.isPaid ? "paid" : "unpaid"}`}>
           {order.isPaid ? "Paid" : "Not Paid"}
         </span>
-      </div>
-
-      {/* BODY */}
-      <div className="order-body">
         <div className="student-info">
           <h3>{order.studentName}</h3>
           <p>Order ID : {order.id.slice(-6)}</p>
         </div>
+          <p>Copies: <b>{order.copies}</b></p>
+
+      </div>
+
+      {/* BODY */}
+      <div className="order-body hover-content-sd">
 
           {/* PRINT DETAILS */}
         <div className="print-details">
@@ -281,10 +284,11 @@ export default function OrderDetails({
         )}
       </div>
 
+    </div>
       {/* OTP MODAL */}
       {showOtpModal && (
-        <div className="modal-overlay" onClick={() => setShowOtpModal(false)}>
-          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-overlay-sd" onClick={() => setShowOtpModal(false)}>
+          <div className="modal-card-sd" onClick={(e) => e.stopPropagation()}>
             <h3>Enter Delivery OTP</h3>
 
             <input
@@ -292,15 +296,15 @@ export default function OrderDetails({
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
               placeholder="4-digit OTP"
-              className="modal-input1"
+              className="modal-input1-sd"
               maxLength={6}
               autoFocus
               onKeyDown={(e) => e.key === "Enter" && handleVerifyOtp()}
             />
 
-            <div className="modal-actions">
+            <div className="modal-actions-sd">
               <button
-                className="submit-btn1"
+                className="submit-btn1-sd"
                 disabled={verifyingOtp}
                 onClick={handleVerifyOtp}
               >
@@ -308,7 +312,7 @@ export default function OrderDetails({
               </button>
 
               <button
-                className="cancel-btn1"
+                className="cancel-btn1-sd"
                 onClick={() => setShowOtpModal(false)}
               >
                 Cancel
@@ -317,6 +321,6 @@ export default function OrderDetails({
           </div>
         </div>
       )}
-    </div>
+      </>
   );
 }

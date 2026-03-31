@@ -1,6 +1,7 @@
 import React from "react";
 import { getDocumentDownloadUrl } from "../../services/shopService";
 import "./OrderPreview-L.css"
+import { createPortal } from "react-dom";
 
 export default function OrderPreview({ order, onClose }) {
   if (!order) return null;
@@ -13,8 +14,9 @@ export default function OrderPreview({ order, onClose }) {
       alert("Failed to download document");
     }
   };
+    const modalRoot = document.getElementById("modal-root");
 
-  return (
+  return createPortal(
     <div className="order-preview-overlay-L" onClick={onClose}>
       <div
         className={`order-preview-L ${
@@ -58,6 +60,16 @@ export default function OrderPreview({ order, onClose }) {
             </div>
           </div>
 
+          {/* Document */}
+          <div className="preview-section-L">
+            <h4>Copies</h4>
+
+            <div className="preview-row-L">
+              <span className="preview-label-L">Number of Copies</span>
+              <span>{order.copies}</span>
+            </div>
+          </div>
+
           {/* Specs */}
           <div className="preview-section-L">
             <h4>Print Specifications</h4>
@@ -79,8 +91,8 @@ export default function OrderPreview({ order, onClose }) {
               </span>
 
               <span className="spec-pill-L">
-                <span className="spec-label-L">Copies:</span>
-                <span className="spec-value-L">{order.copies}</span>
+                <span className="spec-label-L">Print Side:</span>
+                <span className="spec-value-L">{order.printSide}</span>
               </span>
 
               <span className="spec-pill-L">
@@ -150,6 +162,7 @@ export default function OrderPreview({ order, onClose }) {
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    modalRoot
   );
 }

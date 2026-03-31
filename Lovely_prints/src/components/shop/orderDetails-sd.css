@@ -108,10 +108,11 @@
 
 .order-card-sd .pickup-date {
   border: 2px solid #555;
-  border-radius: 20px;
-  padding: 6px 10px;
+  border-radius: 14px;
+  text-align: center;
   font-size: 12px;
   background: #fafafa;
+  width: 100%;
 }
 
 /* DOCUMENT */
@@ -190,7 +191,7 @@
 }
 
 /* MODAL */
-.order-card-sd .modal-overlay {
+.modal-overlay-sd {
   position: fixed;
   top: 0;
   left: 0;
@@ -202,14 +203,14 @@
   align-items: center;
 }
 
-.order-card-sd .modal-card {
+.modal-card-sd {
   background: white;
   padding: 20px;
   border-radius: 12px;
   width: 300px;
 }
 
-.order-card-sd .modal-input1 {
+.modal-input1-sd {
   width: 100%;
   padding: 10px;
   border-radius: 8px;
@@ -217,18 +218,53 @@
   margin: 10px 0;
 }
 
-.order-card-sd .modal-actions {
+.modal-actions-sd {
   display: flex;
   gap: 10px;
 }
 
-.order-card-sd .submit-btn1 {
+.submit-btn1-sd {
   flex: 1;
   background: #4caf50;
   color: white;
+  padding: 6px;
+  border: 0.5px solid black;
+  border-radius: 12px;
 }
 
-.order-card-sd .cancel-btn1 {
+.cancel-btn1-sd {
   flex: 1;
   background: #e0e0e0;
+   padding: 6px;
+  border: 0.5px solid black;
+  border-radius: 12px;
+}
+
+
+/* COLLAPSED STATE */
+.hover-card-sd {
+  overflow: hidden;
+  max-height: 120px;
+  transition: all 0.35s ease;
+  cursor: pointer;
+}
+
+/* EXPANDED ON HOVER */
+.hover-card-sd:hover {
+  max-height: 600px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  transform: translateY(-4px);
+}
+
+/* HIDE CONTENT INITIALLY */
+.hover-content-sd {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.25s ease;
+}
+
+/* SHOW CONTENT ON HOVER */
+.hover-card-sd:hover .hover-content-sd {
+  opacity: 1;
+  transform: translateY(0);
 }

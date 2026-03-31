@@ -10,7 +10,7 @@
 
   z-index: 9999;
 
-    background: rgba(255, 255, 255, 0); /* 50% transparent white */
+    background: rgba(255, 255, 255); /* 50% transparent white */
 
   border-bottom: 1px solid #e5e7eb;
 
