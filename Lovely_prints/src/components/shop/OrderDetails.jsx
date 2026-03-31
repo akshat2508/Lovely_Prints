@@ -3,7 +3,7 @@ import {
   getDocumentDownloadUrl,
   verifyOrderOtp,
 } from "../../services/shopService";
-
+import "./orderDetails-sd.css"
 export default function OrderDetails({
   order,
   onStatusChange,
@@ -152,7 +152,7 @@ export default function OrderDetails({
   /* ---------------- UI ---------------- */
 
   return (
-    <div className={`order-card ${className}`} onClick={onClick}>
+    <div className={`order-card order-card-sd ${className}`} onClick={onClick}>
       {/* HEADER */}
       <div className="order-header">
         <div className="order-id">#{order.orderNo}</div>
@@ -179,15 +179,19 @@ export default function OrderDetails({
           <p>Order ID : {order.id.slice(-6)}</p>
         </div>
 
-        <div className="order-meta order-header">
-          <span className="pickup-date">
-            📅{" "}
-            {createdDate.toLocaleDateString("en-IN", {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-            })}
+          {/* PRINT DETAILS */}
+        <div className="print-details">
+          <span>Paper: <b>{order.paperType}</b></span>
+          <span><b>{order.colorMode}</b></span>
+          <span>Finish: <b>{order.finishType}</b></span>
+          <span>Copies: <b>{order.copies}</b></span>
+          <span>Side: <b>{order.printSide}</b></span>
+          <span>Orient : 
+            <b> {order.orientation === "landscape" ? "Landscape" : "Portrait"}</b>
           </span>
+        </div>
+
+        <div className="order-meta order-header">
           <span className="pickup-date">
             ⏰{" "}
             {pickUpDate
@@ -246,16 +250,7 @@ export default function OrderDetails({
           )}
         </div>
 
-        {/* PRINT DETAILS */}
-        <div className="print-details">
-          <span>Paper: {order.paperType}</span>
-          <span>{order.colorMode}</span>
-          <span>Finish: {order.finishType}</span>
-          <span>Copies: {order.copies}</span>
-          <span>
-            {order.orientation === "landscape" ? "Landscape" : "Portrait"}
-          </span>
-        </div>
+      
 
         {/* ACTION BUTTON (HIDDEN WHEN READY) */}
         {/* CONFIRM / START PRINTING */}
@@ -296,9 +291,11 @@ export default function OrderDetails({
               type="text"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
-              placeholder="6-digit OTP"
+              placeholder="4-digit OTP"
               className="modal-input1"
               maxLength={6}
+              autoFocus
+              onKeyDown={(e) => e.key === "Enter" && handleVerifyOtp()}
             />
 
             <div className="modal-actions">
@@ -307,7 +304,7 @@ export default function OrderDetails({
                 disabled={verifyingOtp}
                 onClick={handleVerifyOtp}
               >
-                {verifyingOtp ? "Verifying..." : "Verify & Complete"}
+                {verifyingOtp ? "Verifying..." : "Verify"}
               </button>
 
               <button

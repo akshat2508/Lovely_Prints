@@ -34,6 +34,8 @@ const adaptOrder = (order) => {
     colorMode: doc.color_modes?.name || "-",
     finishType: doc.finish_types?.name || "-",
     copies: doc.copies || 1,
+    docPrice : doc.total_price,
+    printSide : doc.print_side,
 
     // placeholders
     eta: "—",

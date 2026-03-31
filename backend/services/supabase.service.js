@@ -725,6 +725,7 @@ if (!userId) {
       page_count,
       copies,
       total_price,
+      print_side,
 
       paper_types ( name ),
       color_modes ( name ),

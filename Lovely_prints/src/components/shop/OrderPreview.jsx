@@ -121,7 +121,7 @@ export default function OrderPreview({ order, onClose }) {
             <div className="preview-row-L">
               <span className="preview-label-L">Amount</span>
               <span className={`order-no-highlight-L`}>
-                {order.totalPrice}
+                {order.docPrice}
               </span>
             </div>
 
