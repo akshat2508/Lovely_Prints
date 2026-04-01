@@ -38,12 +38,14 @@ export const loginUser = async ({ email, password }) => {
    * Matches your response format:
    * data.session.access_token
    */
-const token = response.data.data.session.access_token;
+
 const role = response.data.data.user.user_metadata.role;
+const session = response.data.data.session;
 
-localStorage.setItem("access_token", token);
-localStorage.setItem("role", role);
 
+localStorage.setItem("access_token", session.access_token);
+localStorage.setItem("refresh_token", session.refresh_token);localStorage.setItem("role", role);
+console.log("FULL LOGIN RESPONSE:", response.data);
   return response.data;
 };
 

@@ -667,7 +667,7 @@ const discardedOrders = orders.filter(
                 currentSlotLabel === slot.label ? "active-slot" : ""
               }`}
             >
-              <div className="slot-label">{slot.label}</div>
+              <div className="slot-label-b">{slot.label}</div>
 
               {todaysOrdersBySlot[slot.label].length === 0 ? (
                 <div className="empty-slot-message">
@@ -706,7 +706,7 @@ const discardedOrders = orders.filter(
 
               {TIME_SLOTS.map((slot) => (
                 <div key={slot.label} className="time-slot-wrapper">
-                  <div className="slot-label">{slot.label}</div>
+                  <div className="slot-label-b">{slot.label}</div>
 
                   {slots[slot.label].length === 0 ? (
                     <div className="empty-slot-message">

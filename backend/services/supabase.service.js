@@ -926,5 +926,5 @@ async getDocumentTotal(orderId) {
 }
 
 }
-export { supabaseAdmin};
+export { supabaseAdmin , supabaseAnon};
 export default new SupabaseService();

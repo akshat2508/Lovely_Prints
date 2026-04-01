@@ -34,9 +34,8 @@ body {
 }
 
 .shop-dashboard {
-  max-width: 1200px;
-  margin: 50px auto;
-  padding: 20px;
+max-width: 1200px;
+   margin: 62px 24px 24px 24px;
 }
 
 .dashboard-header {
@@ -1174,12 +1173,17 @@ body {
   margin-bottom: 24px;
 }
 
-.slot-label {
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 8px;
+.slot-label-b {
   color: #374151;
+    margin-bottom: 8px;
+    font-size: 18px;
+    font-weight: 600;
+    background: #dbdbdb;
+    padding: 2px;
+    border-radius: 8px;
+    text-align: center;
 }
+
 
 .scheduled-day {
   margin-bottom: 32px;

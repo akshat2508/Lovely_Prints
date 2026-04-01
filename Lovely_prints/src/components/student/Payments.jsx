@@ -3,6 +3,12 @@ import { createPaymentOrder, verifyPayment } from "../../services/studentService
 
 export const startPayment = async (order, onSuccess, onFailure) => {
   try {
+    const token = localStorage.getItem("access_token");
+
+      if (!token) {
+        onFailure("Session expired. Please login again.");
+        return;
+      }
     const res = await createPaymentOrder(order.id);
     const razorpayOrder = res.data;
 

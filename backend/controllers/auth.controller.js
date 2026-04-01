@@ -1,7 +1,7 @@
 // controllers/auth.controller.js
 import supabaseService from '../services/supabase.service.js';
 import { successResponse, errorResponse } from '../utils/response.js';
-import { supabaseAdmin } from "../services/supabase.service.js";
+import { supabaseAdmin , supabaseAnon} from "../services/supabase.service.js";
 
 export const register = async (req, res, next) => {
   try {
@@ -125,5 +125,35 @@ export const getOrganisations = async (req, res) => {
     return successResponse(res, data, "Organisations fetched");
   } catch (err) {
     return errorResponse(res, err.message, 500);
+  }
+};
+
+export const refreshToken = async (req, res) => {
+  try {
+    const { refresh_token } = req.body;
+
+    if (!refresh_token) {
+      return errorResponse(res, "Refresh token required", 400);
+    }
+
+    const { data, error } = await supabaseAnon.auth.refreshSession({
+      refresh_token,
+    });
+
+    if (error || !data?.session) {
+      return errorResponse(res, "Invalid refresh token", 401);
+    }
+
+    return successResponse(
+      res,
+      {
+        access_token: data.session.access_token,
+        refresh_token: data.session.refresh_token,
+      },
+      "Token refreshed"
+    );
+  } catch (err) {
+    console.error("REFRESH ERROR:", err);
+    return errorResponse(res, "Refresh failed", 500);
   }
 };
