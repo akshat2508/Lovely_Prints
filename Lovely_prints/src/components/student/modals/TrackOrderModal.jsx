@@ -40,44 +40,8 @@ const formatTime = (ts) => {
 };
 
 const TrackOrderModal = ({ order, onClose }) => {
-  const [liveOrder, setLiveOrder] = useState(order);
-
-  // keep in sync when parent changes
-  useEffect(() => {
-    setLiveOrder(order);
-  }, [order]);
-
-
-useEffect(() => {
-  if (!liveOrder?.id) return;
-
-  supabase.realtime.setAuth(localStorage.getItem("access_token"));
-
-  const channel = supabase
-    .channel("student-order-track")
-    .on(
-      "postgres_changes",
-      {
-        event: "UPDATE",
-        schema: "public",
-        table: "orders",
-        filter: `id=eq.${liveOrder.id}`,
-      },
-      (payload) => {
-        const updatedOrder = payload.new;
-
-        if (payload.old.status !== payload.new.status) {
-          setLiveOrder(updatedOrder);
-        }
-      }
-    )
-    .subscribe();
-
-  return () => {
-    supabase.removeChannel(channel);
-  };
-}, [liveOrder.id]);
-
+  // const [liveOrder, setLiveOrder] = useState(order);
+  const liveOrder  = order;
   const currentIndex = STATUS_FLOW.indexOf(liveOrder.status);
 
   return createPortal(

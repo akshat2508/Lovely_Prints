@@ -6,7 +6,7 @@ import OrdersSkeleton from "../skeletons/OrdersSkeleton";
 import EmptyOrders from "../skeletons/EmptyOrders";
 import "../dashboard.css";
 import "./studentOrders.css"
-
+import { supabase } from "../../../services/supabase";
 const STATUS_FLOW = ["pending", "confirmed", "printing", "ready", "completed"];
 
 const STATUS_LABELS = {
@@ -35,6 +35,40 @@ const StudentOrders = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+  supabase.realtime.setAuth(localStorage.getItem("access_token"));
+
+  const channel = supabase
+    .channel("student-orders-live")
+    .on(
+      "postgres_changes",
+      {
+        event: "UPDATE",
+        schema: "public",
+        table: "orders",
+      },
+      (payload) => {
+        const updated = payload.new;
+
+        setOrders((prev) =>
+          prev.map((order) =>
+            order.id === updated.id ? { ...order, ...updated } : order
+          )
+        );
+
+        // ALSO update modal if open
+        setSelectedOrder((prev) =>
+          prev?.id === updated.id ? { ...prev, ...updated } : prev
+        );
+      }
+    )
+    .subscribe();
+
+  return () => {
+    supabase.removeChannel(channel);
+  };
+}, []);
 
   useEffect(() => {
     fetchOrders();
