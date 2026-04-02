@@ -29,14 +29,14 @@
   }
 
   .student-bottom-nav a.active {
-    color: #26ccc2;
+    color: #68ac39;
   }
   .student-bottom-nav svg {
   stroke-width: 2;
 }
 
 .student-bottom-nav a.active svg {
-  color:  #26ccc2;
+  color:  #68ac39;
 }
 
 }

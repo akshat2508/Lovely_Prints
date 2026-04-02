@@ -87,7 +87,7 @@ api.interceptors.response.use(
     }
 
     try {
-      console.log("🔄 Refreshing token...");
+      // console.log("🔄 Refreshing token...");
 
       const res = await refreshApi.post("/auth/refresh", {
         refresh_token: refreshToken,
@@ -109,7 +109,7 @@ api.interceptors.response.use(
     } catch (err) {
       processQueue(err, null);
 
-      console.log("❌ Refresh failed → logout");
+      // console.log("❌ Refresh failed → logout");
 
       localStorage.clear();
       window.location.assign("/login");

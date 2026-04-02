@@ -49,14 +49,14 @@ export const startPayment = async (order, onSuccess, onFailure) => {
     const rzp = new window.Razorpay(options);
 
    rzp.on("payment.failed", function (response) {
-  console.error("Razorpay payment failed:", response);
+  console.error(response);
   onFailure(response.error.description || "Payment failed");
 });
 
 
     rzp.open();
   } catch (err) {
-    console.error("Payment failed", err);
+    console.error(err);
     onFailure("Unable to initiate payment");
   }
 };

@@ -314,7 +314,7 @@ useEffect(() => {
     await logoutUser();
     navigate("/login");
   } catch (err) {
-    console.error("Logout failed", err);
+    console.error(err);
     setIsLoggingOut(false); // fallback if error
   }
 };
