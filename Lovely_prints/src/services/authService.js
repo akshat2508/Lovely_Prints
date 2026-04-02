@@ -45,7 +45,6 @@ const session = response.data.data.session;
 
 localStorage.setItem("access_token", session.access_token);
 localStorage.setItem("refresh_token", session.refresh_token);localStorage.setItem("role", role);
-console.log("FULL LOGIN RESPONSE:", response.data);
   return response.data;
 };
 

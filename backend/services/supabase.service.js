@@ -113,16 +113,14 @@ async getUserById(userId) {
 async createOrder(orderData, token) {
   const supabaseUser = getUserSupabase(token);
 
-  // 1️⃣ Authenticated user
-  const { data: userData, error: userError } =
-    await supabaseUser.auth.getUser();
+  const userId = getUserIdFromToken(token);
 
-  if (userError || !userData?.user) {
-    return { error: { message: "Invalid user" } };
-  }
+if (!userId) {
+  return { error: { message: "Invalid user" } };
+}
 
   // 2️⃣ Fetch shop (trusted source)
-  const { data: shop, error: shopError } = await supabaseUser
+  const { data: shop, error: shopError } = await supabaseAnon
     .from("shops")
     .select("organisation_id, is_active, is_accepting_orders")
     .eq("id", orderData.shop_id)
@@ -177,7 +175,7 @@ async createOrder(orderData, token) {
     .insert({
       ...orderData,
       order_type: orderType,
-      student_id: userData.user.id,
+      student_id: userId,
       organisation_id: shop.organisation_id,
     })
     .select()
@@ -485,23 +483,25 @@ async getShopOptions(shopId, token) {
 
 
 async getShopOptionsStudent(shopId) {
-  const paper = await supabaseAnon
-    .from('paper_types')
-    .select('*')
-    .eq('shop_id', shopId)
-    .eq('is_active', true);
+  const [paper, color, finish] = await Promise.all([
+    supabaseAnon
+      .from('paper_types')
+      .select('*')
+      .eq('shop_id', shopId)
+      .eq('is_active', true),
 
-  const color = await supabaseAnon
-    .from('color_modes')
-    .select('*')
-    .eq('shop_id', shopId)
-    .eq('is_active', true);
+    supabaseAnon
+      .from('color_modes')
+      .select('*')
+      .eq('shop_id', shopId)
+      .eq('is_active', true),
 
-  const finish = await supabaseAnon
-    .from('finish_types')
-    .select('*')
-    .eq('shop_id', shopId)
-    .eq('is_active', true);
+    supabaseAnon
+      .from('finish_types')
+      .select('*')
+      .eq('shop_id', shopId)
+      .eq('is_active', true)
+  ]);
 
   return {
     paper_types: paper.data,
