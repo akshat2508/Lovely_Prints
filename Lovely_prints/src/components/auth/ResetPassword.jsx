@@ -21,7 +21,7 @@ const [showPassword, setShowPassword] = useState(false);
         const tokenHash = params.get('token_hash');
         const type = params.get('type');
 
-        console.log('URL params:', { tokenHash: tokenHash ? 'PRESENT' : 'MISSING', type });
+        // console.log('URL params:', { tokenHash: tokenHash ? 'PRESENT' : 'MISSING', type });
 
         if (!tokenHash || type !== 'recovery') {
           setError("Invalid reset link. Please request a new password reset.");
@@ -35,19 +35,19 @@ const [showPassword, setShowPassword] = useState(false);
         });
 
         if (verifyError) {
-          console.error('Verify error:', verifyError);
+          // console.error('Verify error:', verifyError);
           setError("Invalid or expired reset link. Please request a new one.");
           return;
         }
 
         if (data?.session) {
-          console.log('✅ Session verified successfully');
+          // console.log('✅ Session verified successfully');
           setSessionReady(true);
         } else {
           setError("Failed to establish session. Please try again.");
         }
       } catch (err) {
-        console.error('Error:', err);
+        // console.error('Error:', err);
         setError("An error occurred. Please try again.");
       }
     };
@@ -79,7 +79,7 @@ const [showPassword, setShowPassword] = useState(false);
     });
 
     if (error) {
-      console.error('Update error:', error);
+      // console.error('Update error:', error);
       setError(error.message);
       setLoading(false);
       return;

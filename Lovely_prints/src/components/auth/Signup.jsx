@@ -54,7 +54,7 @@ export default function Signup() {
         const data = await getOrganisations();
         setOrganisations(data);
       } catch (err) {
-        console.error("Failed to load organisations", err);
+        // console.error("Failed to load organisations", err);
       }
     };
 

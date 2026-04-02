@@ -320,8 +320,8 @@ useEffect(() => {
         },
       );
     } catch (err) {
-      console.error("FULL ERROR:", err);
-      console.error("RESPONSE DATA:", err?.response?.data);
+      // console.error("FULL ERROR:", err);
+      // console.error("RESPONSE DATA:", err?.response?.data);
 
       setShowLoader(false);
       setSubmitting(false);
