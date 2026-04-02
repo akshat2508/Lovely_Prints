@@ -13,7 +13,6 @@ const ShopNavbar = ({
   hasUrgentOrders,
   hasNewWalkin,
   hasNewScheduled,
-  sessionTimeLeft,
 }) => {
   return (
     <nav className="shop-navbar">
@@ -115,7 +114,7 @@ const ShopNavbar = ({
             </span>
           </div>
 
-          {sessionTimeLeft && (
+          {/* {sessionTimeLeft && (
             <div
               className={`session-timer ${
                 sessionTimeLeft.startsWith("0:") ? "session-timer--warning" : ""
@@ -124,7 +123,7 @@ const ShopNavbar = ({
             >
               {sessionTimeLeft}
             </div>
-          )}
+          )} */}
 
           <button className="logout-btn" onClick={onLogout}>
             Logout

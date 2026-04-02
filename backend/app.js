@@ -89,6 +89,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/auth',authLimiter, authRoutes);
+app.use("/api/auth", authRoutes);
 app.use('/api/students',pollingLimiter, studentRoutes);
 app.use('/api/shops',pollingLimiter, shopRoutes);
 app.use('/api/orders',pollingLimiter, orderRoutes);

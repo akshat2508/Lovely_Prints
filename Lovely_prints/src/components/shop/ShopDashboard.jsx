@@ -17,8 +17,7 @@ import ShopNavbar from "./ShopNavbar";
 import EmptyShopOrders from "./EmptyShopOrders";
 import { supabase } from "../../services/supabase";
 import LoggingOutOverlay from "../common/LoggingOutOverlay";
-const SESSION_DURATION = 60 * 60 * 1000; // 1 hour
-const SESSION_KEY = "shop_session_start";
+
 
 
 const normalizeDate = (d) => {
@@ -307,7 +306,6 @@ useEffect(() => {
   setIsLoggingOut(true); // 🔥 THIS WAS MISSING
 
   try {
-    localStorage.removeItem(SESSION_KEY);
 
     if (shop?.id && shop?.is_active) {
       await setShopStatusManual(shop.id, false);
@@ -468,64 +466,6 @@ useEffect(() => {
     }
   };
 
-  const forceSessionExpiry = async () => {
-    try {
-      alert("Session expired. Please login again.");
-
-      // close shop safely
-      if (shop?.id && shop?.is_active) {
-        await setShopStatusManual(shop.id, false);
-      }
-    } catch (e) {
-      console.error("Error while expiring session", e);
-    } finally {
-      localStorage.removeItem(SESSION_KEY);
-      localStorage.removeItem("access_token");
-      navigate("/login");
-    }
-  };
-  useEffect(() => {
-    const now = Date.now();
-
-    let sessionStart = localStorage.getItem(SESSION_KEY);
-
-    // first time dashboard loads
-    if (!sessionStart) {
-      sessionStart = now;
-      localStorage.setItem(SESSION_KEY, sessionStart);
-    }
-
-    const elapsed = now - Number(sessionStart);
-    const remaining = SESSION_DURATION - elapsed;
-
-    // session already expired
-    if (remaining <= 0) {
-      forceSessionExpiry();
-      return;
-    }
-
-    // schedule auto logout
-    sessionTimerRef.current = setTimeout(() => {
-      forceSessionExpiry();
-    }, remaining);
-
-    return () => {
-      clearTimeout(sessionTimerRef.current);
-    };
-  }, []);
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const start = localStorage.getItem(SESSION_KEY);
-      if (!start) return;
-
-      const elapsed = Date.now() - Number(start);
-      const left = SESSION_DURATION - elapsed;
-
-      setRemainingTime(left > 0 ? left : 0);
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
 
   const today = new Date();
 
@@ -606,9 +546,7 @@ const discardedOrders = orders.filter(
   hasUrgentOrders={hasUrgentOrders}
   hasNewWalkin={hasNewWalkin}
   hasNewScheduled={hasNewScheduled}
-        sessionTimeLeft={
-          remainingTime !== null ? formatTime(remainingTime) : null
-        }
+        
       />
 
       {showNewOrderToast && (
@@ -667,7 +605,7 @@ const discardedOrders = orders.filter(
                 currentSlotLabel === slot.label ? "active-slot" : ""
               }`}
             >
-              <div className="slot-label">{slot.label}</div>
+              <div className="slot-label-b">{slot.label}</div>
 
               {todaysOrdersBySlot[slot.label].length === 0 ? (
                 <div className="empty-slot-message">
@@ -706,7 +644,7 @@ const discardedOrders = orders.filter(
 
               {TIME_SLOTS.map((slot) => (
                 <div key={slot.label} className="time-slot-wrapper">
-                  <div className="slot-label">{slot.label}</div>
+                  <div className="slot-label-b">{slot.label}</div>
 
                   {slots[slot.label].length === 0 ? (
                     <div className="empty-slot-message">

@@ -97,6 +97,17 @@ const razorpayOrder = await paymentService.createOrderWithTransfer({
     },
   ],
 });
+const authHeader = req.headers.authorization;
+
+if (!authHeader) {
+  return errorResponse(res, "Authorization header missing", 401);
+}
+
+const token = authHeader.split(" ")[1];
+
+if (!token) {
+  return errorResponse(res, "Invalid token format", 401);
+}
 
 await supabaseService.createPayment(
   {
@@ -107,7 +118,7 @@ await supabaseService.createPayment(
     razorpay_order_id: razorpayOrder.id,
     status: 'created',
   },
-  req.headers.authorization.split(' ')[1]
+  token
 );
 
 
