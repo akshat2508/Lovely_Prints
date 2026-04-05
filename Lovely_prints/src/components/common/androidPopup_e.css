@@ -1,0 +1,508 @@
+/* ──────────────────────────────────────────────────────────
+   androidPopup_e.css  —  _e suffix  |  Inter font throughout
+   Grid card · Keyboard-key CTA · Draggable mini pill
+   ────────────────────────────────────────────────────────── */
+
+/* ── Keyframes ── */
+@keyframes miniPing_e {
+  0%        { transform: scale(1);   opacity: 0.8; }
+  70%, 100% { transform: scale(2.2); opacity: 0;   }
+}
+
+/* ════════════════════════════════════
+   BACKDROP
+   ════════════════════════════════════ */
+.popup-backdrop_e {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: rgba(12, 10, 10, 0.52);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* ════════════════════════════════════
+   CENTERING SHELL
+   ════════════════════════════════════ */
+.popup-center_e {
+  position: fixed;
+  inset: 0;
+  z-index: 9001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  pointer-events: none;
+}
+
+/* ════════════════════════════════════
+   CARD  —  grey grid background
+   ════════════════════════════════════ */
+.popup-card_e {
+  pointer-events: all;
+  position: relative;
+  width: 100%;
+  max-width: 340px;
+  border-radius: 20px;
+  overflow: hidden;
+
+  /* Grid pattern on warm-grey base */
+  background-color: #f0eeeb;
+  background-image:
+    linear-gradient(rgba(0,0,0,0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.07) 1px, transparent 1px);
+  background-size: 22px 22px;
+
+  box-shadow:
+    0 0   0 1px rgba(0,0,0,0.07),
+    0 4px 16px  rgba(0,0,0,0.07),
+    0 24px 64px rgba(0,0,0,0.16);
+}
+
+/* 1-px gradient top border */
+.popup-card_e::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent   0%,
+    rgba(139,175,41,0.7) 35%,
+    rgba(196,205,78,0.7) 65%,
+    transparent   100%
+  );
+  z-index: 5;
+}
+
+/* ── Minimise button ── */
+.popup-close_e {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 10;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.10);
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(0,0,0,0.4);
+  transition: background 0.14s, color 0.14s;
+}
+.popup-close_e:hover {
+  background: rgba(255,255,255,0.95);
+  color: rgba(0,0,0,0.75);
+}
+
+/* ── Soft radial glow behind icon ── */
+.popup-glow_e {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 180px;
+  height: 130px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(139,175,41,0.20) 0%,
+    transparent 68%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── Play Store icon badge ── */
+.popup-icon-wrap_e {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  padding-top: 30px;
+  padding-bottom: 6px;
+}
+
+.popup-icon_e {
+  width: 62px;
+  height: 62px;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 2px  6px rgba(0,0,0,0.07),
+    0 6px 18px rgba(0,0,0,0.06);
+}
+
+/* ════════════════════════════════════
+   WHITE CONTENT PANEL
+   sits above the grid
+   ════════════════════════════════════ */
+.popup-panel_e {
+  position: relative;
+  z-index: 3;
+  background: #ffffff;
+  border-top: 1px solid rgba(0,0,0,0.06);
+  margin-top: 14px;
+  padding: 20px 24px 24px;
+  text-align: center;
+
+  /* soft top-shadow so the grid bleeds in slightly */
+  box-shadow: 0 -8px 20px rgba(0,0,0,0.04) inset;
+}
+
+/* Eyebrow */
+.popup-eyebrow_e {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: #6e9e1a;
+  margin-bottom: 7px;
+}
+
+/* Heading */
+.popup-heading_e {
+  font-family: 'Inter', sans-serif;
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: #0f0f0e;
+  line-height: 1.25;
+  margin-bottom: 9px;
+  overflow-wrap: break-word;
+}
+
+/* Sub */
+.popup-sub_e {
+  font-family: 'Inter', sans-serif;
+  font-size: 12.5px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: rgba(0,0,0,0.42);
+  margin-bottom: 16px;
+}
+
+/* ── Feature pills ── */
+.popup-pills_e {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+  margin-bottom: 18px;
+}
+
+.popup-pill_e {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'Inter', sans-serif;
+  font-size: 10.5px;
+  font-weight: 500;
+  color: rgba(0,0,0,0.52);
+  background: #f5f4f2;
+  border: 1px solid rgba(0,0,0,0.07);
+  border-radius: 100px;
+  padding: 3px 9px;
+  white-space: nowrap;
+}
+
+/* ════════════════════════════════════
+   KEYBOARD KEY BUTTON
+   Physical keycap aesthetic
+   ════════════════════════════════════ */
+.popup-cta_e {
+  /* Typography */
+  font-family: 'Inter', sans-serif;
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #ffffff;
+
+  /* Geometry */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 12px 20px;
+  cursor: pointer;
+
+  /* ── Keycap structure ── */
+  background: linear-gradient(
+    to bottom,
+    #5dbb1a 0%,
+    #4da813 40%,
+    #438f0f 100%
+  );
+  border-radius: 10px;
+  border: 1px solid #306b08;
+  /* The "depth" of the keycap */
+  border-bottom: 4px solid #1e4605;
+
+  /* Inner surface highlights */
+  box-shadow:
+    0  1px 0 rgba(255,255,255,0.22) inset,   /* top gloss  */
+    1px 0  0 rgba(255,255,255,0.07) inset,   /* left bevel */
+   -1px 0  0 rgba(0,0,0,0.10)       inset;   /* right shadow */
+
+  /* Quick spring-like press transition */
+  transition:
+    border-bottom-width 0.08s ease,
+    transform           0.08s ease,
+    box-shadow          0.08s ease,
+    filter              0.14s ease;
+
+  outline: none;
+  position: relative;
+  user-select: none;
+}
+
+/* Hover — brighten slightly */
+.popup-cta_e:hover {
+  filter: brightness(1.07);
+}
+
+/* Press — key travels down, depth collapses */
+.popup-cta_e:active {
+  border-bottom-width: 1px;
+  transform: translateY(3px);
+  box-shadow:
+    0 0 0 rgba(255,255,255,0.12) inset;
+  filter: brightness(0.97);
+}
+
+/* Focus ring (accessibility) */
+.popup-cta_e:focus-visible {
+  outline: 2px solid #8baf29;
+  outline-offset: 3px;
+}
+
+/* ── Hint ── */
+.popup-hint_e {
+  font-family: 'Inter', sans-serif;
+  font-size: 10.5px;
+  color: rgba(0,0,0,0.26);
+  margin-top: 9px;
+  letter-spacing: 0.02em;
+}
+
+/* ════════════════════════════════════
+   DRAG ZONE  — full viewport boundary
+   ════════════════════════════════════ */
+.popup-drag-zone_e {
+  position: fixed;
+  inset: 0;
+  z-index: 9001;
+  pointer-events: none;
+  /* Default pill anchor = bottom-right */
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 22px;
+}
+
+/* ════════════════════════════════════
+   MINIMISED DRAGGABLE PILL
+   ════════════════════════════════════ */
+.popup-mini_e {
+  pointer-events: all;
+  /* grabbing cursor signals draggability */
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none; /* essential for mobile drag */
+
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 40px;
+  padding: 0 14px 0 10px;
+  border-radius: 100px;
+
+  /* Keycap-family styling for the mini pill too */
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.09);
+  border-bottom: 3px solid rgba(0,0,0,0.12);
+
+  box-shadow:
+    0 2px  6px rgba(0,0,0,0.06),
+    0 8px 22px rgba(0,0,0,0.09);
+
+  /* Must beat nav (1000), scroll-bar (2000) and mac modal — sit at 9002 */
+  z-index: 9002;
+
+  transition: filter 0.15s ease, box-shadow 0.15s ease;
+}
+.popup-mini_e:active {
+  cursor: grabbing;
+  border-bottom-width: 1px;
+  transform: translateY(2px);
+}
+.popup-mini_e:hover {
+  box-shadow:
+    0 4px 10px rgba(0,0,0,0.08),
+    0 14px 30px rgba(0,0,0,0.12);
+  filter: brightness(0.98);
+}
+
+/* Drag grip icon */
+.popup-mini-grip_e {
+  display: flex;
+  align-items: center;
+  color: rgba(0,0,0,0.2);
+  flex-shrink: 0;
+}
+
+/* Coloured dot (Play Store brand colours) */
+.popup-mini-dot_e {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: conic-gradient(
+    #00C4AA  0deg  90deg,
+    #FFD000  90deg 180deg,
+    #FF5252  180deg 270deg,
+    #4CAF50  270deg 360deg
+  );
+}
+
+/* Label */
+.popup-mini-label_e {
+  font-family: 'Inter', sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #111;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+/* Pulsing live indicator */
+.popup-mini-live_e {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+}
+.popup-mini-live-dot_e {
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #8baf29;
+  position: absolute;
+  top: 1px;
+  left: 1px;
+}
+.popup-mini-live-dot_e::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  background: rgba(139,175,41,0.5);
+  animation: miniPing_e 1.8s ease-out infinite;
+}
+
+/* ════════════════════════════════════
+   RESPONSIVE — consistent at all sizes
+   ════════════════════════════════════ */
+
+/* Tablet (560px – 768px): slightly wider card */
+@media (min-width: 560px) {
+  .popup-card_e { max-width: 370px; }
+  .popup-panel_e { padding: 22px 28px 28px; }
+  .popup-heading_e { font-size: 20px; }
+}
+
+/* Large desktop (> 1024px): small tasteful size cap */
+@media (min-width: 1024px) {
+  .popup-card_e { max-width: 360px; }
+}
+
+/* Small mobile (< 380px): compact everything */
+@media (max-width: 380px) {
+  .popup-card_e    { border-radius: 16px; }
+  .popup-panel_e   { padding: 16px 18px 20px; }
+  .popup-heading_e { font-size: 17px; }
+  .popup-cta_e     { font-size: 13px; padding: 11px 16px; }
+
+  .popup-drag-zone_e { padding: 14px; }
+  .popup-mini_e       { height: 36px; padding: 0 11px 0 8px; }
+  .popup-mini-label_e { font-size: 11.5px; }
+}
+
+/* ════════════════════════════════════
+   QR CODE BLOCK (desktop only)
+   ════════════════════════════════════ */
+
+.popup-qr-wrap_e {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  margin-top: 2px;
+}
+
+/* QR image container with corner accents */
+.popup-qr-card_e {
+  position: relative;
+  width: 148px;
+  height: 148px;
+  border-radius: 10px;
+  overflow: visible; /* corners sit outside the clip */
+  margin-bottom: 12px;
+}
+
+.popup-qr-img_e {
+  display: block;
+  width: 148px;
+  height: 148px;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.08);
+  background: #fff;
+  /* subtle shadow so it lifts off the white panel */
+  box-shadow:
+    0 2px  6px rgba(0,0,0,0.06),
+    0 6px 18px rgba(0,0,0,0.07);
+}
+
+/* Branded corner brackets — purely decorative */
+.popup-qr-corner_e {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-color: #8baf29;
+  border-style: solid;
+  pointer-events: none;
+  z-index: 2;
+}
+.popup-qr-corner_e.tl_e { top: -3px;  left: -3px;  border-width: 2.5px 0 0 2.5px; border-radius: 3px 0 0 0; }
+.popup-qr-corner_e.tr_e { top: -3px;  right: -3px; border-width: 2.5px 2.5px 0 0; border-radius: 0 3px 0 0; }
+.popup-qr-corner_e.bl_e { bottom: -3px; left: -3px;  border-width: 0 0 2.5px 2.5px; border-radius: 0 0 0 3px; }
+.popup-qr-corner_e.br_e { bottom: -3px; right: -3px; border-width: 0 2.5px 2.5px 0; border-radius: 0 0 3px 0; }
+
+/* "Scan with your phone's camera" label */
+.popup-qr-label_e {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'Inter', sans-serif;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: rgba(0,0,0,0.45);
+  letter-spacing: 0.01em;
+  margin-bottom: 2px;
+}
+
+.popup-qr-scan-icon_e {
+  color: #8baf29;
+  flex-shrink: 0;
+}
