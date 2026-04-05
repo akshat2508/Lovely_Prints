@@ -134,7 +134,7 @@ function PhoneScreen({ isDesktop, onDownload, ready }) {
           </div>
           <div className="popup-app-meta_e">
             <p className="popup-app-name_e">Docuvio</p>
-            <p className="popup-app-dev_e">Docuvio Labs</p>
+            <p className="popup-app-dev_e">Docuvio</p>
             <p className="popup-app-contains_e">Contains ads · In-app purchases</p>
           </div>
         </motion.div>
@@ -170,7 +170,7 @@ function PhoneScreen({ isDesktop, onDownload, ready }) {
 
           {/* Size */}
           <div className="popup-stat_e">
-            <div className="popup-stat-value_e">8 MB</div>
+            <div className="popup-stat-value_e">16 MB</div>
             <div className="popup-stat-label_e">
               <Download size={8} strokeWidth={2.5} />
             </div>
