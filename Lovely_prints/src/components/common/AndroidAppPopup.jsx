@@ -1,104 +1,336 @@
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Zap, Package, KeyRound, ChevronDown, GripHorizontal, Scan } from "lucide-react";
+import {
+  motion, AnimatePresence, useAnimationControls,
+} from "framer-motion";
+import {
+  ChevronLeft,
+  ChevronDown,
+  ChevronRight,
+  Search,
+  Star,
+  GripHorizontal,
+  Wifi,
+  BatteryFull,
+  Signal,
+  Download,
+  ScanLine,
+  Printer,
+  Package,
+  GraduationCap,
+  Info,
+  Gamepad2,
+  LayoutGrid,
+  BookOpen,
+  MoreVertical,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
+import LOGO from "../../assets/logo.png";
 import "./androidPopup_e.css";
 
-const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.docuvio.app";
-const EASE           = [0.16, 1, 0.3, 1];
+const PLAY_STORE_URL =
+  "https://play.google.com/store/apps/details?id=com.docuvio.app";
+const QR_URL = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&margin=5&color=1a1a1a&bgcolor=ffffff&data=${encodeURIComponent(PLAY_STORE_URL)}`;
+const EASE = [0.16, 1, 0.3, 1];
 
-/* QR image via qrserver — no extra package needed */
-const QR_URL = `https://api.qrserver.com/v1/create-qr-code/?size=148x148&margin=6&color=111110&bgcolor=ffffff&data=${encodeURIComponent(PLAY_STORE_URL)}`;
-
-/* ── Hook: true while viewport ≥ 1024px ── */
+/* ── Responsive hook ── */
 function useIsDesktop() {
-  const [isDesktop, setIsDesktop] = useState(
+  const [v, setV] = useState(
     () => typeof window !== "undefined" && window.innerWidth >= 1024
   );
   useEffect(() => {
-    const mq = window.matchMedia("(min-width: 1024px)");
-    const handler = (e) => setIsDesktop(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
+    const mq = window.matchMedia("(min-width:1024px)");
+    const h = (e) => setV(e.matches);
+    mq.addEventListener("change", h);
+    return () => mq.removeEventListener("change", h);
   }, []);
-  return isDesktop;
+  return v;
 }
 
-/* ── Play Store logo (badge only) ── */
-function PlayStoreLogo({ size = 36 }) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width={size} height={size}>
-      <defs>
-        <clipPath id="ps-clip">
-          <path d="M62 18 C42 28,30 48,30 70 L30 442 C30 464,42 484,62 494 C82 504,106 500,124 488 L482 274 C500 262,510 248,510 234 C510 220,500 206,482 194 L124 24 C106 12,82 8,62 18 Z"/>
-        </clipPath>
-      </defs>
-      <g clipPath="url(#ps-clip)">
-        <polygon points="30,18 270,256 30,256"          fill="#00C4AA" />
-        <polygon points="30,256 270,256 30,494"          fill="#FFD000" />
-        <polygon points="30,18 270,256 510,234 510,18"   fill="#FF3D00" />
-        <polygon points="30,494 270,256 510,234 510,494" fill="#00C853" />
-      </g>
-    </svg>
-  );
-}
+/* ── Screenshot cards — fake Play Store previews ── */
+const SCREENSHOTS = [
+  {
+    from: "#4a90d9", to: "#1565c0",
+    icon: <Printer size={18} strokeWidth={1.8} />,
+    label: "Upload & Print Anywhere",
+  },
+  {
+    from: "#43a047", to: "#1b5e20",
+    icon: <ShieldCheck size={18} strokeWidth={1.8} />,
+    label: "Pay Securely",
+  },
+  {
+    from: "#f57c00", to: "#bf360c",
+    icon: <Package size={18} strokeWidth={1.8} />,
+    label: "Track Your Order",
+  },
+  {
+    from: "#8e24aa", to: "#4a148c",
+    icon: <GraduationCap size={18} strokeWidth={1.8} />,
+    label: "Campus Print Shops",
+  },
+];
 
-/* ── Desktop CTA: QR code block ── */
+/* ── QR block (desktop) ── */
 function QRBlock() {
   return (
     <div className="popup-qr-wrap_e">
-      <div className="popup-qr-card_e">
-        <img
-          src={QR_URL}
-          alt="Scan to download Docuvio on Google Play"
-          className="popup-qr-img_e"
-          width={148}
-          height={148}
-          loading="lazy"
-          draggable={false}
-        />
-        {/* Corner accents */}
-        <span className="popup-qr-corner_e tl_e" aria-hidden />
-        <span className="popup-qr-corner_e tr_e" aria-hidden />
-        <span className="popup-qr-corner_e bl_e" aria-hidden />
-        <span className="popup-qr-corner_e br_e" aria-hidden />
+      <div className="popup-qr-frame_e">
+        <img src={QR_URL} alt="Scan to download" className="popup-qr-img_e"
+          width={120} height={120} draggable={false} />
+        <span className="popup-qr-c_e tl_e" />
+        <span className="popup-qr-c_e tr_e" />
+        <span className="popup-qr-c_e bl_e" />
+        <span className="popup-qr-c_e br_e" />
       </div>
-
-      <div className="popup-qr-label_e">
-        <Scan size={13} strokeWidth={2} className="popup-qr-scan-icon_e" />
-        <span>Scan with your phone's camera</span>
-      </div>
-
-      <p className="popup-hint_e" style={{ marginTop: 6 }}>
-        Opens Google Play directly · Free · No ads
+      <p className="popup-qr-hint_e">
+        <ScanLine size={11} strokeWidth={2} />
+        Scan to install on your phone
       </p>
     </div>
   );
 }
 
-/* ── Mobile CTA: keyboard-key button ── */
-function DownloadButton({ onClick }) {
+/* ── Full Play Store screen ── */
+function PhoneScreen({ isDesktop, onDownload, ready }) {
   return (
-    <>
-      <button className="popup-cta_e" onClick={onClick}>
-        Download on Google Play
-      </button>
-      <p className="popup-hint_e">Free · No ads · 8 MB</p>
-    </>
+    <div className="popup-screen_e">
+      <div className="popup-screen-glass_e" aria-hidden />
+
+      {/* Punch-hole */}
+      <div className="popup-camera-row_e" aria-hidden>
+        <div className="popup-camera-hole_e" />
+      </div>
+
+      {/* Status bar */}
+      <div className="popup-statusbar_e">
+        <span className="popup-time_e">9:41</span>
+        <div className="popup-status-icons_e">
+          <Signal size={11} strokeWidth={2} />
+          <Wifi   size={11} strokeWidth={2} />
+          <BatteryFull size={13} strokeWidth={1.8} />
+        </div>
+      </div>
+
+      {/* Play Store top bar */}
+      <div className="popup-topbar_e">
+        <ChevronLeft size={20} color="#202124" strokeWidth={2.2} />
+        <span className="popup-topbar-title_e">Google Play</span>
+        <MoreVertical size={18} color="#5f6368" strokeWidth={2} />
+      </div>
+
+      {/* ── Scrollable body ── */}
+      <div className="popup-scroll_e">
+
+        {/* App header */}
+        <motion.div
+          className="popup-app-header_e"
+          initial={{ opacity: 0, y: 6 }}
+          animate={ready ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.32, delay: 0.06, ease: EASE }}
+        >
+          <div className="popup-app-icon_e">
+            <img src={LOGO} alt="Docuvio" draggable={false} />
+          </div>
+          <div className="popup-app-meta_e">
+            <p className="popup-app-name_e">Docuvio</p>
+            <p className="popup-app-dev_e">Docuvio Labs</p>
+            <p className="popup-app-contains_e">Contains ads · In-app purchases</p>
+          </div>
+        </motion.div>
+
+        {/* Stats row — 4 columns like real Play Store */}
+        <motion.div
+          className="popup-stats_e"
+          initial={{ opacity: 0 }}
+          animate={ready ? { opacity: 1 } : {}}
+          transition={{ duration: 0.28, delay: 0.14, ease: EASE }}
+        >
+          {/* Rating */}
+          <div className="popup-stat_e">
+            <div className="popup-stat-value_e">
+              4.8 <Star size={9} fill="#1a73e8" color="#1a73e8" />
+            </div>
+            <div className="popup-stat-label_e">
+              2.1K <Info size={8} strokeWidth={2} />
+            </div>
+          </div>
+
+          {/* Age rating */}
+          <div className="popup-stat_e">
+            <div className="popup-stat-value_e" style={{ fontSize: 10 }}>
+              <span style={{
+                border: "1.5px solid #5f6368", borderRadius: 3,
+                padding: "1px 3px", fontSize: 9, fontWeight: 800, color: "#5f6368",
+                lineHeight: 1,
+              }}>3+</span>
+            </div>
+            <div className="popup-stat-label_e">Rated for</div>
+          </div>
+
+          {/* Size */}
+          <div className="popup-stat_e">
+            <div className="popup-stat-value_e">8 MB</div>
+            <div className="popup-stat-label_e">
+              <Download size={8} strokeWidth={2.5} />
+            </div>
+          </div>
+
+          {/* Downloads */}
+          <div className="popup-stat_e">
+            <div className="popup-stat-value_e">10K+</div>
+            <div className="popup-stat-label_e">Downloads</div>
+          </div>
+        </motion.div>
+
+        {/* Install / QR */}
+        <motion.div
+          className="popup-install-wrap_e"
+          initial={{ opacity: 0, y: 5 }}
+          animate={ready ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.3, delay: 0.2, ease: EASE }}
+        >
+          {isDesktop ? (
+            <QRBlock />
+          ) : (
+            <button className="popup-install-btn_e" onClick={onDownload}>
+              <Download size={14} strokeWidth={2.5} />
+              Install
+            </button>
+          )}
+        </motion.div>
+
+        {/* Screenshot carousel */}
+        <motion.div
+          className="popup-screenshots_e"
+          initial={{ opacity: 0 }}
+          animate={ready ? { opacity: 1 } : {}}
+          transition={{ duration: 0.3, delay: 0.26, ease: EASE }}
+        >
+          {SCREENSHOTS.map((s, i) => (
+            <div
+              key={i}
+              className="popup-screenshot_e"
+              style={{ "--ss-from": s.from, "--ss-to": s.to }}
+            >
+              <div className="ss-icon_e">{s.icon}</div>
+              <span className="ss-label_e">{s.label}</span>
+            </div>
+          ))}
+        </motion.div>
+
+        {/* About section */}
+        <motion.div
+          className="popup-about_e"
+          initial={{ opacity: 0 }}
+          animate={ready ? { opacity: 1 } : {}}
+          transition={{ duration: 0.3, delay: 0.32, ease: EASE }}
+        >
+          <div className="popup-about-header_e">
+            <p className="popup-about-title_e">About this app</p>
+            <ChevronRight size={16} color="#5f6368" strokeWidth={2} />
+          </div>
+          <p className="popup-about-body_e">
+            Upload documents, pick a campus print shop, pay securely and collect
+            with a 4-digit OTP — no queues, no guesswork.
+          </p>
+          <div className="popup-chips_e">
+            <span className="popup-chip_e">
+              <Printer size={10} strokeWidth={2} /> Printing
+            </span>
+            <span className="popup-chip_e">
+              <Package size={10} strokeWidth={2} /> Delivery
+            </span>
+            <span className="popup-chip_e">
+              <GraduationCap size={10} strokeWidth={2} /> Campus
+            </span>
+          </div>
+
+          {/* Ask Play row */}
+          <div style={{
+            marginTop: 12,
+            padding: "8px 10px",
+            background: "#f1f3f4",
+            borderRadius: 10,
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+          }}>
+            <Sparkles size={12} color="#1a73e8" strokeWidth={2} />
+            <span style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: 10,
+              fontWeight: 600,
+              color: "#202124",
+            }}>Ask Play about this app</span>
+            <span style={{
+              marginLeft: 2,
+              fontSize: 8.5,
+              fontWeight: 700,
+              color: "#fff",
+              background: "#34a853",
+              borderRadius: 4,
+              padding: "1px 5px",
+              fontFamily: "'Inter', sans-serif",
+            }}>New!</span>
+          </div>
+        </motion.div>
+
+        {/* Bottom padding so content clears the nav */}
+        <div style={{ height: 8, background: "#f8f9fa" }} />
+      </div>
+
+      {/* Bottom nav bar — Games / Apps / Search / Books */}
+      <div className="popup-bottomnav_e">
+        {[
+          { icon: <Gamepad2 size={18} strokeWidth={1.8} />,   label: "Games" },
+          { icon: <LayoutGrid size={18} strokeWidth={1.8} />, label: "Apps" },
+          { icon: <Search size={18} strokeWidth={2} />,       label: "Search", active: true },
+          { icon: <BookOpen size={18} strokeWidth={1.8} />,   label: "Books" },
+        ].map((n, i) => (
+          <div key={i} className={`popup-navitem_e${n.active ? " active_e" : ""}`}>
+            {n.active && <span className="popup-nav-dot_e" />}
+            {n.icon}
+            <span className="popup-navlabel_e">{n.label}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Android gesture bar */}
+      <div className="popup-gesturebar_e" aria-hidden />
+    </div>
   );
 }
 
 /* ════════════════════════════════════════════
-   MAIN COMPONENT
+   MAIN EXPORT
    ════════════════════════════════════════════ */
 export default function AndroidAppPopup() {
-  const [mode, setMode] = useState("idle"); // "idle" | "full" | "mini"
+  const [mode, setMode]       = useState("idle");
   const [dragPos, setDragPos] = useState(null);
-  const isDesktop = useIsDesktop();
+  const [ready, setReady]     = useState(false);
+  const isDesktop             = useIsDesktop();
+  const phoneCtrl             = useAnimationControls();
 
+  /* Auto-open after 8 seconds */
   useEffect(() => {
     const t = setTimeout(() => setMode("full"), 8000);
     return () => clearTimeout(t);
   }, []);
+
+  /* Spring entrance only — no idle float */
+  useEffect(() => {
+    if (mode !== "full") { setReady(false); return; }
+    let alive = true;
+    setReady(false);
+    phoneCtrl
+      .start({
+        opacity: 1, y: 0, rotateX: 0, scale: 1,
+        transition: { type: "spring", stiffness: 260, damping: 24 },
+      })
+      .then(() => { if (alive) setReady(true); });
+    return () => { alive = false; };
+  }, [mode]);
 
   const minimize = () => setMode("mini");
   const expand   = () => setMode("full");
@@ -110,7 +342,7 @@ export default function AndroidAppPopup() {
 
   return (
     <>
-      {/* ════════ FULL POPUP ════════ */}
+      {/* ═══════ FULL POPUP ═══════ */}
       <AnimatePresence>
         {mode === "full" && (
           <>
@@ -120,50 +352,35 @@ export default function AndroidAppPopup() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
+              transition={{ duration: 0.22 }}
               onClick={minimize}
             />
 
             <div className="popup-center_e">
               <motion.div
-                key="card"
-                className="popup-card_e"
-                initial={{ opacity: 0, scale: 0.92, y: 24 }}
-                animate={{ opacity: 1, scale: 1,    y: 0  }}
-                exit={{   opacity: 0, scale: 0.92, y: 24  }}
-                transition={{ duration: 0.3, ease: EASE }}
+                key="phone-wrap"
+                className="popup-phone-wrap_e"
+                style={{ perspective: "1100px" }}
+                initial={{ opacity: 0, y: 80, rotateX: 14, scale: 0.9 }}
+                animate={phoneCtrl}
+                exit={{ opacity: 0, y: 60, scale: 0.92, transition: { duration: 0.22, ease: EASE } }}
               >
                 <button className="popup-close_e" onClick={minimize} aria-label="Minimise">
                   <ChevronDown size={14} strokeWidth={2.5} />
                 </button>
 
-                <div className="popup-glow_e" aria-hidden />
+                <div className="popup-phone-glow_e" aria-hidden />
 
-                <div className="popup-icon-wrap_e">
-                  <div className="popup-icon_e">
-                    <PlayStoreLogo size={34} />
-                  </div>
-                </div>
+                <div className="popup-phone_e">
+                  <span className="popup-btn_e volu_e"  aria-hidden />
+                  <span className="popup-btn_e vold_e"  aria-hidden />
+                  <span className="popup-btn_e power_e" aria-hidden />
 
-                <div className="popup-panel_e">
-                  <p className="popup-eyebrow_e">Available on Android</p>
-
-                  <h2 className="popup-heading_e">Get the Docuvio App</h2>
-
-                  <p className="popup-sub_e">
-                    Upload docs, track orders &amp; collect prints — all from your pocket.
-                  </p>
-
-                  <div className="popup-pills_e">
-                    <span className="popup-pill_e"><Zap      size={10} strokeWidth={2.5} /> Fast Uploads</span>
-                    <span className="popup-pill_e"><Package  size={10} strokeWidth={2.5} /> Live Tracking</span>
-                    <span className="popup-pill_e"><KeyRound size={10} strokeWidth={2.5} /> OTP Pickup</span>
-                  </div>
-
-                  {/* ── Adaptive CTA ── */}
-                  {isDesktop
-                    ? <QRBlock />
-                    : <DownloadButton onClick={download} />
-                  }
+                  <PhoneScreen
+                    isDesktop={isDesktop}
+                    onDownload={download}
+                    ready={ready}
+                  />
                 </div>
               </motion.div>
             </div>
@@ -171,36 +388,32 @@ export default function AndroidAppPopup() {
         )}
       </AnimatePresence>
 
-      {/* ════════ MINI DRAGGABLE PILL ════════ */}
+      {/* ═══════ MINI PILL ═══════ */}
       <AnimatePresence>
         {mode === "mini" && (
           <motion.div
             key="mini"
             className="popup-mini_e"
             style={miniStyle}
-
             drag
             dragMomentum={false}
             dragElastic={0.08}
-
             onDragEnd={(_, info) => {
               setDragPos({
                 x: Math.max(8, Math.min(info.point.x - 80, window.innerWidth  - 172)),
                 y: Math.max(8, Math.min(info.point.y - 20, window.innerHeight -  52)),
               });
             }}
-
             initial={{ opacity: 0, scale: 0.85, y: 8 }}
-            animate={{ opacity: 1, scale: 1,    y: 0 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{   opacity: 0, scale: 0.85, y: 8 }}
             transition={{ duration: 0.22, ease: EASE }}
-
             onTap={expand}
           >
             <span className="popup-mini-grip_e" aria-hidden>
               <GripHorizontal size={11} />
             </span>
-            <span className="popup-mini-dot_e"  aria-hidden />
+            <span className="popup-mini-dot_e" aria-hidden />
             <span className="popup-mini-label_e">Get the App</span>
             <span className="popup-mini-live_e" aria-hidden>
               <span className="popup-mini-live-dot_e" />
