@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import "./Home.css";
 import LOGO from "../assets/logo.png"
+import AndroidAppPopup from "../components/common/AndroidAppPopup";
 const EXPO = [0.16, 1, 0.3, 1];
 
 function Reveal({ children, delay = 0, y = 28, className = "" }) {
@@ -299,6 +300,7 @@ export default function Home() {
 
   return (
     <div>
+      <AndroidAppPopup />
       {/* Scroll progress bar */}
       <motion.div className="scroll-bar_z" style={{ scaleX }} />
 

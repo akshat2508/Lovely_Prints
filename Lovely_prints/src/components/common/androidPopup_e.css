@@ -1,0 +1,636 @@
+/* ──────────────────────────────────────────────────────────
+   androidPopup_e.css  |  Play Store Light Theme
+   ────────────────────────────────────────────────────────── */
+
+@keyframes miniPing_e {
+  0%        { transform: scale(1);   opacity: 0.8; }
+  70%, 100% { transform: scale(2.2); opacity: 0;   }
+}
+
+/* ════════════════════════════════
+   BACKDROP
+   ════════════════════════════════ */
+.popup-backdrop_e {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* ════════════════════════════════
+   CENTER SHELL
+   ════════════════════════════════ */
+.popup-center_e {
+  position: fixed;
+  inset: 0;
+  z-index: 9001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 16px;
+  pointer-events: none;
+}
+
+/* ════════════════════════════════
+   PHONE WRAP
+   ════════════════════════════════ */
+.popup-phone-wrap_e {
+  pointer-events: all;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ── Minimise button ── */
+.popup-close_e {
+  position: absolute;
+  top: -14px;
+  right: -14px;
+  z-index: 10;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.20);
+  background: rgba(20,20,24,0.82);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.72);
+  transition: background 0.15s, color 0.15s, transform 0.15s;
+}
+.popup-close_e:hover {
+  background: rgba(50,50,58,0.96);
+  color: #fff;
+  transform: scale(1.08);
+}
+
+/* ── Glow under phone ── */
+.popup-phone-glow_e {
+  position: absolute;
+  bottom: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 220px;
+  height: 28px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(100,160,255,0.28) 0%, transparent 70%);
+  filter: blur(10px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ════════════════════════════════
+   PHONE FRAME
+   ════════════════════════════════ */
+.popup-phone_e {
+  position: relative;
+  width: 300px;
+  height: 590px;
+  border-radius: 36px;
+  padding: 0;
+
+  background: linear-gradient(160deg, #2c2c30 0%, #1a1a1e 40%, #121214 70%, #202024 100%);
+
+  box-shadow:
+    0  0  0  1px  rgba(255,255,255,0.10),
+    0  0  0  2.5px rgba(0,0,0,0.90),
+    0 48px 130px   rgba(0,0,0,0.72),
+    0  8px  32px   rgba(0,0,0,0.52),
+    inset 0 1px 0  rgba(255,255,255,0.07);
+}
+
+/* Side buttons */
+.popup-btn_e {
+  position: absolute;
+  border-radius: 2px;
+  background: linear-gradient(to right, #272729, #1e1e21);
+}
+.popup-btn_e.volu_e  { left: -2.5px; top: 120px; width: 2.5px; height: 52px; }
+.popup-btn_e.vold_e  { left: -2.5px; top: 184px; width: 2.5px; height: 52px; }
+.popup-btn_e.power_e {
+  right: -2.5px; top: 148px; width: 2.5px; height: 68px;
+  background: linear-gradient(to left, #272729, #1e1e21);
+}
+
+/* ════════════════════════════════
+   SCREEN  (Play Store light bg)
+   ════════════════════════════════ */
+.popup-screen_e {
+  width: 100%;
+  height: 100%;
+  border-radius: 36px;
+  background: #f8f9fa;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Glass shine */
+.popup-screen-glass_e {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 35%;
+  background: linear-gradient(150deg, rgba(255,255,255,0.08) 0%, transparent 60%);
+  border-radius: 36px 36px 0 0;
+  pointer-events: none;
+  z-index: 20;
+}
+
+/* Punch-hole camera */
+.popup-camera-row_e {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  height: 30px;
+  flex-shrink: 0;
+  background: #1a1a1e;
+  padding-bottom: 4px;
+}
+.popup-camera-hole_e {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #0a0a0c;
+  box-shadow: 0 0 0 1.5px rgba(255,255,255,0.06), inset 0 1px 2px rgba(0,0,0,0.8);
+}
+
+/* ── Status bar — real Android light ── */
+.popup-statusbar_e {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 14px 2px;
+  flex-shrink: 0;
+  background: #fff;
+}
+.popup-time_e {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #111;
+  letter-spacing: -0.2px;
+}
+.popup-status-icons_e {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: #333;
+}
+
+/* ── Play Store top bar ── */
+.popup-topbar_e {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 14px 5px;
+  background: #fff;
+  flex-shrink: 0;
+}
+.popup-topbar-title_e {
+  font-family: 'Inter', sans-serif;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #202124;
+  letter-spacing: -0.2px;
+}
+
+/* ════════════════════════════════
+   SCROLLABLE CONTENT
+   ════════════════════════════════ */
+.popup-scroll_e {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #f8f9fa;
+  scrollbar-width: none;
+}
+.popup-scroll_e::-webkit-scrollbar { display: none; }
+
+/* ── App header card ── */
+.popup-app-header_e {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 14px 10px;
+  background: #fff;
+}
+
+.popup-app-icon_e {
+  width: 68px;
+  height: 68px;
+  border-radius: 16px;
+  background: #fff;
+  flex-shrink: 0;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.09);
+}
+.popup-app-icon_e img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.popup-app-meta_e { flex: 1; min-width: 0; }
+
+.popup-app-name_e {
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  color: #202124;
+  letter-spacing: -0.4px;
+  line-height: 1.2;
+  margin: 0 0 3px;
+}
+
+.popup-app-dev_e {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  color: #1a73e8;
+  font-weight: 600;
+  margin: 0 0 5px;
+}
+
+.popup-app-contains_e {
+  font-family: 'Inter', sans-serif;
+  font-size: 9.5px;
+  color: #80868b;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* ── Stats row — exactly like Play Store ── */
+.popup-stats_e {
+  display: flex;
+  align-items: stretch;
+  padding: 10px 0 8px;
+  background: #fff;
+  border-top: 1px solid #f1f3f4;
+}
+
+.popup-stat_e {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  position: relative;
+  padding: 2px 4px;
+}
+.popup-stat_e + .popup-stat_e::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 15%;
+  height: 70%;
+  width: 1px;
+  background: #e0e0e0;
+}
+
+.popup-stat-value_e {
+  font-family: 'Inter', sans-serif;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #202124;
+  letter-spacing: -0.2px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.popup-stat-star_e { color: #1a73e8; font-size: 10px; }
+
+.popup-stat-label_e {
+  font-family: 'Inter', sans-serif;
+  font-size: 8.5px;
+  color: #80868b;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* ── Install button — real Play Store pill ── */
+.popup-install-wrap_e {
+  padding: 10px 14px 8px;
+  background: #fff;
+}
+
+.popup-install-btn_e {
+  width: 100%;
+  padding: 11px;
+  border: none;
+  border-radius: 30px;
+  background: #1a73e8;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: filter 0.15s, transform 0.12s;
+}
+.popup-install-btn_e:hover  { filter: brightness(1.08); }
+.popup-install-btn_e:active { transform: scale(0.97); filter: brightness(0.94); }
+
+/* ── QR (desktop) ── */
+.popup-qr-wrap_e {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+}
+.popup-qr-frame_e {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+.popup-qr-img_e {
+  display: block;
+  width: 120px;
+  height: 120px;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.08);
+}
+.popup-qr-c_e {
+  position: absolute;
+  width: 11px; height: 11px;
+  border-color: #1a73e8;
+  border-style: solid;
+}
+.popup-qr-c_e.tl_e { top: -2px;    left: -2px;  border-width: 2px 0 0 2px; border-radius: 2px 0 0 0; }
+.popup-qr-c_e.tr_e { top: -2px;    right: -2px; border-width: 2px 2px 0 0; border-radius: 0 2px 0 0; }
+.popup-qr-c_e.bl_e { bottom: -2px; left: -2px;  border-width: 0 0 2px 2px; border-radius: 0 0 0 2px; }
+.popup-qr-c_e.br_e { bottom: -2px; right: -2px; border-width: 0 2px 2px 0; border-radius: 0 0 2px 0; }
+
+.popup-qr-hint_e {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  color: #80868b;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* ── Screenshot carousel ── */
+.popup-screenshots_e {
+  padding: 10px 0 10px 14px;
+  background: #fff;
+  border-top: 6px solid #f1f3f4;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  flex-shrink: 0;
+}
+.popup-screenshots_e::-webkit-scrollbar { display: none; }
+
+.popup-screenshot_e {
+  flex-shrink: 0;
+  width: 88px;
+  height: 156px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.08);
+  background: linear-gradient(160deg, var(--ss-from), var(--ss-to));
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 8px;
+}
+
+.popup-screenshot_e .ss-label_e {
+  font-family: 'Inter', sans-serif;
+  font-size: 8.5px;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  line-height: 1.3;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.25);
+}
+
+.popup-screenshot_e .ss-icon_e {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.22);
+  color: #fff;
+}
+
+/* Carousel end padding */
+.popup-screenshots_e::after {
+  content: "";
+  display: block;
+  width: 6px;
+  flex-shrink: 0;
+}
+
+/* ── About section ── */
+.popup-about_e {
+  padding: 12px 14px 10px;
+  background: #fff;
+  border-top: 6px solid #f1f3f4;
+}
+
+.popup-about-header_e {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0 7px;
+}
+
+.popup-about-title_e {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #202124;
+  margin: 0;
+}
+
+.popup-about-body_e {
+  font-family: 'Inter', sans-serif;
+  font-size: 10.5px;
+  color: #5f6368;
+  line-height: 1.6;
+  margin: 0 0 10px;
+}
+
+/* ── Category chips — Play Store rounded rect style ── */
+.popup-chips_e {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.popup-chip_e {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  color: #202124;
+  background: #fff;
+  border: 1px solid #dadce0;
+  border-radius: 8px;
+  padding: 5px 10px;
+  letter-spacing: -0.1px;
+}
+
+/* ── Bottom nav bar — Play Store ── */
+.popup-bottomnav_e {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 6px 0 2px;
+  background: #fff;
+  border-top: 1px solid #e8eaed;
+  flex-shrink: 0;
+}
+
+.popup-navitem_e {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+  color: #80868b;
+}
+
+.popup-navitem_e.active_e {
+  color: #1a73e8;
+}
+
+.popup-navitem_e.active_e .popup-nav-dot_e {
+  width: 28px;
+  height: 2px;
+  border-radius: 1px;
+  background: #1a73e8;
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.popup-navitem_e {
+  position: relative;
+}
+
+.popup-navlabel_e {
+  font-family: 'Inter', sans-serif;
+  font-size: 8.5px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+/* Android gesture bar */
+.popup-gesturebar_e {
+  height: 18px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.popup-gesturebar_e::after {
+  content: "";
+  width: 90px;
+  height: 3px;
+  border-radius: 3px;
+  background: rgba(0,0,0,0.13);
+}
+
+/* ════════════════════════════════
+   DRAGGABLE MINI PILL
+   ════════════════════════════════ */
+.popup-mini_e {
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  z-index: 9002;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 42px;
+  padding: 0 14px 0 10px;
+  border-radius: 100px;
+
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-bottom: 3px solid rgba(0,0,0,0.11);
+
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06), 0 8px 22px rgba(0,0,0,0.09);
+  transition: box-shadow 0.15s;
+}
+.popup-mini_e:active { cursor: grabbing; border-bottom-width: 1px; transform: translateY(2px); }
+.popup-mini_e:hover  { box-shadow: 0 4px 10px rgba(0,0,0,0.08), 0 14px 30px rgba(0,0,0,0.12); }
+
+.popup-mini-grip_e  { display: flex; align-items: center; color: rgba(0,0,0,0.18); flex-shrink: 0; }
+
+.popup-mini-dot_e {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  background: conic-gradient(
+    #1a73e8 0deg 90deg, #34a853 90deg 180deg,
+    #fbbc04 180deg 270deg, #ea4335 270deg 360deg
+  );
+}
+
+.popup-mini-label_e {
+  font-family: 'Inter', sans-serif;
+  font-size: 12.5px; font-weight: 700; color: #111;
+  letter-spacing: -0.02em; white-space: nowrap;
+}
+
+.popup-mini-live_e { position: relative; width: 8px; height: 8px; flex-shrink: 0; }
+.popup-mini-live-dot_e {
+  display: block; width: 6px; height: 6px; border-radius: 50%;
+  background: #34a853; position: absolute; top: 1px; left: 1px;
+}
+.popup-mini-live-dot_e::before {
+  content: ""; position: absolute; inset: -2px; border-radius: 50%;
+  background: rgba(52,168,83,0.45);
+  animation: miniPing_e 1.8s ease-out infinite;
+}
+
+/* ════════════════════════════════
+   RESPONSIVE
+   ════════════════════════════════ */
+@media (min-width: 1024px) {
+  .popup-phone_e { width: 320px; height: 630px; }
+}
+@media (min-height: 700px) and (max-width: 1023px) {
+  .popup-phone_e { height: 600px; }
+}
+@media (max-height: 620px) {
+  .popup-phone-wrap_e { transform: scale(0.84); transform-origin: center; }
+}
+@media (max-width: 320px) {
+  .popup-phone-wrap_e { transform: scale(0.88); transform-origin: center; }
+}
+@media (max-width: 380px) {
+  .popup-mini_e       { height: 36px; padding: 0 11px 0 8px; }
+  .popup-mini-label_e { font-size: 11.5px; }
+}
