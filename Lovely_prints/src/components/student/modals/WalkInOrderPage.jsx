@@ -6,43 +6,51 @@ import {
   attachDocumentToOrder,
 } from "../../../services/studentService";
 import { startPayment } from "../Payments";
-import PrintStackLoader from "../skeletons/PrintStackLoader";
 import "./createOrderModal.css";
 import { PDFDocument } from "pdf-lib";
 import FilePreviewModal from "./FilePreviewModal";
+import Convertor from "../skeletons/Converter";
+import PrintStackLoader from "../skeletons/PrintStackLoader";
 
 const WalkInOrderPage = () => {
   const { shopId } = useParams();
   const navigate = useNavigate();
 
   const [selectedFile, setSelectedFile] = useState(null);
-  const [pageCount, setPageCount] = useState(1);
+  const [pageCount, setPageCount] = useState(0);
   const [amount, setAmount] = useState("");
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
   const [fileError, setFileError] = useState("");
   const [showPreview, setShowPreview] = useState(false);
-
+  const [printstackLoader , setPrintStackLoader] = useState(false);
   const getPdfPageCount = async (file) => {
-    const buffer = await file.arrayBuffer();
-    const pdf = await PDFDocument.load(buffer);
-    return pdf.getPageCount();
-  };
+    try {
+      const buffer = await file.arrayBuffer();
+      const pdf = await PDFDocument.load(buffer, {
+        ignoreEncryption: true,
+      });
 
+      return pdf.getPageCount();
+    } catch (err) {
+      console.error("PDF page count error:", err);
+      return 1; // fallback
+    }
+  };
   const canSubmit = selectedFile && amount && Number(amount) > 0 && !loading;
   const calculatePlatformFee = (amount) => {
-  return amount < 100 ? 1 : 2;
-};
+    return amount < 100 ? 1 : 2;
+  };
 
-const documentPrice = Number(amount) || 0;
-const platformFee = calculatePlatformFee(documentPrice);
-const totalPrice = documentPrice + platformFee;
+  const documentPrice = Number(amount) || 0;
+  const platformFee = calculatePlatformFee(documentPrice);
+  const totalPrice = documentPrice + platformFee;
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
 
     try {
-      setLoading(true);
+      setPrintStackLoader(true);
 
       const orderRes = await createStudentOrder({
         shop_id: shopId,
@@ -52,7 +60,7 @@ const totalPrice = documentPrice + platformFee;
 
       if (!orderRes.success) {
         alert(orderRes.message);
-        setLoading(false);
+        setPrintStackLoader(false);
         return;
       }
 
@@ -69,29 +77,54 @@ const totalPrice = documentPrice + platformFee;
       });
 
       startPayment(
-  { ...order, total_price: totalPrice },
-  () => navigate("/student/orders"),
-  (reason) => {
-    alert(reason || "Payment failed");
-    setLoading(false);
-  }
-);
+        { ...order, total_price: totalPrice },
+        () => navigate("/student/orders"),
+        (reason) => {
+          alert(reason || "Payment failed");
+          setPrintStackLoader(false);
+        },
+      );
     } catch (err) {
       console.error(err);
       alert("Something went wrong");
-      setLoading(false);
+      setPrintStackLoader(false);
     }
+  };
+
+  const convertToPDF = async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await fetch(`${import.meta.env.VITE_CONVERTER_URL}/convert`, {
+      method: "POST",
+      headers: {
+        "x-api-key": import.meta.env.VITE_CONVERTER_API_KEY,
+      },
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(text);
+    }
+
+    const blob = await res.blob();
+
+    return new File([blob], file.name.replace(/\.\w+$/, ".pdf"), {
+      type: "application/pdf",
+    });
   };
 
   return (
     <div className="create-order-page">
-      {loading && <PrintStackLoader />}
+      {loading && <Convertor />}
+      {printstackLoader && <PrintStackLoader/>}
       {showPreview && (
-  <FilePreviewModal
-    file={selectedFile}
-    onClose={() => setShowPreview(false)}
-  />
-)}
+        <FilePreviewModal
+          file={selectedFile}
+          onClose={() => setShowPreview(false)}
+        />
+      )}
 
       <div className="create-order-container">
         <h1 className="container-header">Walk-In Order</h1>
@@ -102,21 +135,20 @@ const totalPrice = documentPrice + platformFee;
 
           <label className="upload-box">
             <span
-  onClick={() => selectedFile && setShowPreview(true)}
-  style={{ cursor: selectedFile ? "pointer" : "default" }}
->
-  {selectedFile ? selectedFile.name : "Choose a File"}
-</span>
+              onClick={() => selectedFile && setShowPreview(true)}
+              style={{ cursor: selectedFile ? "pointer" : "default" }}
+            >
+              {selectedFile ? selectedFile.name : "Choose a File"}
+            </span>
 
             <input
               type="file"
-                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+              accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
               onChange={async (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
 
                 const MAX_SIZE = 10 * 1024 * 1024;
-
                 const ext = file.name.split(".").pop().toLowerCase();
 
                 const extToMime = {
@@ -126,59 +158,78 @@ const totalPrice = documentPrice + platformFee;
                   pdf: "application/pdf",
                   doc: "application/msword",
                   docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                  xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 };
 
                 let finalType = file.type;
 
-                // 🔥 Fix wrong/empty MIME
                 if (!finalType || finalType === "application/octet-stream") {
                   finalType = extToMime[ext];
                 }
 
-                // ❌ Unsupported
                 if (!finalType) {
                   setFileError("Unsupported file type.");
                   setSelectedFile(null);
                   return;
                 }
 
-                // ❌ Size check
                 if (file.size > MAX_SIZE) {
                   setFileError("File must be under 10MB.");
                   setSelectedFile(null);
                   return;
                 }
 
-                // 🔥 FORCE correct MIME (MAIN FIX)
-                const fixedFile = new File([file], file.name, { type: finalType });
-
                 setFileError("");
-                setSelectedFile(fixedFile);
 
                 try {
-                  if (finalType === "application/pdf") {
-                    const pages = await getPdfPageCount(fixedFile);
-                    setPageCount(pages);
-                  } else {
-                    setPageCount(1);
+                  let processedFile = new File([file], file.name, {
+                    type: finalType,
+                  });
+
+                  // 🔥 HANDLE CONVERSION
+                  if (
+                    finalType.includes("wordprocessingml") ||
+                    finalType === "application/msword" ||
+                    finalType.includes("spreadsheetml")
+                  ) {
+                    setLoading(true);
+
+                    processedFile = await convertToPDF(processedFile);
+
+                    // 🔥 WAIT a bit (IMPORTANT for correct parsing)
+                    await new Promise((res) => setTimeout(res, 300));
                   }
-                } catch {
-                  setFileError("Invalid file.");
+
+                  // ✅ NOW detect pages
+                  let pages = 1;
+
+                  if (processedFile.type === "application/pdf") {
+                    pages = await getPdfPageCount(processedFile);
+                  }
+
+                  setSelectedFile(processedFile);
+                  setPageCount(pages);
+                } catch (err) {
+                  console.error(err);
+                  setFileError("File processing failed");
                   setSelectedFile(null);
+                } finally {
+                  setLoading(false);
                 }
               }}
             />
           </label>
-         {selectedFile && !fileError && (
-  <button
-    type="button"
-    className="secondary-btn"
-    style={{ marginTop: "10px" }}
-    onClick={() => setShowPreview(true)}
-  >
-    Preview File
-  </button>
-)}
+          {selectedFile && !fileError && (
+            <button
+              type="button"
+              className="secondary-btn"
+              style={{ marginTop: "10px" }}
+              onClick={() => setShowPreview(true)}
+            >
+              Preview File
+            </button>
+          )}
+          <p>Page count {pageCount}</p>
 
           {fileError && <p className="error-text">{fileError}</p>}
         </div>
@@ -204,35 +255,39 @@ const totalPrice = documentPrice + platformFee;
           />
         </div>
         {documentPrice > 0 && (
-  <div className="summary-card" style={{ marginTop: "20px" }}>
-    <h3>Order Summary</h3>
+          <div className="summary-card" style={{ marginTop: "20px" }}>
+            <h3>Order Summary</h3>
 
-    <div className="summary-row">
-      <span>Document Price</span>
-      <span>₹{documentPrice}</span>
-    </div>
+            <div className="summary-row">
+              <span>Document Price</span>
+              <span>₹{documentPrice}</span>
+            </div>
+            <div className="summary-row">
+              <span>Page Count</span>
+              <span>{pageCount}</span>
+            </div>
 
-    <div className="summary-row">
-      <span>
-        Platform Fee
-        <span
-          title="Below ₹100 → ₹1 | ₹100 and above → ₹2"
-          style={{ marginLeft: "6px", cursor: "pointer" }}
-        >
-          ⓘ
-        </span>
-      </span>
-      <span>+₹{platformFee}</span>
-    </div>
+            <div className="summary-row">
+              <span>
+                Platform Fee
+                <span
+                  title="Below ₹100 → ₹1 | ₹100 and above → ₹2"
+                  style={{ marginLeft: "6px", cursor: "pointer" }}
+                >
+                  ⓘ
+                </span>
+              </span>
+              <span>+₹{platformFee}</span>
+            </div>
 
-    <div className="summary-divider" />
+            <div className="summary-divider" />
 
-    <div className="summary-total">
-      <span>Total</span>
-      <span>₹{totalPrice}</span>
-    </div>
-  </div>
-)}
+            <div className="summary-total">
+              <span>Total</span>
+              <span>₹{totalPrice}</span>
+            </div>
+          </div>
+        )}
 
         <div className="create-footer-A">
           <button className="secondary-btn" onClick={() => navigate(-1)}>
